@@ -6,6 +6,7 @@ var request = require('request');
 var logfmt = require("logfmt");
 
 app.use(logfmt.requestLogger());
+app.use(express.bodyParser());
 
 /*
 app.get('/', function(req, res) {
@@ -13,10 +14,10 @@ app.get('/', function(req, res) {
 }); */
 
 app.post('/room', function(req, res) {
-    console.log(req.body);
-    console.log(req);
-    console.log("ROOM");
-    res.send('test\n');
+	var body = req.body;
+    console.log(body);
+    console.log("ROOM\n");
+    res.send(body);
 });
 
 var port = Number(process.env.PORT || 5000);
