@@ -14,6 +14,8 @@ app.get('/', function(req, res) {
 
 app.post('/room', function(req, res) {
     console.log(req.body);
+    console.log(req);
+    console.log("ROOM");
     res.send('test\n');
 });
 
