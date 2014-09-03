@@ -4,9 +4,13 @@ var http = require('http');
 var server = http.Server(app);
 var request = require('request');
 var logfmt = require("logfmt");
+var bodyParser = require('body-parser');
 
 app.use(logfmt.requestLogger());
-app.use(express.bodyParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 /*
 app.get('/', function(req, res) {
@@ -15,8 +19,9 @@ app.get('/', function(req, res) {
 
 app.post('/room', function(req, res) {
 	var body = req.body;
+    console.log(req);
     console.log(body);
-    console.log("ROOM\n");
+    console.log("ROOM POST\n");
     res.send(body);
 });
 
