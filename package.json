@@ -24,6 +24,8 @@
     "logfmt": "^1.1.2",
     "express": "^4.6.1",
     "request": "^2.39.0",
-    "body-parser":"*"
+    "body-parser":"*",
+    "google-calendar":"*",
+    "passport":"*"
   }
 }

@@ -6,6 +6,10 @@ var request = require('request');
 var logfmt = require("logfmt");
 var bodyParser = require('body-parser');
 
+var config = require('./config');
+var gcal = require('../GoogleCalendar');
+
+
 app.use(logfmt.requestLogger());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -34,7 +38,7 @@ server.listen(port, function() {
 
 
 function schedule(info){
-	var email = info.info;
+	var email = info.email;
 	var company = info.company;
 	var room = info.room;
 	var date = info.date;
