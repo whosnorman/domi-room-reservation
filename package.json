@@ -26,6 +26,7 @@
     "request": "^2.39.0",
     "body-parser":"*",
     "google-calendar":"*",
-    "passport":"*"
+    "passport":"*",
+    "passport-google-oauth":"*"
   }
 }
