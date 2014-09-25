@@ -61,6 +61,8 @@ var token = new GoogleToken({
                   access_token: token
               });
 
+          console.log(oauthClient);
+
           gcal.events.insert({
             auth: oauthClient,
             calendarId: calID,
