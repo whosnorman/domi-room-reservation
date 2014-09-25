@@ -56,15 +56,17 @@ var token = new GoogleToken({
           var now = moment().format();
           var later = moment().format();
 
-          var oauthClient = new OAuth2('', '', '', {
+          var oauthClient = new OAuth2('', '', '', {}, {
                   token_type: 'Bearer',
                   access_token: token
               });
 
           console.log(oauthClient);
 
+          var oauth = {token_type: 'Bearer', access_token: token};
+
           gcal.events.insert({
-            auth: oauthClient,
+            auth: oauth,
             calendarId: calID,
             resource: {
               summarty: 'test event',
