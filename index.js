@@ -57,8 +57,10 @@ var token = new GoogleToken({
           var later = moment().format();
 
           var oauthClient = new OAuth2('', '', '', {}, {
+                credentials: {
                   token_type: 'Bearer',
                   access_token: token
+                }
               });
 
           console.log(oauthClient);
