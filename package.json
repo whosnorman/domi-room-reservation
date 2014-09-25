@@ -27,6 +27,9 @@
     "body-parser":"*",
     "google-calendar":"*",
     "passport":"*",
-    "passport-google-oauth":"*"
+    "passport-google-oauth":"*",
+    "moment": "*",
+    "googleapis":"*",
+    "gapitoken":"*"
   }
 }

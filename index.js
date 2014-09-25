@@ -20,10 +20,88 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+
+
+
+var moment = require('moment');
+var googleapis = require('googleapis');
+var GoogleToken = require('gapitoken');
+var OAuth2Client = googleapis.OAuth2Client;
+
+var token = new GoogleToken({
+    iss: '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com',
+    scope: 'https://www.googleapis.com/auth/calendar',
+    keyFile: './key.pem'
+}, function (err) {
+    if (err) {
+        return console.log(err);
+    }
+
+    console.log('token recieved');
+
+    token.getToken(function (err, token) {
+        if (err) {
+            return console.log(err);
+        }
+
+        googleapis.load('calendar', 'v3', function (err, client) {
+            var oauthClient = new OAuth2Client('', '', '', {}, {
+                token_type: 'Bearer',
+                access_token: token
+            });
+
+            console.log('calendar API loaded');
+
+            var now = moment().format();
+            var later = moment().format();
+            later.hour(3);
+
+            client
+                .calendar
+                .events
+                .insert({
+                    calendarId: calID, // 'primary'
+                    resource: {
+                        summary: 'test event',
+                        description: 'hangout',
+                        reminders: {
+                            overrides: {
+                                method: 'popup',
+                                minutes: 0
+                            }
+                        },
+                        start: {
+                            dateTime: now
+                        },
+                        end: {
+                            dateTime: later
+                        },
+                        attendees: [{
+                            email: 'matt@domiventures.co'
+                        }]
+                    }
+                })
+                .withAuthClient(oauthClient)
+                .execute(function (err, event) {
+
+                    console.log(event);
+                });
+        });
+    });
+});
+
+console.log('here');
+
+
+
+
+
 /*
 app.get('/', function(req, res) {
 	res.sendfile(__dirname + '/public/index.html');
 }); */
+
+/*
 
 passport.use(new GoogleStrategy({
 	clientID: config.consumer_key,
@@ -38,7 +116,8 @@ passport.use(new GoogleStrategy({
 ));
 
 app.get('/auth', 
-	passport.authenticate('google', {session: false}));
+	passport.authenticate('google', {session: false})
+  );
 
 app.get('/auth/callback', 
   passport.authenticate('google', { session: false, failureRedirect: '/login' }),
@@ -47,17 +126,21 @@ app.get('/auth/callback',
     res.redirect('/');
   });
 
+function auth() {
+
+} */
+
 app.post('/room', function(req, res) {
 	var body = req.body;
 
     console.log(body);
     console.log("ROOM POST\n");
 
-    //schedule(body);
+    schedule(body);
 
-    if(!req.session.access_token) return res.redirect('/auth');
+    //if(!req.session.access_token) return res.redirect('/auth');
   
-	var accessToken     = req.session.access_token;
+	//var accessToken     = req.session.access_token;
 	var text            = body.room + ' ' + body.company;
 
 	gcal(accessToken).events.quickAdd(calID, text, function(err, data) {
@@ -71,7 +154,7 @@ app.post('/room', function(req, res) {
 var port = Number(process.env.PORT || 5000);
 server.listen(port, function() {
    console.log("Listenin\' on " + port);
-});
+}); 
 
 
 function schedule(info){
