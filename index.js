@@ -46,7 +46,7 @@ var token = new GoogleToken({
 
     token.getToken(function (err, token) {
         if (err) {
-            console.log('theres a token error');
+            console.log('tokenErr: ' + err);
             return console.log(err);
         }
 
@@ -55,7 +55,7 @@ var token = new GoogleToken({
         var now = moment().format();
         var later = moment().format();
 
-        var oauthClient = new OAuth2(clientID, 'notasecret', '', {}, {
+        var oauthClient = new OAuth2('', '', '', {}, {
                 token_type: 'Bearer',
                 access_token: token
             });
@@ -79,6 +79,7 @@ var token = new GoogleToken({
         }, function(err){
           if (err) {
             console.log('theres a gcal error');
+            console.log('err: ' + err);
             return console.log(err);
           } else {
             console.log('success?');
