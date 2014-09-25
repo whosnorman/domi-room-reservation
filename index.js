@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 
-
+var clientID = '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7.apps.googleusercontent.com';
 
 var moment = require('moment');
 var googleapis = require('googleapis');
@@ -55,7 +55,7 @@ var token = new GoogleToken({
         var now = moment().format();
         var later = moment().format();
 
-        var oauthClient = new OAuth2('', '', '', {}, {
+        var oauthClient = new OAuth2(clientID, 'notasecret', '', {}, {
                 token_type: 'Bearer',
                 access_token: token
             });
