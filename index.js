@@ -28,7 +28,10 @@ app.use(bodyParser.urlencoded({
 var moment = require('moment');
 var googleapis = require('googleapis');
 var GoogleToken = require('gapitoken');
-var OAuth2Client = googleapis.OAuth2Client;
+var OAuth2 = googleapis.auth.OAuth2;
+var gcal = googleapis.calendar('v3');
+
+
 
 var token = new GoogleToken({
     iss: '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com',
@@ -43,17 +46,23 @@ var token = new GoogleToken({
 
     token.getToken(function (err, token) {
         if (err) {
-            console.log('theres an error');
+            console.log('theres a token error');
             return console.log(err);
         }
 
         console.log('token recieved');
 
-        googleapis.client.load('calendar', 'v3', function (err, client) {
-            var oauthClient = new OAuth2Client('', '', '', {}, {
+        var oauthClient = new OAuth2('', '', '', {}, {
                 token_type: 'Bearer',
                 access_token: token
             });
+        
+        gcal.get({auth: oauthClient }, function(err, client) {
+            if (err) {
+            console.log('theres a gcal error');
+            return console.log(err);
+            }     
+            
 
             console.log('calendar API loaded');
 
