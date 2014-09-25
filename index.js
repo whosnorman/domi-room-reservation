@@ -60,7 +60,7 @@ var token = new GoogleToken({
                 access_token: token
             });
 
-        gcal.insert({
+        gcal.events.insert({
           auth: oauthClient,
           calendarId: calID,
           resource: {
