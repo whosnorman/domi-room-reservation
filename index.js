@@ -54,7 +54,6 @@ var token = new GoogleToken({
 
         var now = moment().format();
         var later = moment().format();
-        later.hour(3);
 
         var oauthClient = new OAuth2('', '', '', {}, {
                 token_type: 'Bearer',
