@@ -13,7 +13,7 @@ var passport = require('passport');
 var GoogleStrategy = require('passport-google-oatuh').OAuth2Strategy;
 */
 
-var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.com';
+var calID = 'https://www.google.com/calendar/ical/domiventures.co_e1eknta8nrohjg1lhrqmntrla4%40group.calendar.google.com/private-798e327638625569ed574eb8be4f98b2/basic.ics';
 
 //app.use(passport.initialize());
 app.use(logfmt.requestLogger());
@@ -32,9 +32,10 @@ var OAuth2 = googleapis.auth.OAuth2;
 var gcal = googleapis.calendar('v3');
 
 
+var emailAddress = '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com';
 
 var token = new GoogleToken({
-    iss: '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com',
+    iss: emailAddress,
     scope: 'https://www.googleapis.com/auth/calendar',
     keyFile: './key.pem'
 }, function (err) {
@@ -61,12 +62,9 @@ var token = new GoogleToken({
           var oauthClient = new OAuth2('', '', '', {}, {
 
               });
+
           oauthClient.setCredentials({token_type: 'Bearer', access_token: tokenn});
 
-          //console.log(oauthClient);
-
-          //var oauth = new OAuth2({token_type: 'Bearer', access_token: tokenn});
-          //var oauth = new OAuth2(clientID, {token_type: 'Bearer', access_token: tokenn});
 
           console.log(oauthClient);
 
@@ -74,13 +72,13 @@ var token = new GoogleToken({
             auth: oauthClient,
             calendarId: calID,
             resource: {
-              summarty: 'test event',
+              summary: 'test event',
               description: 'hangout',
               start: {
                 dateTime: now
               },
               end: {
-                dateTime: later
+                dateTime: now
               },
               attendees: [{
                 email: 'matt@domiventures.co'
