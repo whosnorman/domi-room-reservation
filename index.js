@@ -44,31 +44,34 @@ var token = new GoogleToken({
 
     console.log('about to get token');
 
-    token.getToken(function (err, token) {
+    token.getToken(function (err, tokenn) {
         if (err) {
             console.log('tokenErr: ' + err);
             return console.log(err);
         }
         else {
 
-          console.log(token);
+          console.log(tokenn);
+
+
 
           var now = moment().format();
           var later = moment().format();
 
           var oauthClient = new OAuth2('', '', '', {}, {
-                credentials: {
-                  token_type: 'Bearer',
-                  access_token: token
-                }
+
               });
+          oauthClient.setCredentials({token_type: 'Bearer', access_token: tokenn});
+
+          //console.log(oauthClient);
+
+          //var oauth = new OAuth2({token_type: 'Bearer', access_token: tokenn});
+          //var oauth = new OAuth2(clientID, {token_type: 'Bearer', access_token: tokenn});
 
           console.log(oauthClient);
 
-          var oauth = {token_type: 'Bearer', access_token: token};
-
           gcal.events.insert({
-            auth: oauth,
+            auth: oauthClient,
             calendarId: calID,
             resource: {
               summarty: 'test event',
