@@ -15,7 +15,7 @@ var GoogleStrategy = require('passport-google-oatuh').OAuth2Strategy;
 
 var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.com';
 
-app.use(passpot.initialize());
+//app.use(passport.initialize());
 app.use(logfmt.requestLogger());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -145,10 +145,10 @@ app.post('/room', function(req, res) {
 	//var accessToken     = req.session.access_token;
 	var text            = body.room + ' ' + body.company;
 
-	gcal(accessToken).events.quickAdd(calID, text, function(err, data) {
+	/*gcal(accessToken).events.quickAdd(calID, text, function(err, data) {
 		if(err) return res.send(500,err);
 		return res.redirect('/');
-	});
+	}); */
 
 	res.send(body);
 });
