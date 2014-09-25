@@ -49,7 +49,7 @@ var token = new GoogleToken({
 
         console.log('token recieved');
 
-        googleapis.load('calendar', 'v3', function (err, client) {
+        googleapis.client.load('calendar', 'v3', function (err, client) {
             var oauthClient = new OAuth2Client('', '', '', {}, {
                 token_type: 'Bearer',
                 access_token: token
