@@ -6,10 +6,12 @@ var request = require('request');
 var logfmt = require("logfmt");
 var bodyParser = require('body-parser');
 
+/*
 var config = require('./config');
 var gcal = require('google-calendar');
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oatuh').OAuth2Strategy;
+*/
 
 var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.com';
 
