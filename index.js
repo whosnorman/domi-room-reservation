@@ -49,42 +49,43 @@ var token = new GoogleToken({
             console.log('tokenErr: ' + err);
             return console.log(err);
         }
+        else {
 
-        console.log('token recieved');
+          console.log(token);
 
-        var now = moment().format();
-        var later = moment().format();
+          var now = moment().format();
+          var later = moment().format();
 
-        var oauthClient = new OAuth2('', '', '', {}, {
-                token_type: 'Bearer',
-                access_token: token
-            });
+          var oauthClient = new OAuth2('', '', '', {}, {
+                  token_type: 'Bearer',
+                  access_token: token
+              });
 
-        gcal.events.insert({
-          auth: oauthClient,
-          calendarId: calID,
-          resource: {
-            summarty: 'test event',
-            description: 'hangout',
-            start: {
-              dateTime: now
-            },
-            end: {
-              dateTime: later
-            },
-            attendees: [{
-              email: 'matt@domiventures.co'
-            }]
-          }
-        }, function(err){
-          if (err) {
-            console.log('theres a gcal error');
-            console.log('err: ' + err);
-            return console.log(err);
-          } else {
-            console.log('success?');
-          }
-        });
+          gcal.events.insert({
+            auth: oauthClient,
+            calendarId: calID,
+            resource: {
+              summarty: 'test event',
+              description: 'hangout',
+              start: {
+                dateTime: now
+              },
+              end: {
+                dateTime: later
+              },
+              attendees: [{
+                email: 'matt@domiventures.co'
+              }]
+            }
+          }, function(err){
+            if (err) {
+              console.log('gcalErr: ' + err);
+              return console.log(err);
+            } else {
+              console.log('success?');
+            }
+          });
+      }
 
 
         /*
