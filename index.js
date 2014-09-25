@@ -39,12 +39,15 @@ var token = new GoogleToken({
         return console.log(err);
     }
 
-    console.log('token recieved');
+    console.log('about to get token');
 
     token.getToken(function (err, token) {
         if (err) {
+            console.log('theres an error');
             return console.log(err);
         }
+
+        console.log('token recieved');
 
         googleapis.load('calendar', 'v3', function (err, client) {
             var oauthClient = new OAuth2Client('', '', '', {}, {
