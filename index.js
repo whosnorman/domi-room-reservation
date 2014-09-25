@@ -52,6 +52,10 @@ var token = new GoogleToken({
 
         console.log('token recieved');
 
+        var now = moment().format();
+        var later = moment().format();
+        later.hour(3);
+
         var oauthClient = new OAuth2('', '', '', {}, {
                 token_type: 'Bearer',
                 access_token: token
