@@ -56,7 +56,34 @@ var token = new GoogleToken({
                 token_type: 'Bearer',
                 access_token: token
             });
-        
+
+        gcal.insert({
+          auth: oauthClient,
+          calendarId: calID,
+          resource: {
+            summarty: 'test event',
+            description: 'hangout',
+            start: {
+              dateTime: now
+            },
+            end: {
+              dateTime: later
+            },
+            attendees: [{
+              email: 'matt@domiventures.co'
+            }]
+          }
+        }, function(err){
+          if (err) {
+            console.log('theres a gcal error');
+            return console.log(err);
+          } else {
+            console.log('success?');
+          }
+        });
+
+
+        /*
         gcal.get({auth: oauthClient }, function(err, client) {
             if (err) {
             console.log('theres a gcal error');
@@ -100,7 +127,7 @@ var token = new GoogleToken({
 
                     console.log(event);
                 });
-        });
+        }); */
     });
 });
 
