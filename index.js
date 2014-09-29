@@ -25,6 +25,8 @@ var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.co
 // google API service account, calendar has been shared with this email
 var serviceAcc = '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com';
 
+var oauthClient;
+
 // create token
 var token = new GoogleToken({
     iss: serviceAcc,
@@ -52,10 +54,12 @@ var token = new GoogleToken({
           var later = moment().format();
 
           // create and set authorization client and necessary credentials
-          var oauthClient = new OAuth2('', '', '', {}, {});
+          oauthClient = new OAuth2('', '', '', {}, {});
           oauthClient.setCredentials({token_type: 'Bearer', access_token: tokenn});
 
-          gcal.events.insert({
+          console.log('credentials loaded');
+
+          /*gcal.events.insert({
             auth: oauthClient,
             calendarId: calID,
             resource: {
@@ -68,7 +72,7 @@ var token = new GoogleToken({
                 dateTime: later
               },
               attendees: [{
-                email: 'matt@domiventures.co'
+                email: 'lucas@domiventures.co'
               }]
             }
           }, function(err, event){
@@ -115,15 +119,42 @@ app.get('/', function(req, res) {
 app.post('/room', function(req, res) {
 	var body = req.body;
 
-    console.log(body);
-    console.log("ROOM POST\n");
+  console.log(body);
+  console.log("ROOM POST\n");
 
-    schedule(body);
+  // create correct times
+  var now = moment(body.start);
+  var later = moment(body.end);
 
-    //if(!req.session.access_token) return res.redirect('/auth');
-  
-	//var accessToken     = req.session.access_token;
-	var text            = body.room + ' ' + body.company;
+  var title = body.room + ' - ' + body.company;
+  var attendee = body.email;
+
+  gcal.events.insert({
+    auth: oauthClient,
+    calendarId: calID,
+    resource: {
+      summary: title || 'No information recieved',
+      description: 'Reservation made by sample@gmail.com',
+      start: {
+        dateTime: now
+      },
+      end: {
+        dateTime: later
+      },
+      attendees: [{
+        email: attendee
+      }]
+    }
+  }, function(err, event){
+    if (err) {
+      console.log('gcalErr: ' + err);
+      return console.log(err);
+    } else {
+      console.log(event);
+      console.log(err);
+      console.log('success?');
+    }
+  }); 
 
 	res.send(body);
 });
