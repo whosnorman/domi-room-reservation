@@ -6,14 +6,11 @@ var request = require('request');
 var logfmt = require("logfmt");
 var bodyParser = require('body-parser');
 
-/*
-var config = require('./config');
-var gcal = require('google-calendar');
-var passport = require('passport');
-var GoogleStrategy = require('passport-google-oatuh').OAuth2Strategy;
-*/
-
-var calID = 'https://www.google.com/calendar/ical/domiventures.co_e1eknta8nrohjg1lhrqmntrla4%40group.calendar.google.com/private-798e327638625569ed574eb8be4f98b2/basic.ics';
+var moment = require('moment');
+var googleapis = require('googleapis');
+var GoogleToken = require('gapitoken');
+var OAuth2 = googleapis.auth.OAuth2;
+var gcal = googleapis.calendar('v3');
 
 //app.use(passport.initialize());
 app.use(logfmt.requestLogger());
@@ -22,20 +19,15 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+// public calendar ID
+var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.com';
 
-var clientID = '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7.apps.googleusercontent.com';
+// google API service account, calendar has been shared with this email
+var serviceAcc = '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com';
 
-var moment = require('moment');
-var googleapis = require('googleapis');
-var GoogleToken = require('gapitoken');
-var OAuth2 = googleapis.auth.OAuth2;
-var gcal = googleapis.calendar('v3');
-
-
-var emailAddress = '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com';
-
+// create token
 var token = new GoogleToken({
-    iss: emailAddress,
+    iss: serviceAcc,
     scope: 'https://www.googleapis.com/auth/calendar',
     keyFile: './key.pem'
 }, function (err) {
@@ -52,101 +44,66 @@ var token = new GoogleToken({
         }
         else {
 
-          console.log(tokenn);
+          //console.log(tokenn);
 
 
-
+          // create correct times
           var now = moment().format();
           var later = moment().format();
 
-          var oauthClient = new OAuth2('', '', '', {}, {
-
-              });
-
+          // create and set authorization client and necessary credentials
+          var oauthClient = new OAuth2('', '', '', {}, {});
           oauthClient.setCredentials({token_type: 'Bearer', access_token: tokenn});
-
-
-          console.log(oauthClient);
 
           gcal.events.insert({
             auth: oauthClient,
             calendarId: calID,
             resource: {
-              summary: 'test event',
-              description: 'hangout',
+              summary: 'Lecture Hall - Loris Ipsum',
+              description: 'Reservation made by sample@gmail.com',
               start: {
                 dateTime: now
               },
               end: {
-                dateTime: now
+                dateTime: later
               },
               attendees: [{
                 email: 'matt@domiventures.co'
               }]
             }
-          }, function(err){
+          }, function(err, event){
             if (err) {
               console.log('gcalErr: ' + err);
               return console.log(err);
             } else {
+              console.log(event);
+              console.log(err);
+              console.log('success?');
+            }
+          }); 
+
+          /* look into freebusy api call for checking availability
+
+          gcal.events.list({
+            calendarId: 'primary',
+            auth: oauthClient,
+            maxResults: 5,
+            fields: "items(end,start,status,summary)"
+          }, function(err, cal){
+            if (err) {
+              console.log('gcalErr: ' + err);
+              return console.log(err);
+            } else {
+              console.log(err);
+              console.log(cal);
               console.log('success?');
             }
           });
+          */
       }
-
-
-        /*
-        gcal.get({auth: oauthClient }, function(err, client) {
-            if (err) {
-            console.log('theres a gcal error');
-            return console.log(err);
-            }     
-            
-
-            console.log('calendar API loaded');
-
-            var now = moment().format();
-            var later = moment().format();
-            later.hour(3);
-
-            client
-                .calendar
-                .events
-                .insert({
-                    calendarId: calID, // 'primary'
-                    resource: {
-                        summary: 'test event',
-                        description: 'hangout',
-                        reminders: {
-                            overrides: {
-                                method: 'popup',
-                                minutes: 0
-                            }
-                        },
-                        start: {
-                            dateTime: now
-                        },
-                        end: {
-                            dateTime: later
-                        },
-                        attendees: [{
-                            email: 'matt@domiventures.co'
-                        }]
-                    }
-                })
-                .withAuthClient(oauthClient)
-                .execute(function (err, event) {
-
-                    console.log(event);
-                });
-        }); */
+      
     });
 });
-
-console.log('here');
-
-
-
 
 
 /*
@@ -154,34 +111,6 @@ app.get('/', function(req, res) {
 	res.sendfile(__dirname + '/public/index.html');
 }); */
 
-/*
-
-passport.use(new GoogleStrategy({
-	clientID: config.consumer_key,
-	clientSecret: config.consumer_secret,
-	callbackURL: "http://localhost:5000/auth/callback",
-	scope: ['openid', 'email', 'https://googleapis.com/auth/calendar']
-  },
-  function(accessToken, refreshToken, profile, done) {
-  	profile.accessToken = accessToken;
-  	return done(null, profile);
-  }
-));
-
-app.get('/auth', 
-	passport.authenticate('google', {session: false})
-  );
-
-app.get('/auth/callback', 
-  passport.authenticate('google', { session: false, failureRedirect: '/login' }),
-  function(req, res) { 
-    req.session.access_token = req.user.accessToken;
-    res.redirect('/');
-  });
-
-function auth() {
-
-} */
 
 app.post('/room', function(req, res) {
 	var body = req.body;
@@ -195,11 +124,6 @@ app.post('/room', function(req, res) {
   
 	//var accessToken     = req.session.access_token;
 	var text            = body.room + ' ' + body.company;
-
-	/*gcal(accessToken).events.quickAdd(calID, text, function(err, data) {
-		if(err) return res.send(500,err);
-		return res.redirect('/');
-	}); */
 
 	res.send(body);
 });
