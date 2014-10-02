@@ -232,7 +232,7 @@ function sendEmail(user){
   var async = false;
   var ip_pool = "Main Pool";        // resets to default ip pool
   var now = moment();
-  var send_at = now;  // no idea if this will work
+  var send_at = null;  // no idea if this will work
 
   mandrillClient.messages.send({"message": message, "async": async, "ip_pool": ip_pool, "send_at": send_at}, function(result) {
       console.log('EMAIL RESULT:');
