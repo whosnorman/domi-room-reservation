@@ -103,7 +103,7 @@ app.post('/room', function(req, res) {
   var now = moment(body.date);
   now.hours(body.start);
   var later = moment(body.date);
-  laer.hours(body.end);
+  later.hours(body.end);
 
   var title = body.room + ' - ' + body.company;
   var attendee = body.email;
@@ -158,12 +158,14 @@ function schedule(info){
 };
 
 function sendEmail(user){
-  var msg = user.room + ' has been reserved! \n \n -Domi Team';
   var fromEmail = "matt@domiventures.co";
 
+  var msg = "<h1>Domi Station</h1> <p>" + user.room + " has been reserved!</p>
+  <p>Link to calendar event</br><p>-Domi Team</p>";
+
   var message = {
-      "html": "<p>Domi Station</p>",
-      "text": msg,
+      "html": msg,
+      "text": null,
       "subject": "Domi Room Reservation",
       "from_email": fromEmail,
       "from_name": "Room Reservation",
