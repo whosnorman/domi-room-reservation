@@ -30,6 +30,7 @@
     "passport-google-oauth":"*",
     "moment": "*",
     "googleapis":"*",
-    "gapitoken":"*"
+    "gapitoken":"*",
+    "mandrill-api":"*"
   }
 }
