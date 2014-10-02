@@ -160,8 +160,7 @@ function schedule(info){
 function sendEmail(user){
   var fromEmail = "matt@domiventures.co";
 
-  var msg = "<h1>Domi Station</h1> <p>" + user.room + " has been reserved!</p>
-  <p>Link to calendar event</br><p>-Domi Team</p>";
+  var msg = "<h1>Domi Station</h1> <p>" + user.room + " has been reserved!</p><p>Link to calendar event</br><p>-Domi Team</p>";
 
   var message = {
       "html": msg,
