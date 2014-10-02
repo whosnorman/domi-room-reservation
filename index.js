@@ -100,8 +100,10 @@ app.post('/room', function(req, res) {
   console.log("ROOM POST\n");
 
   // create correct times
-  var now = moment(body.start);
-  var later = moment(body.end);
+  var now = moment(body.date);
+  now.hours(body.start);
+  var later = moment(body.date);
+  laer.hours(body.end);
 
   var title = body.room + ' - ' + body.company;
   var attendee = body.email;
