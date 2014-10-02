@@ -100,10 +100,8 @@ app.post('/room', function(req, res) {
   console.log("ROOM POST\n");
 
   // create correct times
-  var now = moment(body.date);
-  now.hours(body.start);
-  var later = moment(body.date);
-  later.hours(body.end);
+  var now = moment(body.start);
+  var later = moment(body.end);
 
   var title = body.room + ' - ' + body.company;
   var attendee = body.email;
@@ -131,7 +129,7 @@ app.post('/room', function(req, res) {
     } else {
       console.log(event);
       console.log('attempting to send email');
-      sendEmail(body);
+      sendEmail(body, event);
     }
   }); 
 
@@ -157,10 +155,10 @@ function schedule(info){
 	console.log(room);
 };
 
-function sendEmail(user){
+function sendEmail(user, ev){
   var fromEmail = "matt@domiventures.co";
-
-  var msg = "<h1>Domi Station</h1> <p>" + user.room + " has been reserved!</p><p>Link to calendar event</br><p>-Domi Team</p>";
+  var link = ev.iCalid || '';
+  var msg = "<h1>Domi Station</h1> <p>" + user.room + " has been reserved!</p><p><a href='" + link + "'>Link to calendar event</a></p></br><p>-Domi Team</p>";
 
   var message = {
       "html": msg,
