@@ -157,9 +157,9 @@ function schedule(info){
 
 function sendEmail(user, ev){
   var fromEmail = "matt@domiventures.co";
-  var link = ev.iCalUID || '';
+  var link = ev.htmlLink || '';
   var domiLogo = 'https://doc-00-2o-docs.googleusercontent.com/docs/securesc/e5bjquob2jma89rdu2d6p7mumep1ec8o/f0vld6qs8cruq8jg0llv6c8vkojab6rg/1412352000000/02681725396603651839/03801544499766144817/0ByHBPc7NwoY1QndwZ3lkZVBiSVU?e=view&h=16653014193614665626&nonce=01unb50418mu2&user=03801544499766144817&hash=bolilt7o1dsa13fvgjsgsj1drt0qsmnl';
-  var msg = "<h1>Snag A Room</h1> <p>Congrats! " + user.room + " has been reserved!</p><p><a href='" + link + "'>Link to calendar event</a>. Please confirm details and email us if there are any discrepancies.</p></br><p>-- The Domi Team</p><p><img src='" + domiLogo + "' style='width: 150px; height: 150px' />";
+  var msg = "<h3>Congrats! " + user.room + " has been reserved!</h3><p><a href='url(" + link + ")'>Link to calendar event</a>. Please confirm details and email us if there are any discrepancies.</p></br><p>-- The Domi Team</p><p><img src='" + domiLogo + "' style='width: 150px; height: 150px' />";
 
   var message = {
       "html": msg,
