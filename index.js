@@ -164,9 +164,9 @@ function sendEmail(user, ev){
   var message = {
       "html": msg,
       "text": null,
-      "subject": "Domi Room Reservation",
+      "subject": "Snag A Room",
       "from_email": fromEmail,
-      "from_name": "Room Reservation",
+      "from_name": "Domi Room Reservation",
       "to": [{
               "email": user.email,
               "name": user.company,
