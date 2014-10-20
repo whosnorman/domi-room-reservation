@@ -23,6 +23,13 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+app.use("/public", express.static(__dirname + '/public'));
+
+app.get('/robots.txt', function(req, res) {
+  res.sendfile(__dirname + '/public/robots.html');
+}); 
+
+
 // public calendar ID
 var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.com';
 
@@ -85,12 +92,6 @@ var token = new GoogleToken({
       
     });
 });
-
-app.use("/public", express.static(__dirname + '/public'));
-
-app.get('/robots.txt', function(req, res) {
-	res.sendfile(__dirname + '/public/robots.txt');
-}); 
 
 
 app.post('/room', function(req, res) {
