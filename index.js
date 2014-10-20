@@ -23,10 +23,11 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-app.use('/public', express.static(__dirname + '/domi/public'));
+//app.use('/public', express.static(__dirname + '/public'));
 
-app.get('/', function(req, res) {
-  res.sendfile(__dirname + '/domi/public/hello.html');
+app.get('/robots.txt', function(req, res) {
+  res.type('text/plain')
+  res.send("User-agent: *\nDisallow: /");
 }); 
 
 
