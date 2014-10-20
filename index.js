@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({
 app.use('/public', express.static(__dirname + '/domi/public'));
 
 app.get('/', function(req, res) {
-  res.sendfile(__dirname + '/public/hello.html');
+  res.sendfile(__dirname + '/domi/public/hello.html');
 }); 
 
 
