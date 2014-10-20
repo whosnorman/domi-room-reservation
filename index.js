@@ -157,16 +157,18 @@ function schedule(info){
 
 function sendEmail(user, ev){
   var fromEmail = "matt@domiventures.co";
-  var link = ev.htmlLink || '';
+  var link = ev.htmlLink;
+  console.log("html link upcoming");
+  console.log(link);
   var domiLogo = 'https://doc-00-2o-docs.googleusercontent.com/docs/securesc/e5bjquob2jma89rdu2d6p7mumep1ec8o/f0vld6qs8cruq8jg0llv6c8vkojab6rg/1412352000000/02681725396603651839/03801544499766144817/0ByHBPc7NwoY1QndwZ3lkZVBiSVU?e=view&h=16653014193614665626&nonce=01unb50418mu2&user=03801544499766144817&hash=bolilt7o1dsa13fvgjsgsj1drt0qsmnl';
-  var msg = "<h3>Congrats! " + user.room + " has been reserved!</h3><p><a href='url(" + link + ")'>Link to calendar event</a>. Please confirm details and email us if there are any discrepancies.</p></br><p>-- The Domi Team</p><p><img src='" + domiLogo + "' style='width: 150px; height: 150px' />";
+  var msg = "<h3>Congrats! " + user.room + " has been reserved!</h3><p><a href='url(" + link + ")'>Link to calendar</a>. Please confirm the details and email us if there are any discrepancies.</p></br><p>-- The Domi Team</p><p><img src='" + domiLogo + "' style='width: 150px; height: 150px' />";
 
   var message = {
       "html": msg,
       "text": null,
       "subject": "Snag A Room",
       "from_email": fromEmail,
-      "from_name": "Domi Room Reservation",
+      "from_name": "Domi Station",
       "to": [{
               "email": user.email,
               "name": user.company,
@@ -233,8 +235,7 @@ function sendEmail(user, ev){
 
   var async = false;
   var ip_pool = "Main Pool";        // resets to default ip pool
-  var now = moment();
-  var send_at = null;  // no idea if this will work
+  var send_at = null;               // have to pay to get this feature
 
   mandrillClient.messages.send({"message": message, "async": async, "ip_pool": ip_pool, "send_at": send_at}, function(result) {
       console.log('EMAIL RESULT:');
