@@ -87,10 +87,9 @@ var token = new GoogleToken({
 });
 
 
-/*
-app.get('/', function(req, res) {
-	res.sendfile(__dirname + '/public/index.html');
-}); */
+app.get('/robots.txt', function(req, res) {
+	res.sendfile(__dirname + '/robots.txt');
+}); 
 
 
 app.post('/room', function(req, res) {
