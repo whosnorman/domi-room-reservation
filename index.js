@@ -86,6 +86,7 @@ var token = new GoogleToken({
     });
 });
 
+app.use("/public", express.static(__dirname + '/public'));
 
 app.get('/robots.txt', function(req, res) {
 	res.sendfile(__dirname + '/public/robots.txt');
