@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-app.use('/public', express.static(__dirname + '/public'));
+app.use('/public', express.static(__dirname + '/domi/public'));
 
 app.get('/', function(req, res) {
   res.sendfile(__dirname + '/public/hello.html');
