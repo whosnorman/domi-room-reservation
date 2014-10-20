@@ -88,7 +88,7 @@ var token = new GoogleToken({
 
 
 app.get('/robots.txt', function(req, res) {
-	res.sendfile(__dirname + 'robots.txt');
+	res.sendfile(__dirname + '/public/robots.txt');
 }); 
 
 
