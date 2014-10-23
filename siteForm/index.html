@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+
+		<link rel="stylesheet" type="text/css" href="css/default.css" />
+		<link rel="stylesheet" type="text/css" href="css/component.css" />
+	
+		<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script src="js/modernizr.custom.js"></script>
+	</head>
+	<body class="nl-blurred">
+		<div class="container demo-1">
+			<div class="main clearfix">
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<form id="nl-form" class="nl-form">
+					Hello, I am 
+					<input id="company" type="text" value="" placeholder="company" data-subline="For example: <em>Domi Ventures</em> or <em>HackFSU</em>"/>
+					and  want to reserve the 
+					<select id="room">
+						<option value="1" selected>West Conference Room</option>
+						<option value="2">East Conference Room</option>
+						<option value="3">Education Lecture Hall</option>
+					</select>
+					<br />on the
+					<select id="dayTens">
+						<option value="1" selected>0</option>
+					 	<option value="2">1</option>
+					 	<option value="3">2</option>
+					 	<option value="4">3</option>
+					</select>
+					<select id="dayOnes">
+						<option value="0" selected>0</option>
+						<option value="1">1</option>
+					 	<option value="2">2</option>
+					 	<option value="3">3</option>
+					 	<option value="4">4</option>
+					 	<option value="2">5</option>
+					 	<option value="3">6</option>
+					 	<option value="4">7</option>
+					 	<option value="2">8</option>
+					 	<option value="3">9</option>
+					</select>
+					of 
+					<select id="month">
+						<option value="1">Jan</option>
+						<option value="2">Feb</option>
+						<option value="3">Mar</option>
+						<option value="4">Apr</option>
+						<option value="5">May</option>
+						<option value="6">June</option>
+						<option value="7">July</option>
+						<option value="8">Aug</option>
+						<option value="9">Sept</option>
+						<option value="10">Oct</option>
+						<option value="11">Nov</option>
+						<option value="12">Dec</option>
+					</select>
+					<select id="year">
+						<option value="1" selected>2014</option>
+					 	<option value="2">2015</option>
+					 	<option value="3">2016</option>
+					</select>
+					from 
+					<select id="firstHr">
+						<option value="1" selected>1</option>
+					 	<option value="2">2</option>
+					 	<option value="3">3</option>
+					 	<option value="4">4</option>
+					 	<option value="5">5</option>
+					 	<option value="6">6</option>
+					 	<option value="7">7</option>
+					 	<option value="8">8</option>
+					 	<option value="9">9</option>
+					 	<option value="10">10</option>
+					 	<option value="11">11</option>
+					 	<option value="12">12</option>
+					</select>
+					:
+					<select id="firstMin">
+						<option value="1" selected>00</option>
+					 	<option value="2">15</option>
+					 	<option value="3">30</option>
+					 	<option value="4">45</option>
+					</select>
+					<select id="firstPeriod">
+						<option value="1" selected>pm</option>
+					 	<option value="2">am</option>
+					</select>
+					to
+					<select id="secondHr">
+						<option value="1">1</option>
+					 	<option value="2" selected>2</option>
+					 	<option value="3">3</option>
+					 	<option value="4">4</option>
+					 	<option value="5">5</option>
+					 	<option value="6">6</option>
+					 	<option value="7">7</option>
+					 	<option value="8">8</option>
+					 	<option value="9">9</option>
+					 	<option value="10">10</option>
+					 	<option value="11">11</option>
+					 	<option value="12">12</option>
+					</select>
+					:
+					<select id="secondMin">
+						<option value="1" selected>00</option>
+					 	<option value="2">15</option>
+					 	<option value="3">30</option>
+					 	<option value="4">45</option>
+					</select>
+					<select id="secondPeriod">
+						<option value="1" selected>pm</option>
+					 	<option value="2">am</option>
+					</select>
+					<br />
+					Please send a confirmation to <input id="email" type="text" value="" placeholder="you@comp.io"/>
+
+					<div class="nl-submit-wrap">
+						<button class="nl-submit" onclick="event.returnValue=false; validateForm();">Snag A Room</button>
+					</div>
+					<div class="nl-overlay"></div>
+				</form>
+			</div>
+		</div><!-- /container -->
+
+		<script src="js/nlform.js"></script>
+		<script>
+			
+			var today = new Date();
+			var month = today.getMonth();
+			var day = today.getDate();
+			var year = today.getFullYear();
+
+			document.getElementById('month').selectedIndex = month;
+			var selDayTens = document.getElementById('dayTens');
+			var selDayOnes = document.getElementById('dayOnes');
+
+			if(day < 10) {
+				selDayOnes.selectedIndex = day;
+			} else {
+				var tens = day / 10;
+				var ones = day % 10;
+				selDayTens.selectedIndex = tens;
+				selDayOnes.selectedIndex = ones;
+			}
+
+			if(year === 2015) {
+				document.getElementById('year').selectedIndex = 1;
+			} else if(year === 2016) {
+				document.getElementById('year').selectedIndex = 2;
+			}
+
+			var nlform = new NLForm( document.getElementById( 'nl-form' ) );
+
+			function validateForm() {
+				// add validation later or now idc
+
+				var tens = $("#dayTens option:selected").text();
+				var ones = $("#dayOnes option:selected").text();
+				var month = $("#month option:selected").val();
+				var year = $("#year option:selected").text();
+
+				var strHr = parseInt($("#firstHr option:selected").text());
+				var strMin = parseInt($("#firstMin option:selected").text());
+				var strPer = $("#firstPeriod option:selected").text();
+				var endHr = parseInt($("#secondHr option:selected").text());
+				var endMin = parseInt($("#secondMin option:selected").text());
+				var endPer = $("#secondPeriod option:selected").text();
+
+				var room = $("#room option:selected").text();
+				var company = $("#company").val();
+				var email = $("#email").val();
+
+				var day = parseInt(tens) * 10 + parseInt(ones);
+
+				if(strPer == 'pm')
+					strHr += 12;
+				if(endPer == 'pm')
+					endHr += 12;
+
+				if(company == undefined || company == '')
+					validateErr('comp');
+
+				if ((month == 4 || month == 6 || month == 9 || month == 11) && (day > 30)) 
+					validateErr('day');
+				 else if ((month == 2) && (day > 28))
+					validateErr('day');
+				 else if (day > 31)
+					validateErr('day');
+
+				var start = new Date(year, (month - 1), day, strHr, strMin);
+				console.log(start);
+				var end = new Date(year, (month - 1), day, endHr, endMin);
+				console.log(end);
+
+				//alert(day + ' ' + month + ' ' + room + '\n' + company + ' ' + email);
+			}
+
+			function validateErr(err) {
+				switch(err){
+					case 'day': alert('Invalid Day');
+					break;
+					case 'comp': alert('Invalid Company');
+					break;
+					default:
+					break;
+				}
+
+			}
+
+
+		</script>
+	</body>
+</html>
