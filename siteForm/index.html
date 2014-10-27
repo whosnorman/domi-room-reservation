@@ -20,7 +20,7 @@
 				<form id="nl-form" class="nl-form">
 					Hello, I am 
 					<input id="company" type="text" value="" placeholder="company" data-subline="For example: <em>Domi Ventures</em> or <em>HackFSU</em>"/>
-					and  want to reserve the 
+					and  want to <br /> reserve the 
 					<select id="room">
 						<option value="1" selected>West Conference Room</option>
 						<option value="2">East Conference Room</option>
@@ -65,7 +65,7 @@
 					 	<option value="2">2015</option>
 					 	<option value="3">2016</option>
 					</select>
-					from 
+					from <br />
 					<select id="firstHr">
 						<option value="1" selected>1</option>
 					 	<option value="2">2</option>
@@ -117,11 +117,12 @@
 						<option value="1" selected>pm</option>
 					 	<option value="2">am</option>
 					</select>
-					<br />
+					.
 					Please send a confirmation to <input id="email" type="text" value="" placeholder="you@comp.io"/>
 
 					<div class="nl-submit-wrap">
 						<button class="nl-submit" onclick="event.returnValue=false; validateForm();">Snag A Room</button>
+						<div class="errorText"></div>
 					</div>
 					<div class="nl-overlay"></div>
 				</form>
@@ -135,6 +136,7 @@
 			var month = today.getMonth();
 			var day = today.getDate();
 			var year = today.getFullYear();
+			var validated;
 
 			document.getElementById('month').selectedIndex = month;
 			var selDayTens = document.getElementById('dayTens');
@@ -158,8 +160,9 @@
 			var nlform = new NLForm( document.getElementById( 'nl-form' ) );
 
 			function validateForm() {
-				// add validation later or now idc
+				validated = true;
 
+				// retrieve all variables
 				var tens = $("#dayTens option:selected").text();
 				var ones = $("#dayOnes option:selected").text();
 				var month = $("#month option:selected").val();
@@ -176,16 +179,18 @@
 				var company = $("#company").val();
 				var email = $("#email").val();
 
+				// adjust and format day and hour 
 				var day = parseInt(tens) * 10 + parseInt(ones);
-
 				if(strPer == 'pm')
 					strHr += 12;
 				if(endPer == 'pm')
 					endHr += 12;
 
+				// check for empty company field
 				if(company == undefined || company == '')
 					validateErr('comp');
 
+				// check for day errors
 				if ((month == 4 || month == 6 || month == 9 || month == 11) && (day > 30)) 
 					validateErr('day');
 				 else if ((month == 2) && (day > 28))
@@ -193,26 +198,75 @@
 				 else if (day > 31)
 					validateErr('day');
 
+				// regex email validation
+			    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+			    var emailVal = re.test(email);
+			    if (!emailVal) 
+			    	validateErr('email');
+
+				// create correct start and end Date objects
 				var start = new Date(year, (month - 1), day, strHr, strMin);
 				console.log(start);
 				var end = new Date(year, (month - 1), day, endHr, endMin);
 				console.log(end);
 
+				if(validated) {
+					$('errorText').text('');
+
+					url = "http://domi-room.herokuapp.com/room";
+
+					var data = {
+					    "email": email,
+					    "company": company,
+					    "room": room,
+					    "start": start,
+					    "end": end
+					 }
+
+					$.ajax({
+					  type: "POST",
+					  url: url,
+					  data: data,
+					  success: function(){
+					  	console.log('successfully posted');
+					  },
+					  dataType: 'json'
+					});
+				}
+
+
+			/*
+			 */
+
 				//alert(day + ' ' + month + ' ' + room + '\n' + company + ' ' + email);
 			}
 
 			function validateErr(err) {
+				var errTxt = $('.errorText');
+
 				switch(err){
-					case 'day': alert('Invalid Day');
+					case 'day': 
+						errTxt.text('Invalid Day');
+						errTxt.addClass('shakeText');
 					break;
-					case 'comp': alert('Invalid Company');
+					case 'comp': 
+						errTxt.text('Invalid Company');
+						errTxt.addClass('shakeText');
 					break;
+					case 'email': 
+						errTxt.text('Invalid Email');
+						errTxt.addClass('shakeText');
 					default:
 					break;
 				}
 
-			}
+				errTxt.one('webkitAnimationEnd oanimationend msAnimationEnd animationend',   
+				    function(e) {
+				    	errTxt.removeClass('shakeText');
+				});
 
+				validated = false;
+			}
 
 		</script>
 	</body>

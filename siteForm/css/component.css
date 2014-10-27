@@ -9,11 +9,37 @@
 	font-style: normal;
 }
 
+.errorText {
+	float: right;
+	margin-top: 10px;
+}
+
+.shakeText {
+	-webkit-animation-name: shake;
+	-webkit-animation-duration: 0.5s;
+	-webkit-animation-iteration-count: 1;
+	-webkit-animation-timing-function: linear;
+}
+
+@-webkit-keyframes shake {
+	0% { -webkit-transform:      translate(5px, 0px) rotate(0deg); }
+	10% { -webkit-transform:     translate(-3px, 0px) rotate(0deg); }
+	20% { -webkit-transform:     translate(5px, 0px) rotate(0deg); }
+	30% { -webkit-transform:     translate(-3px, 0px) rotate(0deg); }
+	40% { -webkit-transform:     translate(3px, 0px) rotate(0deg); }
+	50% { -webkit-transform:     translate(-3px, 0px) rotate(0deg); }
+	60% { -webkit-transform:     translate(5px, 0px) rotate(0deg); }
+	70% { -webkit-transform:     translate(-3px, 0px) rotate(0deg); }
+	80% { -webkit-transform:     translate(3px, 0px) rotate(0deg); }
+	90% { -webkit-transform:     translate(-1px, 0px) rotate(0deg); }
+	100% { -webkit-transform:     translate(1px, 0px) rotate(0deg); }
+}
+
 /* general style for the form */
 .nl-form {
 	width: 100%;
 	margin: 0.3em auto 0 auto;
-	font-size: 4em;
+	font-size: 3.5em;
 	line-height: 1.5;
 }
 
@@ -66,11 +92,11 @@
 	border-bottom: 1px dashed #b14943;
 }
 
-/* drop-down list / text element */
+/* drop-down list / text element #339999 #76C3BD */
 .nl-field ul {
 	position: absolute;
 	visibility: hidden;
-	background: #76C3BD;
+	background: #339999; 
 	left: -0.5em;
 	top: 50%;
 	font-size: 80%;
@@ -106,7 +132,7 @@
 }
 
 .nl-dd ul li.nl-dd-checked {
-	color: #478982;
+	color: #303030;
 }
 
 .no-touch .nl-dd ul li:hover {
@@ -114,7 +140,7 @@
 }
 
 .no-touch .nl-dd ul li:hover:active {
-	color: #478982;
+	color: #303030;
 }
 
 /* icons for some elements */
@@ -212,7 +238,7 @@ input:focus::-ms-input-placeholder {
 	color: #fff
 }
 
-/* submit button */
+/* submit button 69B1A9 76C3BD */
 .nl-submit-wrap {
 	margin-top: 0.4em;
 }
@@ -222,7 +248,7 @@ input:focus::-ms-input-placeholder {
 	text-transform: uppercase;
 	cursor: pointer;
 	position: relative;
-	background: #76C3BD;
+	background: #339999;
 	color: #fff;
 	padding: 0 1em 0 0;
 	font-size: 40%;
@@ -236,19 +262,19 @@ input:focus::-ms-input-placeholder {
 	float: left;
 	padding: 0 0.7em;
 	margin: 0 0.8em 0 0;
-	background: #69B1A9;
+	background: #006666;
 }
 
 .no-touch .nl-form .nl-submit:hover,
 .no-touch .nl-form .nl-submit:active {
-	background: #69B1A9;
+	background: #006666;
 }
 
 .no-touch .nl-form .nl-submit:hover:before {
-	background: #58a199;
+	background: #006666;
 }
 
-/* overlay becomes visible when a field is opened */
+/* overlay becomes visible when a field is opened ^ 58a199 */
 .nl-overlay {
 	position: fixed;
 	top: 0;

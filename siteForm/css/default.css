@@ -21,11 +21,13 @@ body, html { font-size: 100%; padding: 0; margin: 0;}
 
 body {
 	font-family: 'Lato', Calibri, Arial, sans-serif;
-	color: #ffe8e7;
-	background: #E96D65;
+	color: #303030;
+	background: #fff;				/* background here */
 	font-weight: 300;
 	overflow-x: hidden;
 }
+
+#339999
 
 a {
 	color: #888;
@@ -65,7 +67,7 @@ a:active {
 
 /* Main Content */
 .main {
-	max-width: 50em;
+	max-width: 58em;
 }
 
 /* To Navigation Style */
