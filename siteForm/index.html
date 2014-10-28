@@ -11,16 +11,10 @@
 	<body class="nl-blurred">
 		<div class="container demo-1">
 			<div class="main clearfix">
-				<br />
-				<br />
-				<br />
-				<br />
-				<br />
-				<br />
 				<form id="nl-form" class="nl-form">
 					Hello, I am 
 					<input id="company" type="text" value="" placeholder="company" data-subline="For example: <em>Domi Ventures</em> or <em>HackFSU</em>"/>
-					and  want to <br /> reserve the 
+					and  want to reserve the 
 					<select id="room">
 						<option value="1" selected>West Conference Room</option>
 						<option value="2">East Conference Room</option>
@@ -131,7 +125,6 @@
 
 		<script src="js/nlform.js"></script>
 		<script>
-			
 			var today = new Date();
 			var month = today.getMonth();
 			var day = today.getDate();
@@ -234,11 +227,7 @@
 					});
 				}
 
-
-			/*
-			 */
-
-				//alert(day + ' ' + month + ' ' + room + '\n' + company + ' ' + email);
+				//console.log(day + ' ' + month + ' ' + room + '\n' + company + ' ' + email);
 			}
 
 			function validateErr(err) {
