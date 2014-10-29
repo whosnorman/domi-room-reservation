@@ -162,9 +162,40 @@ function sendEmail(user, ev){
   var link = ev.htmlLink;
   console.log("html link upcoming");
   console.log(link);
-  var domiLogo = 'https://doc-00-2o-docs.googleusercontent.com/docs/securesc/e5bjquob2jma89rdu2d6p7mumep1ec8o/f0vld6qs8cruq8jg0llv6c8vkojab6rg/1412352000000/02681725396603651839/03801544499766144817/0ByHBPc7NwoY1QndwZ3lkZVBiSVU?e=view&h=16653014193614665626&nonce=01unb50418mu2&user=03801544499766144817&hash=bolilt7o1dsa13fvgjsgsj1drt0qsmnl';
+  var titleString;
+  var signOff;
 
-  var msg = "<h3>Congrats! " + user.room + " has been reserved!</h3><p>Link to calendar.<br />" + link +"<br /> Please confirm the details and email us if there are any discrepancies.</p></br><p>-- The Domi Team</p><p><img src='" + domiLogo + "' style='width: 150px; height: 150px' />";
+  var rand = Math.floor((Math.random() * 3) + 1);
+  var rand2 = Math.floor((Math.random() * 3) + 1);
+
+  switch(rand){
+    case 1:
+      titleString = "Congrats!";
+      break;
+    case 2:
+      titleString = "Eureka!";
+      break;
+    default:
+      titleString = "Hooray!";
+      break;
+  }
+
+  switch(rand2){
+    case 1:
+      signOff = "If you\'re on time you\'re late!";
+      break;
+    case 2:
+      signOff = "The early bird catches the worm!";
+      break;
+    default:
+      signOff = "Rise and shine it\'s meeting time!";
+      break;
+  }
+
+
+  var domLogo = 'https://www.dropbox.com/s/wweksdd33iruxyp/Dom_Eyes.png?raw=1';
+
+  var msg = "<div style='width: 100%; background: url('" + domLogo + "' no-repeat fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;'></div><h3>" + titleString + " " + user.room + " has been reserved!</h3><p>" + link + "<br /> Checkout the calendar to make sure all your ducks are in a row! You can email my pal matt@domiventures.co for any problems.<br/>" + signOff + "</p><br/><p>-- Dom</p>";
 
   var message = {
       "html": msg,
