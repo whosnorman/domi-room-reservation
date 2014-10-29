@@ -193,9 +193,9 @@ function sendEmail(user, ev){
   }
 
 
-  var domLogo = "https://www.dropbox.com/s/wweksdd33iruxyp/Dom_Eyes.png?raw=1";
+  var domLogo = "www.dropbox.com/s/wweksdd33iruxyp/Dom_Eyes.png?raw=1";
 
-  var msg = "<div style='width: 100%; background: url('" + domLogo + "') no-repeat fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;'></div><h3>" + titleString + " " + user.room + " has been reserved!</h3><p>" + link + "<br /> Checkout the calendar to make sure all your ducks are in a row! You can email my pal matt@domiventures.co for any problems.<br/>" + signOff + "</p><br/><p>-- Dom</p>";
+  var msg = "<div style='width: 100%; background-image: url('" + domLogo + "'); background-repeat: no-repeat; background-position: fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;'></div><h3>" + titleString + " " + user.room + " has been reserved!</h3><p>" + link + "<br /> Checkout the calendar to make sure all your ducks are in a row! You can email my pal matt@domiventures.co for any problems.<br/>" + signOff + "</p><br/><p>-- Dom</p>";
 
   var message = {
       "html": msg,
