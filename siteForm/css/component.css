@@ -2,9 +2,9 @@
 	font-family: 'nlicons';
 	src:url('/s/nlicons.eot');
 	src:url('/s/nlicons.eot') format('embedded-opentype'),
-		url('https://www.dropbox.com/s/imn4ro3gwj3of7t/nlicons.woff?raw=1') format('woff'),
-		url('https://www.dropbox.com/s/tpyvh6ds4jw3g0d/nlicons.ttf?raw=1') format('truetype'),
-		url('https://www.dropbox.com/s/e9118ummr79es0g/nlicons.svg?raw=1') format('svg');
+		url('/s/nlicons.woff') format('woff'),
+		url('/s/nlicons.ttf') format('truetype'),
+		url('/s/nlicons.svg') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
