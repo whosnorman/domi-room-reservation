@@ -10,7 +10,7 @@
 	</head>
 	<body class="nl-blurred">
 		<div class="container demo-1">
-			<div class="main clearfix">
+			<div class="main clearfix" id="mainBox">
 				<form id="nl-form" class="nl-form">
 					Hello, I am 
 					<input id="company" type="text" value="" placeholder="company" data-subline="For example: <em>Domi Ventures</em> or <em>HackFSU</em>"/>
@@ -120,7 +120,9 @@
 					</div>
 					<div class="nl-overlay"></div>
 				</form>
+				<div class="afterText"></div>
 			</div>
+			
 		</div><!-- /container -->
 
 		<script src="js/nlform.js"></script>
@@ -214,20 +216,71 @@
 					    "room": room,
 					    "start": start,
 					    "end": end
-					 }
+					 };
 
 					$.ajax({
 					  type: "POST",
 					  url: url,
 					  data: data,
 					  success: function(){
-					  	console.log('successfully posted');
+					  	var form = $('#nl-form');
+						form.animate({
+				            opacity: "0"
+				        }, 700, function() {
+						    form.addClass('disappear');
+						    var afterTxt = $('.afterText');
+						    
+						    afterTxt.animate({
+						    	opacity: "toggle"
+						    }, 10, function(){
+						    	afterTxt.css('font-size', '2.5em');
+						    	afterTxt.text('Dom\'s busy getting your room ready, check your email for a confirmation!');
+						    	afterTxt.animate({
+						    		opacity: "toggle"
+						    	}, 700, function(){
+						    		console.log('hooray end of animation');
+						    	});
+						    });
+						    
+		        		});
+					  },
+					  error: function(xhr, textStatus, errThrown){
+					  	validateErr('post');
+					  	console.log(xhr.responseText);
+					  	console.log(textStatus);
+					  	console.log(errThrown);
 					  },
 					  dataType: 'json'
 					});
+
+
 				}
 
 				//console.log(day + ' ' + month + ' ' + room + '\n' + company + ' ' + email);
+			}
+
+			function testing(){
+				var form = $('#nl-form');
+
+				form.animate({
+		            opacity: "0"
+		        }, 700, function() {
+				    form.addClass('disappear');
+				    var afterTxt = $('.afterText');
+				    
+				    afterTxt.animate({
+				    	opacity: "toggle"
+				    }, 10, function(){
+				    	afterTxt.css('font-size', '2.5em');
+				    afterTxt.text('Dom\'s busy getting your room ready, check your email for a confirmation!');
+				    	afterTxt.animate({
+				    		opacity: "toggle"
+				    	}, 700, function(){
+
+				    	});
+				    });
+				    
+        		});
 			}
 
 			function validateErr(err) {
@@ -245,6 +298,12 @@
 					case 'email': 
 						errTxt.text('Invalid Email');
 						errTxt.addClass('shakeText');
+					break;
+					case 'post': 
+						errTxt.text('Error, please refresh and try again.');
+						errTxt.css('font-size', '0.6em');
+						errTxt.addClass('shakeText');
+					break;
 					default:
 					break;
 				}
