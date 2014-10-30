@@ -23,6 +23,16 @@
 	-webkit-animation-timing-function: linear;
 }
 
+.disappear {
+	display: none;
+}
+
+.afterText {
+	font-weight: bold;
+	color: #b14943;
+}
+
+
 @-webkit-keyframes shake {
 	0% { -webkit-transform:      translate(5px, 0px) rotate(0deg); }
 	10% { -webkit-transform:     translate(-3px, 0px) rotate(0deg); }
@@ -36,6 +46,7 @@
 	90% { -webkit-transform:     translate(-1px, 0px) rotate(0deg); }
 	100% { -webkit-transform:     translate(1px, 0px) rotate(0deg); }
 }
+
 
 /* general style for the form */
 .nl-form {
