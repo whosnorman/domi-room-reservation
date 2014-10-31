@@ -89,6 +89,38 @@ var token = new GoogleToken({
     });
 });
 
+// just copy and pasted the above code into this function to be able to call, don't judge
+function reAuthAttempt() {
+  var token = new GoogleToken({
+      iss: serviceAcc,
+      scope: 'https://www.googleapis.com/auth/calendar',
+      keyFile: './key.pem'
+  }, function (err) {
+      if (err) {
+          console.log('--TOKEN ERR--:\n' + err);
+          sendErrMail(err);
+          return console.log(err);
+      }
+
+      console.log('about to get token');
+
+      token.getToken(function (err, tokenn) {
+          if (err) {
+              console.log('-- TOKEN ERR --: \n' + err);
+              sendErrMail(err);
+              return console.log(err);
+          }
+          else {
+            // create and set authorization client and necessary credentials
+            oauthClient = new OAuth2('', '', '', {}, {});
+            oauthClient.setCredentials({token_type: 'Bearer', access_token: tokenn});
+
+            console.log('credentials loaded');
+          }
+      });
+  });
+}
+
 
 app.post('/room', function(req, res) {
 	var body = req.body;
@@ -122,6 +154,7 @@ app.post('/room', function(req, res) {
   }, function(err, event){
     if (err) {
       console.log('-- GCAL ERR-- : ' + err);
+      reAuthAttempt();
       sendErrMail(err, body);
       return console.log(err);
     } else {  
