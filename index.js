@@ -46,6 +46,8 @@ var token = new GoogleToken({
     keyFile: './key.pem'
 }, function (err) {
     if (err) {
+        console.log('--TOKEN ERR--:\n' + err);
+        sendErrMail(err);
         return console.log(err);
     }
 
@@ -53,19 +55,11 @@ var token = new GoogleToken({
 
     token.getToken(function (err, tokenn) {
         if (err) {
-            console.log('tokenErr: ' + err);
+            console.log('-- TOKEN ERR --: \n' + err);
             sendErrMail(err);
             return console.log(err);
         }
         else {
-
-          //console.log(tokenn);
-
-
-          // create correct times
-          var now = moment().format();
-          var later = moment().format();
-
           // create and set authorization client and necessary credentials
           oauthClient = new OAuth2('', '', '', {}, {});
           oauthClient.setCredentials({token_type: 'Bearer', access_token: tokenn});
