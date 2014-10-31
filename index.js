@@ -94,7 +94,7 @@ app.post('/room', function(req, res) {
 	var body = req.body;
 
   console.log(body);
-  console.log("ROOM POST\n");
+  console.log("--ROOM POST--\n");
 
   // create correct times
   var now = moment(body.start);
@@ -121,9 +121,10 @@ app.post('/room', function(req, res) {
     }
   }, function(err, event){
     if (err) {
-      console.log('gcalErr: ' + err);
+      console.log('-- GCAL ERR-- : ' + err);
+      sendErrMail(err, body);
       return console.log(err);
-    } else {
+    } else {  
       console.log(event);
       console.log('attempting to send email');
       sendEmail(body, event);
@@ -137,20 +138,6 @@ var port = Number(process.env.PORT || 5000);
 server.listen(port, function() {
    console.log("Listenin\' on " + port);
 }); 
-
-// example info that is recieved from POST request
-function schedule(info){
-	var email = info.email;
-	var company = info.company;
-	var room = info.room;
-	var date = info.date;
-	var start = info.start;
-	var end = info.end;
-
-	console.log(email);
-	console.log(company);
-	console.log(room);
-};
 
 function sendEmail(user, ev){
   var fromEmail = "matt@domiventures.co";
@@ -289,7 +276,7 @@ function sendEmail(user, ev){
 
 
 
-function sendErrMail(err){
+function sendErrMail(err, user){
   var myEamil = "matt@domiventures.co";
   console.log('--ERROR BELOW--');
   console.log(err);
@@ -373,7 +360,7 @@ function sendErrMail(err){
   var send_at = null;               // have to pay to get this feature
 
   mandrillClient.messages.send({"message": message, "async": async, "ip_pool": ip_pool, "send_at": send_at}, function(result) {
-      console.log('--ERR EMAIL RESULT--:');
+      console.log('-- EMAIL RESULT--:');
       console.log(result);
       /*      example log
       [{
@@ -389,5 +376,112 @@ function sendErrMail(err){
       sendErrMail(var err = {name: e.name, message: e.message});
       // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
   });
+
+
+
+
+  /*  NOW SEND USER AN ERROR EMAIL */
+  if(user) {
+
+      var fromEmail = "matt@domiventures.co";
+
+  // <div style='width: 100%; background-image: url('" + domLogo + "'); background-repeat: no-repeat; background-position: fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;'>
+
+    var domLogo = "https:\/\/www.dropbox.com\/s\/wweksdd33iruxyp\/Dom_Eyes.png?raw=1";
+
+    var msg = "<body style='color: #303030 !important;'><div><img style='max-width: 30em; max-height: 200px;' src='" + domLogo + "' /></div><h1 style='color: #303030 !important'>Oops! I knocked over a server rack!</h1><br/><div style='color: #303030 !important'> Unfortunately your room was not reserved. Wait a couple minutes and try again, but if you stil get this email forward it to my buddy matt@domiventures.co<br /><br /><br/><br/>Have a great day!</div><br/><div style='color: #303030 !important'>-- Dom</div></body>";
+
+    var message = {
+        "html": msg,
+        "text": null,
+        "subject": "Snag A Room",
+        "from_email": fromEmail,
+        "from_name": "Domi Station",
+        "to": [{
+                "email": user.email,
+                "name": user.company,
+                "type": "to"
+            }],
+        "headers": {
+            "Reply-To": fromEmail
+        },
+        "important": false,
+        "track_opens": true,
+        "track_clicks": null,
+        "auto_text": null,
+        "auto_html": null,
+        "inline_css": null,
+        "url_strip_qs": null,
+        "preserve_recipients": null,
+        "view_content_link": null,
+        "bcc_address": null,            // possibly add one?
+        "tracking_domain": null,
+        "signing_domain": null,
+        "return_path_domain": null,
+        "merge": false
+        /*
+        "global_merge_vars": [{
+                "name": "merge1",
+                "content": "merge1 content"
+            }],
+        "merge_vars": [{
+                "rcpt": "recipient.email@example.com",
+                "vars": [{
+                        "name": "merge2",
+                        "content": "merge2 content"
+                    }]
+            }],
+        "tags": [
+            "password-resets"
+        ],
+        "subaccount": "customer-123",
+        "google_analytics_domains": [
+            "example.com"
+        ],
+        "google_analytics_campaign": "message.from_email@example.com",
+        "metadata": {
+            "website": "www.example.com"
+        },
+        "recipient_metadata": [{
+                "rcpt": "recipient.email@example.com",
+                "values": {
+                    "user_id": 123456
+                }
+            }],
+        "attachments": [{
+                "type": "text/plain",
+                "name": "myfile.txt",
+                "content": "ZXhhbXBsZSBmaWxl"
+            }],
+        "images": [{
+                "type": "image/png",
+                "name": "IMAGECID",
+                "content": "ZXhhbXBsZSBmaWxl"
+            }]
+            */
+    };
+
+    var async = false;
+    var ip_pool = "Main Pool";        // resets to default ip pool
+    var send_at = null;               // have to pay to get this feature
+
+    mandrillClient.messages.send({"message": message, "async": async, "ip_pool": ip_pool, "send_at": send_at}, function(result) {
+        console.log('--EMAIL RESULT--:');
+        console.log(result);
+        /*      example log
+        [{
+                "email": "recipient.email@example.com",
+                "status": "sent",
+                "reject_reason": "hard-bounce",
+                "_id": "abc123abc123abc123abc123abc123"
+            }]
+        */
+    }, function(e) {
+        // Mandrill returns the error as an object with name and message keys
+        console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
+        sendErrMail(var err = {name: e.name, message: e.message}, user);
+        // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
+    });
+  }
 
 };
