@@ -54,6 +54,7 @@ var token = new GoogleToken({
     token.getToken(function (err, tokenn) {
         if (err) {
             console.log('tokenErr: ' + err);
+            sendErrMail(err);
             return console.log(err);
         }
         else {

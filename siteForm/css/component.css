@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'nlicons';
-	src:url('/s/nlicons.eot');
-	src:url('/s/nlicons.eot') format('embedded-opentype'),
-		url('/s/nlicons.woff') format('woff'),
-		url('/s/nlicons.ttf') format('truetype'),
-		url('/s/nlicons.svg') format('svg');
+	src:url('https://domistation.com/s/nlicons.eot');
+	src:url('https://domistation.com/s/nlicons.eot') format('embedded-opentype'),
+		url('https://domistation.com/s/nlicons.woff') format('woff'),
+		url('https://domistation.com/s/nlicons.ttf') format('truetype'),
+		url('https://domistation.com/s/nlicons.svg') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -28,8 +28,11 @@
 }
 
 .afterText {
+	font-family: 'Lato', Calibri, Arial, sans-serif;
+	font-weight: 300;
 	font-weight: bold;
 	color: #b14943;
+	line-height: 1em;
 }
 
 
