@@ -22,7 +22,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-app.use(allowCrossDomain);
 
 //app.use('/public', express.static(__dirname + '/public'));
 
