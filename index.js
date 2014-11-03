@@ -125,18 +125,6 @@ function reAuthAttempt() {
 app.post('/room', function(req, res) {
 	var body = req.body;
 
-  res.writeHead(
-    "204",
-    "No Content",
-    {
-      "access-control-allow-origin": "*",
-      "access-control-allow-methods": "POST",
-      "access-control-allow-headers": "content-type, accept",
-      "access-control-max-age": 10, // Seconds.
-      "content-length": 0
-    }
-  );
-
   console.log(body);
   console.log("--ROOM POST--\n");
 
@@ -173,6 +161,14 @@ app.post('/room', function(req, res) {
     } else {  
       console.log(event);
       console.log('attempting to send email');
+      res.writeHead(
+        "204",
+        "OK",
+        {
+          "access-control-allow-origin": "*",
+          "content-type": "application/json"
+        }
+      );
       res.send({success: true});
       sendEmail(body, event);
     }
