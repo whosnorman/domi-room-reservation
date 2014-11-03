@@ -129,13 +129,13 @@ app.post('/room', function(req, res) {
     "204",
     "No Content",
     {
-      "access-control-allow-origin": "*",
-      "access-control-allow-methods": "POST",
-      "access-control-allow-headers": "content-type, accept",
-      "access-control-max-age": 10, // Seconds.
-      "content-length": 0
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST",
+      "Access-Control-Allow-Headers": "content-type, accept"
     }
   );
+
+  res.send();
 
   console.log(body);
   console.log("--ROOM POST--\n");
