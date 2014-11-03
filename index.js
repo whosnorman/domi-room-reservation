@@ -156,7 +156,7 @@ app.post('/room', function(req, res) {
       console.log('-- GCAL ERR-- : ' + err);
       reAuthAttempt();
       sendErrMail(err, body);
-      res.send(true);
+      res.send({success: true});
       return console.log(err);
     } else {  
       console.log(event);
