@@ -156,13 +156,13 @@ app.post('/room', function(req, res) {
       console.log('-- GCAL ERR-- : ' + err);
       reAuthAttempt();
       sendErrMail(err, body);
-      res.send({success: true});
+      res.send(false);
       return console.log(err);
     } else {  
       console.log(event);
       console.log('attempting to send email');
+      res.send({success: true});
       sendEmail(body, event);
-      res.send(false);
     }
   }); 
 });
