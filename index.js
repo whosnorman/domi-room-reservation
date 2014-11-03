@@ -300,7 +300,7 @@ function sendEmail(user, ev){
   }, function(e) {
       // Mandrill returns the error as an object with name and message keys
       console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
-      sendErrMail(var err = {name: e.name, message: e.message});
+      sendErrMail({name: e.name, message: e.message});
       // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
   });
 
@@ -406,7 +406,7 @@ function sendErrMail(err, user){
   }, function(e) {
       // Mandrill returns the error as an object with name and message keys
       console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
-      sendErrMail(var err = {name: e.name, message: e.message});
+      sendErrMail({name: e.name, message: e.message});
       // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
   });
 
@@ -512,7 +512,7 @@ function sendErrMail(err, user){
     }, function(e) {
         // Mandrill returns the error as an object with name and message keys
         console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
-        sendErrMail(var err = {name: e.name, message: e.message}, user);
+        sendErrMail({name: e.name, message: e.message}, user);
         // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
     });
   }
