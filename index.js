@@ -169,7 +169,11 @@ app.post('/room', function(req, res) {
           "content-type": "application/json"
         }
       );
-      res.send({success: true});
+      var responseJSON = {
+        success: true,
+        status: 200
+      }
+      res.end(JSON.stringify(responseJSON));
       sendEmail(body, event);
     }
   }); 
