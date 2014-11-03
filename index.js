@@ -1,5 +1,22 @@
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+
+    // intercept OPTIONS method
+    if ('OPTIONS' == req.method) {
+      res.send(200);
+    }
+    else {
+      next();
+    }
+};
+
 var express = require('express');
 var app = express();
+
+app.use(allowCrossDomain);
+
 var http = require('http');
 var server = http.Server(app);
 var request = require('request');
@@ -14,7 +31,6 @@ var gcal = googleapis.calendar('v3');
 
 var mandrill = require('mandrill-api/mandrill');
 var mandrillClient = new mandrill.Mandrill('x6BKz6My1EWINC6ppAeIMg');
-
 
 //app.use(passport.initialize());
 app.use(logfmt.requestLogger());
@@ -124,19 +140,6 @@ function reAuthAttempt() {
 
 app.post('/room', function(req, res) {
 	var body = req.body;
-
-  res.writeHead(
-    "204",
-    "No Content",
-    {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST",
-      "Access-Control-Allow-Headers": "Content-Type, Accept",
-      "Connection": "Keep-Alive"
-    }
-  );
-
-  res.send();
 
   console.log(body);
   console.log("--ROOM POST--\n");
