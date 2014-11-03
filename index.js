@@ -22,6 +22,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+app.use(allowCrossDomain);
 
 //app.use('/public', express.static(__dirname + '/public'));
 
@@ -131,7 +132,9 @@ app.post('/room', function(req, res) {
     {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST",
-      "Access-Control-Allow-Headers": "content-type, accept"
+      "Access-Control-Allow-Headers": "Content-Type, Accept",
+      "Connection": "Keep-Alive",
+      "Content-Type:" "application/json"
     }
   );
 

@@ -224,7 +224,8 @@
 					  datatype: "json",
 					  contentType: "application/json",
 					  data: data,
-					  success: function(){
+					  success: function(result){
+					  	console.log(result);
 					  	var form = $('#nl-form');
 						form.animate({
 				            opacity: "0"
