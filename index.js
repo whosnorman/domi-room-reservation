@@ -133,8 +133,7 @@ app.post('/room', function(req, res) {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST",
       "Access-Control-Allow-Headers": "Content-Type, Accept",
-      "Connection": "Keep-Alive",
-      "Content-Type:" "application/json"
+      "Connection": "Keep-Alive"
     }
   );
 
