@@ -125,6 +125,18 @@ function reAuthAttempt() {
 app.post('/room', function(req, res) {
 	var body = req.body;
 
+  res.writeHead(
+    "204",
+    "No Content",
+    {
+      "access-control-allow-origin": "*",
+      "access-control-allow-methods": "POST",
+      "access-control-allow-headers": "content-type, accept",
+      "access-control-max-age": 10, // Seconds.
+      "content-length": 0
+    }
+  );
+
   console.log(body);
   console.log("--ROOM POST--\n");
 
