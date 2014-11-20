@@ -1,13 +1,80 @@
-@font-face {
-	font-family: 'nlicons';
-	src:url('https://domistation.com/s/nlicons.eot');
-	src:url('https://domistation.com/s/nlicons.eot') format('embedded-opentype'),
-		url('https://domistation.com/s/nlicons.woff') format('woff'),
-		url('https://domistation.com/s/nlicons.ttf') format('truetype'),
-		url('https://domistation.com/s/nlicons.svg') format('svg');
-	font-weight: normal;
-	font-style: normal;
+
+.loaderBox{
+	width: 250%;
+	height: 7px;
+	margin-left: -75%;
+	margin-top: 30px;
 }
+
+.loader {
+	height: 3px;
+	opacity: 0;
+	background-color: #b14943;
+	border-radius: 1px;
+}
+
+.fadeLeft {
+	opacity: 1;
+	-webkit-animation-name: rightLeft;
+	-webkit-animation-duration: 1.25s;
+	-webkit-animation-iteration-count: 1;
+	-webkit-animation-timing-function: linear;
+	-moz-animation-name: rightLeft;
+	-moz-animation-duration: 1.25s;
+	-moz-animation-iteration-count: 1;
+	-moz-animation-timing-function: linear;
+	-o-animation-name: rightLeft;
+	-o-animation-duration: 1.25s;
+	-o-animation-iteration-count: 1;
+	-o-animation-timing-function: linear;
+	animation-name: rightLeft;
+	animation-duration: 1.25s;
+	animation-iteration-count: 1;
+	animation-timing-function: linear;
+}
+
+.fadeRight {
+	opacity: 1;
+	-webkit-animation-name: leftRight;
+	-webkit-animation-duration: 1.25s;
+	-webkit-animation-iteration-count: 1;
+	-webkit-animation-timing-function: linear;
+	-moz-animation-name: leftRight;
+	-moz-animation-duration: 1.25s;
+	-moz-animation-iteration-count: 1;
+	-moz-animation-timing-function: linear;
+	-o-animation-name: leftRight;
+	-o-animation-duration: 1.25s;
+	-o-animation-iteration-count: 1;
+	-o-animation-timing-function: linear;
+	animation-name: leftRight;
+	animation-duration: 1.25s;
+	animation-iteration-count: 1;
+	animation-timing-function: linear;
+}
+
+@-webkit-keyframes leftRight {
+	0% {width:0%; opacity: 0;}
+    100% {width:100%; opacity: 1;}
+}
+
+@-webkit-keyframes rightLeft {
+	0% {margin-left: 0%; width: 100%; opacity: 1;}
+	100% {margin-left: 100%; width: 0%; opacity: 0;}
+}
+
+@keyframes leftRight {
+	0% {width:0%; opacity: 0;}
+    100% {width:100%; opacity: 1;}
+}
+
+@keyframes rightLeft {
+	0% {margin-left: 0%; width: 100%; opacity: 1;}
+	100% {margin-left: 100%; width: 0%; opacity: 0;}
+}
+
+
+
 
 .errorText {
 	float: right;
@@ -21,6 +88,18 @@
 	-webkit-animation-duration: 0.5s;
 	-webkit-animation-iteration-count: 1;
 	-webkit-animation-timing-function: linear;
+	-moz-animation-name: shake;
+	-moz-animation-duration: 0.5s;
+	-moz-animation-iteration-count: 1;
+	-moz-animation-timing-function: linear;
+	-o-animation-name: shake;
+	-o-animation-duration: 0.5s;
+	-o-animation-iteration-count: 1;
+	-o-animation-timing-function: linear;
+	animation-name: shake;
+	animation-duration: 0.5s;
+	animation-iteration-count: 1;
+	animation-timing-function: linear;
 }
 
 .disappear {
@@ -30,7 +109,6 @@
 .afterText {
 	font-family: 'Lato', Calibri, Arial, sans-serif;
 	font-weight: 300;
-	font-weight: bold;
 	color: #b14943;
 	line-height: 1em;
 }
@@ -48,6 +126,20 @@
 	80% { -webkit-transform:     translate(3px, 0px) rotate(0deg); }
 	90% { -webkit-transform:     translate(-1px, 0px) rotate(0deg); }
 	100% { -webkit-transform:     translate(1px, 0px) rotate(0deg); }
+}
+
+@keyframes shake {
+	0% { transform:      translate(5px, 0px) rotate(0deg); }
+	10% { transform:     translate(-3px, 0px) rotate(0deg); }
+	20% { transform:     translate(5px, 0px) rotate(0deg); }
+	30% { transform:     translate(-3px, 0px) rotate(0deg); }
+	40% { transform:     translate(3px, 0px) rotate(0deg); }
+	50% { transform:     translate(-3px, 0px) rotate(0deg); }
+	60% { transform:     translate(5px, 0px) rotate(0deg); }
+	70% { transform:     translate(-3px, 0px) rotate(0deg); }
+	80% { transform:     translate(3px, 0px) rotate(0deg); }
+	90% { transform:     translate(-1px, 0px) rotate(0deg); }
+	100% { transform:     translate(1px, 0px) rotate(0deg); }
 }
 
 
@@ -163,7 +255,7 @@
 .nl-dd ul li.nl-dd-checked:before,
 .nl-submit:before,
 .nl-field-go:before {
-	font-family: 'nlicons';
+	font-family: 'Lato';
 	speak: none;
 	font-style: normal;
 	font-weight: normal;
@@ -173,7 +265,8 @@
 }
 
 .nl-dd ul li.nl-dd-checked:before {
-	content: "\e000";
+	content: "X";
+	font-weight: bold;
 	position: absolute;
 	right: 1em;
 	font-size: 50%;
@@ -204,7 +297,8 @@
 }
 
 .nl-field-go:before {
-	content: "\e001";
+	content: ">";
+	font-weight: bold;
 	font-size: 75%;
 	color: #fff;
 	width: 100%;
@@ -272,8 +366,10 @@ input:focus::-ms-input-placeholder {
 	letter-spacing: 3px;
 }
 
+
 .nl-submit:before {
-	content: "\e001";
+	content: ">";
+	font-weight: bold;
 	color: #fff;
 	float: left;
 	padding: 0 0.7em;

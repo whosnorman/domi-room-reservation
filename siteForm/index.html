@@ -33,11 +33,11 @@
 					 	<option value="2">2</option>
 					 	<option value="3">3</option>
 					 	<option value="4">4</option>
-					 	<option value="2">5</option>
-					 	<option value="3">6</option>
-					 	<option value="4">7</option>
-					 	<option value="2">8</option>
-					 	<option value="3">9</option>
+					 	<option value="5">5</option>
+					 	<option value="6">6</option>
+					 	<option value="7">7</option>
+					 	<option value="8">8</option>
+					 	<option value="9">9</option>
 					</select>
 					of 
 					<select id="month">
@@ -114,8 +114,12 @@
 					.
 					Please send a confirmation to <input id="email" type="text" value="" placeholder="you@comp.io"/>
 
+					<div class="loaderBox">
+					<div id="load" class="loader">
+					</div></div>
+
 					<div class="nl-submit-wrap">
-						<button class="nl-submit" onclick="event.returnValue=false; validateForm();">Snag A Room</button>
+						<button id="subBtn" class="nl-submit" onclick="event.returnValue=false; if(!btnClicked){validateForm(event);}">Snag A Room</button>
 						<div class="errorText"></div>
 					</div>
 					<div class="nl-overlay"></div>
@@ -132,6 +136,8 @@
 			var day = today.getDate();
 			var year = today.getFullYear();
 			var validated;
+			var btnClicked = false;
+			var waiting = true;
 
 			document.getElementById('month').selectedIndex = month;
 			var selDayTens = document.getElementById('dayTens');
@@ -154,8 +160,9 @@
 
 			var nlform = new NLForm( document.getElementById( 'nl-form' ) );
 
-			function validateForm() {
+			function validateForm(e) {
 				validated = true;
+				btnClicked = true;
 
 				// retrieve all variables
 				var tens = $("#dayTens option:selected").text();
@@ -176,10 +183,22 @@
 
 				// adjust and format day and hour 
 				var day = parseInt(tens) * 10 + parseInt(ones);
-				if(strPer == 'pm')
+				if(strPer == 'pm' && strHr != 12)
 					strHr += 12;
-				if(endPer == 'pm')
+				if(endPer == 'pm' && endHr != 12)
 					endHr += 12;
+
+				var endTime = endHr + (endMin * 0.01);
+				var startTime = strHr + (strMin * 0.01);
+				console.log(startTime);
+				console.log(endTime);
+				console.log(endTime - startTime);
+
+				if ((endTime - startTime) > 3) {
+					validateErr('hrs');
+				} else if ((endTime - startTime) <= 0){
+					validateErr('time');
+				}
 
 				// check for empty company field
 				if(company == undefined || company == '')
@@ -218,15 +237,21 @@
 					    "end": end
 					 };
 
+					btnLoad();
+
 					$.ajax({
 					  type: "POST",
 					  url: url,
-					  datatype: "json",
+					  dataType: "json",
 					  contentType: "application/json",
-					  data: data,
+					  data: JSON.stringify(data),
 					  success: function(result){
 					  	console.log(result);
 					  	var form = $('#nl-form');
+					  	// stop loading animation
+					  	waiting = false;
+
+					  	// hide form & show new text
 						form.animate({
 				            opacity: "0"
 				        }, 700, function() {
@@ -258,7 +283,47 @@
 
 				}
 
+				e.preventDefault();
+
 				//console.log(day + ' ' + month + ' ' + room + '\n' + company + ' ' + email);
+			}
+
+			function btnLoad(){
+				var loader = $('#load');
+				var curr = loader.attr('class');
+
+				//console.log(curr);
+				
+				if(waiting){
+					if(curr == 'loader fadeRight'){
+						loader.removeClass('fadeRight');
+						loader.addClass('fadeLeft');
+
+						loader.one('webkitAnimationEnd oanimationend msAnimationEnd animationend',   
+						    function(e) {
+						    	btnLoad();
+						    	//setTimeout(btnLoad, 250);
+						});
+					} else if (curr == 'loader fadeLeft'){
+						loader.removeClass('fadeLeft');
+						loader.addClass('fadeRight');
+
+						loader.one('webkitAnimationEnd oanimationend msAnimationEnd animationend',   
+						    function(e) {
+						    	btnLoad();
+						});
+					} else if (curr == 'loader'){
+						loader.addClass('fadeRight');
+
+						loader.one('webkitAnimationEnd oanimationend msAnimationEnd animationend',   
+						    function(e) {
+						    	btnLoad();
+						});
+					}
+				}
+
+
+
 			}
 
 			function testing(){
@@ -285,6 +350,29 @@
         		});
 			}
 
+			function getVars(){
+				var tens = $("#dayTens option:selected").text();
+				var ones = $("#dayOnes option:selected").text();
+				var month = $("#month option:selected").val();
+				var year = $("#year option:selected").text();
+
+				var strHr = parseInt($("#firstHr option:selected").text());
+				var strMin = parseInt($("#firstMin option:selected").text());
+				var strPer = $("#firstPeriod option:selected").text();
+				var endHr = parseInt($("#secondHr option:selected").text());
+				var endMin = parseInt($("#secondMin option:selected").text());
+				var endPer = $("#secondPeriod option:selected").text();
+
+				var room = $("#room option:selected").text();
+				var company = $("#company").val();
+				var email = $("#email").val();
+
+				var sp = ' \n';
+				console.log(
+					tens + sp + ones + sp + month + sp + year + sp + strHr + sp + strMin + sp + strPer + sp + endHr + sp + endMin + sp + endPer + sp + room + sp + company + sp + email
+				)
+			}
+
 			function validateErr(err) {
 				var errTxt = $('.errorText');
 
@@ -306,6 +394,16 @@
 						errTxt.css('font-size', '0.6em');
 						errTxt.addClass('shakeText');
 					break;
+					case 'hrs':
+						console.log('Get outta here cuttlesoft');
+						errTxt.text('Cannot exceed three hours.');
+						errTxt.addClass('shakeText');
+					break;
+					case 'time':
+						console.log('Invlaid Times');
+						errTxt.text('Invalid Times');
+						errTxt.addClass('shakeText');
+					break;
 					default:
 					break;
 				}
@@ -316,6 +414,7 @@
 				});
 
 				validated = false;
+				btnClicked = false;
 			}
 
 		</script>
