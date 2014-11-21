@@ -1,5 +1,4 @@
 
-
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -34,6 +33,9 @@ var gcal = googleapis.calendar('v3');
 var mandrill = require('mandrill-api/mandrill');
 var mandrillClient = new mandrill.Mandrill('x6BKz6My1EWINC6ppAeIMg');
 
+var mongodb = require('mongodb');
+var MongoClient = mongodb.MongoClient;
+
 //app.use(passport.initialize());
 app.use(logfmt.requestLogger());
 app.use(bodyParser.json());
@@ -42,7 +44,6 @@ app.use(bodyParser.urlencoded({
 }));
 
 //app.use('/public', express.static(__dirname + '/public'));
-
 app.get('/robots.txt', function(req, res) {
   res.type('text/plain')
   res.send("User-agent: *\nDisallow: /");
@@ -51,11 +52,43 @@ app.get('/robots.txt', function(req, res) {
 
 // public calendar ID
 var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.com';
-
 // google API service account, calendar has been shared with this email
 var serviceAcc = '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com';
-
 var oauthClient;
+
+
+// insert request into a mongodb collection
+function insertReq(request) {
+  var r = request;
+  console.log(process.env.MONGOHQ_URL);
+  MongoClient.connect(process.env.MONGOHQ_URL, function(err, db){
+    var collection = db.collection('requests');
+
+    console.log('inserting new req');
+
+    var doc = {
+      'email': r.email,
+      'start': r.start,
+      'end': r.end,
+      'room': r.room,
+      'company': r.company
+    }
+
+    collection.insert([doc], function(err, docs) {
+      if (err) {
+        return console.error(err);
+      }
+    });
+  });
+}
+
+insertReq({
+      'email': 'email',
+      'start': 'start time',
+      'end': 'end time',
+      'room': 'west conference',
+      'company': 'company name'
+    });
 
 // create token & authentication
 var token = new GoogleToken({
@@ -146,6 +179,9 @@ app.post('/room', function(req, res) {
   console.log(body);
   console.log("--ROOM POST--\n");
 
+  // insert into mongodb collection
+  insertReq(body);
+
   // create correct times
   var now = moment(body.start);
   var later = moment(body.end);
@@ -158,7 +194,7 @@ app.post('/room', function(req, res) {
     calendarId: calID,
     resource: {
       summary: title,
-      description: 'Reservation made by ' + body.email,
+      description: 'Reservation made by ' + attendee,
       start: {
         dateTime: now
       },
