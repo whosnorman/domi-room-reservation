@@ -81,9 +81,9 @@ function insertReq(request) {
     });
   });
 }
-
+console.log('hello');
 insertReq({
-      'email': 'email',
+      'email': 'test email',
       'start': 'start time',
       'end': 'end time',
       'room': 'west conference',
