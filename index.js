@@ -62,9 +62,14 @@ function insertReq(request) {
   var r = request;
   console.log(process.env.MONGOHQ_URL);
   MongoClient.connect(process.env.MONGOHQ_URL, function(err, db){
+    if(err){
+      console.log('----');
+      return console.error(err);
+    }
+
     var collection = db.collection('requests');
 
-    console.log('inserting new req');
+    console.log('about to add new doc');
 
     var doc = {
       'email': r.email,
@@ -78,10 +83,12 @@ function insertReq(request) {
       if (err) {
         return console.error(err);
       }
+      
+      console.log('added new req');
     });
   });
 }
-console.log('hello');
+
 insertReq({
       'email': 'test email',
       'start': 'start time',
