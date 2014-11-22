@@ -43,11 +43,14 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-//app.use('/public', express.static(__dirname + '/public'));
+app.use('/public', express.static(__dirname + '/public'));
 app.get('/robots.txt', function(req, res) {
   res.type('text/plain')
   res.send("User-agent: *\nDisallow: /");
 }); 
+app.get('/dash', function(req, res) {
+  res.sendfile(__dirname + '/public/dashboard.html');
+});
 
 
 // public calendar ID
@@ -60,10 +63,8 @@ var oauthClient;
 // insert request into a mongodb collection
 function insertReq(request) {
   var r = request;
-  console.log(process.env.MONGOHQ_URL);
   MongoClient.connect(process.env.MONGOHQ_URL, function(err, db){
     if(err){
-      console.log('----');
       return console.error(err);
     }
 
@@ -89,6 +90,25 @@ function insertReq(request) {
   });
 }
 
+function getList(){
+  MongoClient.connect(process.env.MONGOHQ_URL, function(err, db){
+    if(err){
+      return console.error(err);
+    }
+
+    var collection = db.collection('requests');
+
+    collection.find({}).toArray(function (err, items){
+      if (err) {
+        return console.error(err);
+      }
+
+      return items;
+    });
+  });
+}
+
+/* for testing purposes
 insertReq({
       'email': 'test email',
       'start': 'start time',
@@ -96,6 +116,12 @@ insertReq({
       'room': 'west conference',
       'company': 'company name'
     });
+*/
+
+app.get('/list', function(req, res) {
+  res.json(getList());
+});
+
 
 // create token & authentication
 var token = new GoogleToken({
