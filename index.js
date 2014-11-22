@@ -49,7 +49,7 @@ app.get('/robots.txt', function(req, res) {
   res.send("User-agent: *\nDisallow: /");
 }); 
 app.get('/dash', function(req, res) {
-  res.sendfile(__dirname + 'public/dashboard.html');
+  res.sendFile(__dirname + '/public/dashboard.html');
 });
 
 
