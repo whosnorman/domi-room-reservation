@@ -43,13 +43,13 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-app.use('/public', express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/public'));
 app.get('/robots.txt', function(req, res) {
   res.type('text/plain')
   res.send("User-agent: *\nDisallow: /");
 }); 
 app.get('/dash', function(req, res) {
-  res.sendfile(__dirname + '/public/dashboard.html');
+  res.sendfile('public/dashboard.html');
 });
 
 
