@@ -43,14 +43,19 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-app.use('public', express.static(__dirname + '/public'));
+app.use("/public", express.static(__dirname + '/public'));
+app.use("/js", express.static(__dirname + '/public/js'));
+app.use("/css", express.static(__dirname + '/public/css'));
+
 app.get('/robots.txt', function(req, res) {
   res.type('text/plain')
   res.send("User-agent: *\nDisallow: /");
 }); 
+
 app.get('/dash', function(req, res) {
-  res.sendfile('public/dashboard.html');
+  res.sendfile(__dirname + '/public/dashboard.html');
 });
+
 
 
 // public calendar ID
