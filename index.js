@@ -53,7 +53,9 @@ app.get('/robots.txt', function(req, res) {
 }); 
 
 app.get('/dash', function(req, res) {
-  res.sendfile(__dirname + '/public/dashboard.html');
+  var file = __dirname + '/public/dashboard.html';
+  console.log(file);
+  res.sendfile(file);
 });
 
 
