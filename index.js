@@ -48,7 +48,7 @@ app.use("/js", express.static(__dirname + '/public/js'));
 app.use("/css", express.static(__dirname + '/public/css'));
 
 app.get('/robots.txt', function(req, res) {
-  res.type('text/plain')
+  res.type('text/plain');
   res.send("User-agent: *\nDisallow: /");
 }); 
 
@@ -58,7 +58,11 @@ app.get('/dash', function(req, res) {
   res.sendfile(file);
 });
 
+app.get('/list', function(req, res) {
+  res.json(getList());
+});
 
+// TODO: change keys
 
 // public calendar ID
 var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.com';
@@ -70,6 +74,7 @@ var oauthClient;
 // insert request into a mongodb collection
 function insertReq(request) {
   var r = request;
+
   MongoClient.connect(process.env.MONGOHQ_URL, function(err, db){
     if(err){
       return console.error(err);
@@ -97,6 +102,7 @@ function insertReq(request) {
   });
 }
 
+// look up all docs in the requests collection
 function getList(){
   MongoClient.connect(process.env.MONGOHQ_URL, function(err, db){
     if(err){
@@ -110,6 +116,7 @@ function getList(){
         return console.error(err);
       }
 
+      console.log(items);
       return items;
     });
   });
@@ -125,12 +132,8 @@ insertReq({
     });
 */
 
-app.get('/list', function(req, res) {
-  res.json(getList());
-});
 
-
-// create token & authentication
+// create initial token & authentication 
 var token = new GoogleToken({
     iss: serviceAcc,
     scope: 'https://www.googleapis.com/auth/calendar',
@@ -145,42 +148,22 @@ var token = new GoogleToken({
     console.log('about to get token');
 
     token.getToken(function (err, tokenn) {
-        if (err) {
-            console.log('-- TOKEN ERR --: \n' + err);
-            sendErrMail(err);
-            return console.log(err);
-        }
-        else {
-          // create and set authorization client and necessary credentials
-          oauthClient = new OAuth2('', '', '', {}, {});
-          oauthClient.setCredentials({token_type: 'Bearer', access_token: tokenn});
-
-          console.log('credentials loaded');
-
-          /* look into freebusy api call for checking availability
-
-          gcal.events.list({
-            calendarId: 'primary',
-            auth: oauthClient,
-            maxResults: 5,
-            fields: "items(end,start,status,summary)"
-          }, function(err, cal){
-            if (err) {
-              console.log('gcalErr: ' + err);
-              return console.log(err);
-            } else {
-              console.log(err);
-              console.log(cal);
-              console.log('success?');
-            }
-          });
-          */
+      if (err) {
+          console.log('-- TOKEN ERR --: \n' + err);
+          sendErrMail(err);
+          return console.log(err);
       }
-      
+      else {
+        // create and set authorization client and necessary credentials
+        oauthClient = new OAuth2('', '', '', {}, {});
+        oauthClient.setCredentials({token_type: 'Bearer', access_token: tokenn});
+
+        console.log('credentials loaded');
+      }
     });
 });
 
-// just copy and pasted the above code into this function to be able to call, don't judge
+// for more auth attempts, sends an email in case of errors
 function reAuthAttempt() {
   var token = new GoogleToken({
       iss: serviceAcc,
