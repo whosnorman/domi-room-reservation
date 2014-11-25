@@ -58,8 +58,12 @@ app.get('/dash', function(req, res) {
   res.sendfile(file);
 });
 
+
 app.get('/list', function(req, res) {
-  res.json(getList());
+  // pass async callback
+  getList(function(result){
+    res.json(result);
+  });
 });
 
 // TODO: change keys
@@ -103,7 +107,7 @@ function insertReq(request) {
 }
 
 // look up all docs in the requests collection
-function getList(){
+function getList(callback){
   MongoClient.connect(process.env.MONGOHQ_URL, function(err, db){
     if(err){
       return console.error(err);
@@ -116,8 +120,9 @@ function getList(){
         return console.error(err);
       }
 
-      console.log(items);
-      return items;
+     
+      //console.log(items);
+      callback(items);
     });
   });
 }
