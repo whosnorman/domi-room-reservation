@@ -66,3 +66,7 @@ tr:nth-child(even) {
 .header {
 	width: 90%;
 }
+
+.footer {
+	height: 100px;
+}

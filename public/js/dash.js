@@ -64,9 +64,35 @@ function populateTable() {
 
 		$('#duration tbody').html(content);
 
-		// each month over time 
-		// could store emails that are associated with each company
-		// check for either a similar name or an email that is on the list 
+		// schema for db
+		// 
+		// 
+		// two docs
+		// one for all requests, will be displayed as most recent
+		// 
+		// and one for storing the users and their hours reserved for each month
+		//     - each doc is a member in all lowercase
+		// 
+		// cuttlesoft
+		//   months
+		//   	nov: 3
+		//   	dec: 1
+		//   users: [user@comp.io, other@email.here]
+		// domi
+		//   months
+		//   	nov: 4
+		//   	dec: 0
+		//   users: [lucas@domi.com, matt@domi.com, amanda@domi.com]
+		//   
+		// server does logic on requests to figure everything out
+		// table just displays everything and makes it moveable 
+		// 
+		// first check the name in all lowercase
+		// if (name is same)
+		// 		add hours to month
+		// 		if user is not found
+		// 			add user
+		// 			
 
 
 	});
