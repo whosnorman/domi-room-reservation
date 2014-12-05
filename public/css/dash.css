@@ -15,10 +15,6 @@ h1 {
 	font-weight: 300;
 }
 
-h1:hover {
-	color: #f93;
-}
-
 table > thead {
 	font-size: 20px;
 	border: 1px solid #fff;
@@ -65,6 +61,14 @@ tr:nth-child(even) {
 
 .header {
 	width: 90%;
+}
+
+.header h1 {
+	float: left;
+}
+
+.header h1 span {
+	color: #f93;
 }
 
 .footer {

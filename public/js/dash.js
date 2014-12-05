@@ -69,29 +69,61 @@ function populateTable() {
 		// 
 		// two docs
 		// one for all requests, will be displayed as most recent
-		// 
 		// and one for storing the users and their hours reserved for each month
-		//     - each doc is a member in all lowercase
+		//     - each doc is a member
+		// server does logic on requests to figure everything out
+		// table just displays everything and makes it moveable 
 		// 
-		// cuttlesoft
+		// Dash Functionality ------
+		// - switch out member name with an alias
+		// - add one member to another
+		// 
+		// 'Cuttlesoft'
 		//   months
 		//   	nov: 3
 		//   	dec: 1
 		//   users: [user@comp.io, other@email.here]
-		// domi
+		//   aliases: ['cuttlesoft', 'cuttle soft', 'frank']
+		// 'Domi'
 		//   months
 		//   	nov: 4
 		//   	dec: 0
 		//   users: [lucas@domi.com, matt@domi.com, amanda@domi.com]
 		//   
-		// server does logic on requests to figure everything out
-		// table just displays everything and makes it moveable 
 		// 
-		// first check the name in all lowercase
-		// if (name is same)
-		// 		add hours to month
-		// 		if user is not found
-		// 			add user
+		// pseudo ---------------------------------------------------
+		//
+		// for(look thru all members)
+		// 	 if (newMember == member)	// member name in lowercase
+		// 		found
+		// 	 else
+		// 		for(look thru member.aliases)
+		// 			if(newMember == alias)	// lowercase
+		// 				found
+		// 				
+		// if(member found){
+		//	check for users
+		// 	if(!user found)
+		// 		add user email
+		// 	navigate to year & month
+		// 		add hours
+		// } else{
+		// 	  for(look thru all members)
+		// 		for(look thru member.users)
+		// 			if(newUser == user)
+		// 				user found
+		// 	  if(user found)
+		//  	add alias to member
+		//  	navigate to year & monthx
+		//  		add hours
+		//    else					// no member found
+		//  	initiate member
+		//  		year & month & hours
+		//  		empty aliases[]
+		//  		users[email]
+		//  }
+		// 	
+		// 	 
 		// 			
 
 

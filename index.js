@@ -73,13 +73,14 @@ var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.co
 // google API service account, calendar has been shared with this email
 var serviceAcc = '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com';
 var oauthClient;
+var MONGOHQ_URL = process.env.MONGOHQ_URL;
 
 
 // insert request into a mongodb collection
 function insertReq(request) {
   var r = request;
 
-  MongoClient.connect(process.env.MONGOHQ_URL, function(err, db){
+  MongoClient.connect(MONGOHQ_URL, function(err, db){
     if(err){
       return console.error(err);
     }
@@ -108,7 +109,7 @@ function insertReq(request) {
 
 // look up all docs in the requests collection
 function getList(callback){
-  MongoClient.connect(process.env.MONGOHQ_URL, function(err, db){
+  MongoClient.connect(MONGOHQ_URL, function(err, db){
     if(err){
       return console.error(err);
     }
