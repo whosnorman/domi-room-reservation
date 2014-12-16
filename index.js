@@ -107,6 +107,65 @@ function insertReq(request) {
   });
 }
 
+// insert or update relevant member collection
+function insertMember(mem){
+
+  var date, dateString, start, end, duration;
+
+  MongoClient.connect(MONGOHQ_URL, function(err, db){
+    if(err){
+      return console.error(err);
+    }
+
+    var collection = db.collection('members');
+
+    // look through all companies
+    collection.find({company: mem.company}, function (err, members){
+      if (err)
+        console.error(err);
+
+      // no company matches
+      if(!members){
+        console.log("no member found");
+
+        // look through all users
+        collection.find({users: mem.email}, function(err, members){
+          // no user matches
+          if (!members){
+            console.log("no users found");
+
+            var newMem = {
+              'company': mem.company,
+              'years': {currYear: {currMonth: duration}},
+              'users': [mem.email],
+              'aliases': []
+            }
+
+            // insert new member 
+            collection.insert(newMem, function(err, docs) {
+              if (err) {
+                return console.error(err);
+              }
+              console.log('added new member');
+            });
+
+          } else {
+            // email found in a member
+            
+
+          }
+
+          
+        });
+
+
+      }
+    });
+
+    
+  });
+}
+
 // look up all docs in the requests collection
 function getList(callback){
   MongoClient.connect(MONGOHQ_URL, function(err, db){
@@ -120,7 +179,6 @@ function getList(callback){
       if (err) {
         return console.error(err);
       }
-
      
       //console.log(items);
       callback(items);
@@ -195,7 +253,7 @@ function reAuthAttempt() {
             oauthClient = new OAuth2('', '', '', {}, {});
             oauthClient.setCredentials({token_type: 'Bearer', access_token: tokenn});
 
-            console.log('credentials loaded');
+            console.log('credentials reloaded');
           }
       });
   });
@@ -208,8 +266,9 @@ app.post('/room', function(req, res) {
   console.log(body);
   console.log("--ROOM POST--\n");
 
-  // insert into mongodb collection
+  // insert into mongodb collections
   insertReq(body);
+  insertMember(body);
 
   // create correct times
   var now = moment(body.start);

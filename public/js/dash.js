@@ -24,7 +24,7 @@ function populateTable() {
 			date = new Date(this.start);
 			start = date.getUTCHours();
 			dateString = (date.getMonth() + 1) + '/' + date.getDate();
-			
+
 			if(start > end)
 				this.duration = (end + 24) - start;
 			else
@@ -81,6 +81,7 @@ function populateTable() {
 		// Dash Functionality ------
 		// - switch out member name with an alias
 		// - add one member to another
+		// - showcase monthly total times for members
 		// 
 		// 'Cuttlesoft'
 		//   months
