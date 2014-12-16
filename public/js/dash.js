@@ -24,7 +24,11 @@ function populateTable() {
 			date = new Date(this.start);
 			start = date.getUTCHours();
 			dateString = (date.getMonth() + 1) + '/' + date.getDate();
-			this.duration = end - start;
+			
+			if(start > end)
+				this.duration = (end + 24) - start;
+			else
+				this.duration = end - start;
 
 			content += '<tr>';
 			content += '<td>' + this.company + '</td>';
