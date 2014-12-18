@@ -73,7 +73,7 @@ var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.co
 // google API service account, calendar has been shared with this email
 var serviceAcc = '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com';
 var oauthClient;
-var MONGOHQ_URL = 'mongodb://heroku:thinkfast@dogen.mongohq.com:10042/reservations';//process.env.MONGOHQ_URL;
+var MONGOHQ_URL = process.env.MONGOHQ_URL;
 
 
 // insert request into a mongodb collection
@@ -107,11 +107,9 @@ function insertReq(request) {
   });
 }
 
-// insert or update relevant member collection
+// insert or update relevant member document
 function insertMember(mem){
-
-  var date, dateString, start, end, duration;
-
+  // connect to database
   MongoClient.connect(MONGOHQ_URL, function(err, db){
     if(err){
       return console.error(err);
@@ -119,52 +117,224 @@ function insertMember(mem){
 
     var collection = db.collection('members');
 
+    // search to see if there is an existing member doc to update
     // look through all companies
-    collection.find({company: mem.company}, function (err, members){
+    collection.find({company: mem.company}).toArray(function (err, members){
       if (err)
         console.error(err);
 
       // no company matches
-      if(!members){
-        console.log("no member found");
+      if(members[0] == null){
+        console.log("no member found for " + mem.company);
+        console.log(members);
+        // look through all aliases
+        collection.find({aliases: mem.company}).toArray(function(err, members){
+          if (err) 
+            console.error(err);
 
-        // look through all users
-        collection.find({users: mem.email}, function(err, members){
-          // no user matches
-          if (!members){
-            console.log("no users found");
+          // no alias matches
+          if (members[0] == null){
+            // look through all users
+            collection.find({users: mem.email}).toArray(function(err, members){
+              if(err)
+                console.error(err);
 
-            var newMem = {
-              'company': mem.company,
-              'years': {currYear: {currMonth: duration}},
-              'users': [mem.email],
-              'aliases': []
-            }
-
-            // insert new member 
-            collection.insert(newMem, function(err, docs) {
-              if (err) {
-                return console.error(err);
+              // no user matches
+              if (members[0] == null){
+                // no part of member found, create new doc
+                insertNewMember();
+              } else {
+                // email found in a doc
+                updateAliases(members[0]);
+                updateHours(members[0]);
               }
-              console.log('added new member');
             });
-
           } else {
-            // email found in a member
-            
-
+            // alias found in a doc
+            updateUsers(members[0]);
+            updateHours(members[0]);
           }
-
-          
         });
-
-
+      } else {
+        // company found in a doc
+        console.log(members);
+        updateUsers(members[0]);
+        updateHours(members[0]);
       }
     });
 
-    
+    // update functions
+    function updateUsers(member){
+      collection.update(
+        {company: member.company}, 
+        {$addToSet: {users: mem.email}},
+        function(err, count, status){
+          if(err)
+            console.error(err);
+        }
+      );
+    }
+
+    function updateAliases(member){
+      collection.update(
+        {company: member.company}, 
+        {$addToSet: {aliases: mem.company}},
+        function(err, count, status){
+          if(err)
+            console.error(err);
+        }
+      );
+    }
+
+    function updateHours(member){
+      console.log(member.years);
+      var ev = getDetails();
+
+      if(member.years.hasOwnProperty(ev.year)){
+        var year = ev.year;
+        if(member.years[ev.year].hasOwnProperty(ev.month)){
+          var month = ev.month;
+          var hours = member['years'][ev.year][ev.month];
+
+          var increment = member['years'];
+          increment[ev.year][ev.month] = (ev.duration + hours);
+
+          // year and month already exist, update hours
+          collection.update(
+            {company: member.company}, 
+            {$set: {years: increment}},
+            function(err, count, status){
+              if(err)
+                console.error(err);
+            }
+          );
+        } else {
+          // create new month object
+          var newYears = member['years'];
+          var month = ev.month;
+          var duration = ev.duration;
+
+          newYears[ev.year] = {};
+          newYears[ev.year][ev.month] = duration;
+
+          collection.update(
+            {company: member.company}, 
+            {$set: {years: newYears}},
+            function(err, count, status){
+              if(err)
+                console.error(err);
+            }
+          );
+        }
+      } else {
+        // create new year object
+        var newYears = member['years'];
+        var year = ev.year;
+        var month = ev.month;
+        var duration = ev.duration;
+
+        newYears[ev.year][ev.month] = duration;
+
+        collection.update(
+          {company: member.compay},
+          {$set: {years: newYears}},
+          function(err, count, status){
+            if(err)
+              console.error(err);
+          }
+        );
+      }
+    }
+
+    // create new member doc
+    function insertNewMember(){
+      var ev = getDetails();
+      var year = ev.year;
+      var month = ev.month;
+      var duration = ev.duration;
+
+      // create doc
+      var newMem = {
+        'company': mem.company,
+        'years': {},
+        'users': [mem.email],
+        'aliases': []
+      }
+
+      newMem['years'][ev.year] = {};
+      newMem['years'][ev.year][ev.month] = duration;
+
+      // insert new member 
+      collection.insert(newMem, function(err, docs) {
+        if (err) {
+          return console.error(err);
+        }
+        console.log('added new member ' + mem.company);
+      });
+    }
+
+    // calculate and return event details
+    function getDetails(){
+      var ev = {};
+
+      var evDate = new Date(mem.start);
+      ev.year = evDate.getFullYear();
+      ev.month = evDate.getMonth() + 1;
+      var start = evDate.getUTCHours();
+      evDate = new Date(mem.end);
+      var end = evDate.getUTCHours();
+
+      // calculate duration
+      if(start > end)
+        end += 24;
+      ev.duration = end - start;
+
+      return ev;
+    }
+
+
   });
 }
+
+
+function testUpdateMember(){
+  console.log('connecting to db');
+  MongoClient.connect(MONGOHQ_URL, function(err, db){
+    if(err){
+      return console.error(err);
+    }
+
+    var collection = db.collection('requests');
+
+    console.log('finding 5 queries');
+    collection.find({}).toArray(function (err, items){
+      if (err) {
+        return console.error(err);
+      }
+      
+      //console.log(items);
+      console.log('updating members collection');
+      var i = 0;
+
+      function testing(){
+        insertMember(items[i]);
+        if(i < items.length - 1){
+          i++;
+          setTimeout(testing, 3500);
+        }
+        else{
+          console.log('DONE WITH LOOP');
+        }
+      }
+
+      testing();
+
+    });
+  });
+}
+
+
+testUpdateMember();
 
 // look up all docs in the requests collection
 function getList(callback){
@@ -180,7 +350,7 @@ function getList(callback){
         return console.error(err);
       }
      
-      //console.log(items);
+      console.log(items);
       callback(items);
     });
   });
@@ -268,7 +438,7 @@ app.post('/room', function(req, res) {
 
   // insert into mongodb collections
   insertReq(body);
-  insertMember(body);
+  //insertMember(body);
 
   // create correct times
   var now = moment(body.start);

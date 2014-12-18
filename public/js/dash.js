@@ -24,6 +24,7 @@ function populateTable() {
 			date = new Date(this.start);
 			start = date.getUTCHours();
 			dateString = (date.getMonth() + 1) + '/' + date.getDate();
+			console.log(date.getFullYear());
 
 			if(start > end)
 				this.duration = (end + 24) - start;
@@ -111,7 +112,7 @@ function populateTable() {
 		// 	if(!user found)
 		// 		add user email
 		// 	navigate to year & month
-		// 		add hours
+		// 		add hours for certain year & month
 		// } else{
 		// 	  for(look thru all members)
 		// 		for(look thru member.users)
