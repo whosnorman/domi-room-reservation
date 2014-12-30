@@ -46,6 +46,7 @@ app.use(bodyParser.urlencoded({
 app.use("/public", express.static(__dirname + '/public'));
 app.use("/js", express.static(__dirname + '/public/js'));
 app.use("/css", express.static(__dirname + '/public/css'));
+app.use("/img", express.static(__dirname + '/public/img'));
 
 app.get('/robots.txt', function(req, res) {
   res.type('text/plain');
@@ -53,15 +54,19 @@ app.get('/robots.txt', function(req, res) {
 }); 
 
 app.get('/dash', function(req, res) {
-  var file = __dirname + '/public/dashboard.html';
-  console.log(file);
   res.sendfile(__dirname + '/public/dashboard.html');
 });
 
-
-app.get('/list', function(req, res) {
+app.get('/mems', function(req, res) {
   // pass async callback
-  getList(function(result){
+  getCollection('members', function(result){
+    res.json(result);
+  });
+});
+
+app.get('/reqs', function(req, res) {
+  // pass async callback
+  getCollection('requests', function(result){
     res.json(result);
   });
 });
@@ -116,6 +121,8 @@ function insertMember(mem){
     }
 
     var collection = db.collection('members');
+    var ev = getDetails();
+
 
     // search to see if there is an existing member doc to update
     // look through all companies
@@ -126,7 +133,7 @@ function insertMember(mem){
       // no company matches
       if(members[0] == null){
         console.log("no member found for " + mem.company);
-        console.log(members);
+        //console.log(members);
         // look through all aliases
         collection.find({aliases: mem.company}).toArray(function(err, members){
           if (err) 
@@ -157,13 +164,14 @@ function insertMember(mem){
         });
       } else {
         // company found in a doc
-        console.log(members);
+        //console.log(members);
         updateUsers(members[0]);
         updateHours(members[0]);
       }
     });
 
-    // update functions
+
+    /// update functions ///
     function updateUsers(member){
       collection.update(
         {company: member.company}, 
@@ -187,13 +195,13 @@ function insertMember(mem){
     }
 
     function updateHours(member){
-      console.log(member.years);
-      var ev = getDetails();
+      //console.log(member.years);
 
+      // check if the event year is already a key
       if(member.years.hasOwnProperty(ev.year)){
-        var year = ev.year;
+
+        // check if the event month is already a key
         if(member.years[ev.year].hasOwnProperty(ev.month)){
-          var month = ev.month;
           var hours = member['years'][ev.year][ev.month];
 
           var increment = member['years'];
@@ -211,11 +219,8 @@ function insertMember(mem){
         } else {
           // create new month object
           var newYears = member['years'];
-          var month = ev.month;
-          var duration = ev.duration;
 
-          newYears[ev.year] = {};
-          newYears[ev.year][ev.month] = duration;
+          newYears[ev.year][ev.month] = ev.duration;
 
           collection.update(
             {company: member.company}, 
@@ -229,11 +234,9 @@ function insertMember(mem){
       } else {
         // create new year object
         var newYears = member['years'];
-        var year = ev.year;
-        var month = ev.month;
-        var duration = ev.duration;
 
-        newYears[ev.year][ev.month] = duration;
+        newYears[ev.year] = {};
+        newYears[ev.year][ev.month] = ev.duration;
 
         collection.update(
           {company: member.compay},
@@ -248,10 +251,6 @@ function insertMember(mem){
 
     // create new member doc
     function insertNewMember(){
-      var ev = getDetails();
-      var year = ev.year;
-      var month = ev.month;
-      var duration = ev.duration;
 
       // create doc
       var newMem = {
@@ -262,7 +261,7 @@ function insertMember(mem){
       }
 
       newMem['years'][ev.year] = {};
-      newMem['years'][ev.year][ev.month] = duration;
+      newMem['years'][ev.year][ev.month] = ev.duration;
 
       // insert new member 
       collection.insert(newMem, function(err, docs) {
@@ -292,11 +291,10 @@ function insertMember(mem){
       return ev;
     }
 
-
   });
 }
 
-
+// run sorting logic on existing requests
 function testUpdateMember(){
   console.log('connecting to db');
   MongoClient.connect(MONGOHQ_URL, function(err, db){
@@ -306,24 +304,23 @@ function testUpdateMember(){
 
     var collection = db.collection('requests');
 
-    console.log('finding 5 queries');
     collection.find({}).toArray(function (err, items){
       if (err) {
         return console.error(err);
       }
       
       //console.log(items);
-      console.log('updating members collection');
       var i = 0;
 
       function testing(){
         insertMember(items[i]);
         if(i < items.length - 1){
           i++;
+          // manual delay, loop was too fast for db inserts
           setTimeout(testing, 3500);
         }
         else{
-          console.log('DONE WITH LOOP');
+          console.log('-- DONE WITH LOOP --');
         }
       }
 
@@ -336,14 +333,16 @@ function testUpdateMember(){
 
 testUpdateMember();
 
+
+
 // look up all docs in the requests collection
-function getList(callback){
+function getCollection(coll, callback){
   MongoClient.connect(MONGOHQ_URL, function(err, db){
     if(err){
       return console.error(err);
     }
 
-    var collection = db.collection('requests');
+    var collection = db.collection(coll);
 
     collection.find({}).toArray(function (err, items){
       if (err) {
@@ -438,7 +437,7 @@ app.post('/room', function(req, res) {
 
   // insert into mongodb collections
   insertReq(body);
-  //insertMember(body);
+  insertMember(body);
 
   // create correct times
   var now = moment(body.start);
