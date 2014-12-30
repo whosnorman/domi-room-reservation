@@ -331,7 +331,7 @@ function testUpdateMember(){
 }
 
 
-testUpdateMember();
+//testUpdateMember();
 
 
 
