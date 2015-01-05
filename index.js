@@ -35,6 +35,7 @@ var mandrillClient = new mandrill.Mandrill('x6BKz6My1EWINC6ppAeIMg');
 
 var mongodb = require('mongodb');
 var MongoClient = mongodb.MongoClient;
+var ObjectID = mongodb.ObjectID;
 
 //app.use(passport.initialize());
 app.use(logfmt.requestLogger());
@@ -47,6 +48,7 @@ app.use("/public", express.static(__dirname + '/public'));
 app.use("/js", express.static(__dirname + '/public/js'));
 app.use("/css", express.static(__dirname + '/public/css'));
 app.use("/img", express.static(__dirname + '/public/img'));
+app.use("/font", express.static(__dirname + '/public/font'));
 
 app.get('/robots.txt', function(req, res) {
   res.type('text/plain');
@@ -68,6 +70,21 @@ app.get('/reqs', function(req, res) {
   // pass async callback
   getCollection('requests', function(result){
     res.json(result);
+  });
+});
+
+app.post('/merge', function(req, res) {
+  mergeMember(req.body['first'], req.body['second'], function(){
+    res.send({success: true});
+    res.end();
+  });
+});
+
+app.post('/delreq', function(req, res) {
+  // receive request obj in body json
+  deleteRequest(req.body, function(){
+    res.send({success:true});
+    res.end();
   });
 });
 
@@ -99,7 +116,8 @@ function insertReq(request) {
       'start': r.start,
       'end': r.end,
       'room': r.room,
-      'company': r.company
+      'company': r.company,
+      'event_id': r.id
     }
 
     collection.insert([doc], function(err, docs) {
@@ -109,6 +127,109 @@ function insertReq(request) {
       
       console.log('added new req');
     });
+  });
+} 
+
+function deleteRequest(request, callback){
+  // delete event from gcal
+  // subtract hours from correct month
+  // delete request from request collection
+}
+
+// merge two member documents
+function mergeMember(one, two, callback){
+  MongoClient.connect(MONGOHQ_URL, function(err, db){
+    if(err){
+      return console.error(err);
+    }
+
+    var collection = db.collection('members');
+
+    findMember(one, function(first){
+      findMember(two, function(second){
+
+        // combine email arrays
+        collection.update(
+          {_id: ObjectID(second._id)}, 
+          {$addToSet: {users: {$each: first.users}}},
+          function(err, count, status){
+            if(err)
+              console.error(err);
+          }
+        );
+
+        // add company name to aliases
+        collection.update(
+          {_id: ObjectID(second._id)}, 
+          {$addToSet: {aliases: first.company}},
+          function(err, count, status){
+            if(err)
+              console.error(err);
+          }
+        );
+
+        // add aliases to aliases
+        collection.update(
+          {_id: ObjectID(second._id)}, 
+          {$addToSet: {aliases: {$each: first.aliases}}},
+          function(err, count, status){
+            if(err)
+              console.error(err);
+          }
+        );
+
+        // update hours in json format
+        // loop through years in first
+        for (var year in first.years){
+          // if that year is already in second
+          if(second.years.hasOwnProperty(year)){
+            // loop through months in the year in first
+            for (var month in first.years[year]){
+              // if that month and year are already in second
+              if(second.years[year].hasOwnProperty(month)){
+                second.years[year][month] += first.years[year][month];
+              } else {
+                // month not already in second
+                second.years[year][month] = first.years[year][month];
+              }
+            }
+          } else {
+            // year not already in second
+            second.years[year] = {};
+            for (var month in first.years[year]){
+              if(first.years[year].hasOwnProperty(month)){
+                second.years[year][month] = first.years[year][month];
+              }
+            }
+          }
+        }
+
+        // remove first member doc
+        collection.remove({_id: ObjectID(first._id)});
+
+        collection.update(
+          {_id: ObjectID(second._id)}, 
+          {$set: {years: second.years}},
+          function(err, count, status){
+            if(err)
+              console.error(err);
+
+            // callback to original post request
+            callback();
+          }
+        );
+      });
+    });
+
+    function findMember(id, returnMem){
+      collection.find({_id: ObjectID(id)}).toArray(function(err, members){
+        if(err)
+          console.error(err);
+
+        returnMem(members[0]);
+      });
+    }
+
   });
 }
 
@@ -349,7 +470,6 @@ function getCollection(coll, callback){
         return console.error(err);
       }
      
-      console.log(items);
       callback(items);
     });
   });
@@ -435,10 +555,6 @@ app.post('/room', function(req, res) {
   console.log(body);
   console.log("--ROOM POST--\n");
 
-  // insert into mongodb collections
-  insertReq(body);
-  insertMember(body);
-
   // create correct times
   var now = moment(body.start);
   var later = moment(body.end);
@@ -474,6 +590,11 @@ app.post('/room', function(req, res) {
       console.log('attempting to send email');
       res.send({success: true});
       res.end();
+      // insert into mongodb collections
+      insertMember(body);
+      body.id = event.id;
+      insertReq(body);
+      // send confirmation email
       sendEmail(body, event);
     }
   }); 

@@ -1,10 +1,13 @@
 var requestData = [];
+var mergeArr = [];
+var memArr = [];
+var dateArr = [];
 
 $(document).ready(function() {
-	populateTable();
+	populatePage();
 
 	$('#refresh').on('click', function(){
-		populateTable();
+		populatePage();
 	});
 
 	$('#approx').hover(
@@ -17,17 +20,118 @@ $(document).ready(function() {
 	$('#minusMem').on('click', function(){
 		minimize($('#members'));
 	});
+
+	$('.searchBar').on('click', function(){
+		$('#search').val('');
+		$('#search').focus();
+
+		var counter = 0;
+		$('.mem').each(function() {
+			$(this).css('display', 'block');
+			counter++;
+		});
+
+		$('#memTot').text(counter);
+
+	});
+
+
+	$('#search').on('keyup', function(){
+		var text = $('#search').val();
+		console.log('--------------');
+		var counter = 0;
+		$('.mem').each(function() {
+			var comp = this.getElementsByClassName('comp');
+			var str = $(comp).text();
+			var test = str.toLowerCase().indexOf(text);
+			if(test > -1){
+				console.log(this.company);
+				$(this).css('display', 'block');
+				counter++;
+			} else {
+				$(this).css('display', 'none');
+			}
+		});
+
+		$('#memTot').text(counter);
+
+	});
+
+	$('.icon-left-dir').on('click', function(){
+		sorterBtn('left');
+	});
+
+	$('.icon-right-dir').on('click', function(){
+		sorterBtn('right');
+	});
 });
 
-function expand(el) {
-	el.addClass('expand');
-	el.removeClass('mem');
+function sorterBtn(dir){
+	var dateObj = {};
+	var month = $('#sorterMonth').text();
+	var year = $('#sorterYear').text();
+	dateObj.month = monthToInt(month);
+	dateObj.year = parseInt(year);
+
+	if(dir == 'left'){
+		var newDate = getPrevMonth(dateObj);
+	} else if (dir == 'right') {
+		var newDate = getNextMonth(dateObj);
+	}
+
+	$('#sorterMonth').text(intToMonth(newDate.month));
+	$('#sorterYear').text(newDate.year);
+
+	// re-sort list
+	sorter(newDate);
 }
 
-function populateTable() {
+function sorter(testDate){
+	memArr = populatePage.sortByMonth(memArr, testDate);
+	populatePage.cycleMembers();
+
+	/*var recent = [];
+		var old = [];
+		var newArr = [];
+
+		$.each(memArr, function(){
+			// ignore blanks when the memArr is run through
+			if(this.company != 'blank'){
+				var hasMonth = false;
+				if(this.years.hasOwnProperty(testDate.year)) {
+					if(this.years[testDate.year].hasOwnProperty(testDate.month)){
+						hasMonth = true;
+						recent.push(this);
+					} 
+				} 
+
+				if(!hasMonth) {
+					old.push(this);
+				}
+			}
+		});
+
+		console.log(recent);
+		console.log(old); */
+}
+
+// inits data
+var populatePage = (function(){
+	// variables
 	var content = '';
 	var arr = [];
 
+	var date = new Date();
+	var year = date.getFullYear();
+	var month = date.getMonth() + 1;
+	var tDate = {};
+	tDate.month = month;
+	tDate.year = year;
+
+	$('#sorterYear').text(year);
+	$('#sorterMonth').text(intToMonth(month));
+
+	// get requests
 	$.getJSON('/reqs', function(obj){
 		var date, dateString, start, end, duration;
 		var data = [];
@@ -36,6 +140,7 @@ function populateTable() {
 			data[item] = obj[item];
 		}
 
+		// print requests into a table
 		for(var i = data.length - 1; i > 0; i--){
 			date = new Date(data[i].end);
 			end = date.getUTCHours();
@@ -49,7 +154,7 @@ function populateTable() {
 				data[i].duration = end - start;
 
 			content += '<tr>';
-			content += '<td>' + data[i].company + '</td>';
+			content += '<td>' + '<div class="delBtn">X</div>' + data[i].company + '</td>';
 			content += '<td>' + data[i].email + '</td>';
 			content += '<td>' + data[i].room + '</td>';
 
@@ -66,12 +171,10 @@ function populateTable() {
 		var totString = 'Total Requests: ' + data.length;
 
 
-
 		var i = 0;
 		var time = 25;
 		// approximation of saved emails
 		var counter = data.length * 2.125;
-		console.log(counter);
 		function countEmails(){
 			if(counter > 0){
 				i++;
@@ -89,54 +192,36 @@ function populateTable() {
 	});
 
 
-	$.getJSON('/mems', function(data){
+	// get members
+	$.getJSON('/mems', function(data){	
+		console.log(tDate);
+		memArr = sortByMonth(data, tDate);
+		cycleMembers();
+	});
+
+	/// END OF CALLS ///
+
+	/// START OF HELPER FUNCTIONS ///
+
+	// uses global arrarys memArr & dateArr
+	// use to refresh or resort full list of members
+	function cycleMembers(){
+		// html content to fill members div
 		var content = '';
-		var date = new Date();
-		var year = date.getFullYear();
-		var month = date.getMonth() + 1;
-		var counter = 0;
-
-		$.each(data, function() {
-
-			content += '<div class="mem">';
-			content += '<div class="comp">' + this.company + '</div>';
-			content += '<div class="months">';
-
-			var years = this.years;
-			if(years.hasOwnProperty(year)){
-				if(years[year].hasOwnProperty(month)){
-					if(years[year].hasOwnProperty(month - 1)){
-						content += '<div>';
-						content += intToMonth(month - 1) + ': ' + this.years[year][month - 1];
-						content += '</div>';
-					}
-
-				content += '<div>';
-				content += intToMonth(month) + ': ' + this.years[year][month];
-				content += '</div>';
-				} else {
-					content += '<div> no data </div>';
-				}
+		var dateCounter = 0;
+		$.each(memArr, function(){
+			// blanks seperate the sorted months
+			if (this.company == 'blank') {
+				dateCounter++;
+				content += '<div class="line"></div>';
 			} else {
-				content += '<div> no data </div>';
+				content += printMember(this, dateArr[dateCounter]);
 			}
-			content += '</div>';
-
-			content += '<div class="emails">';
-			for(var i = 0; i < this.users.length; i++) {
-				content+= this.users[i] + ' ';
-			}
-			content += '</div>';
-
-			content += '</div>';
-
-			counter++;
-
-
-		});
+		});		
 
 		var i = 0;
 		var time = 75;
+		var counter = memArr.length - 1;
 		function countMembers(){
 			if(counter != 0){
 				i++;
@@ -148,20 +233,223 @@ function populateTable() {
 		}
 
 		countMembers();
+		// fill members div with printed content
 		$('#members').html(content);
+
+		// add event listeners
+		var cnt = 0;
 		$('.mem').each(function() {
+			var comp = this.getElementsByClassName('comp');
+			var str = $(comp).text();
+			if(str.length - 1 > 16) {
+				var newStr = str.substring(0, 16) + '...';
+				$(comp).text(newStr);
+				$(comp).attr('title', str);
+			}
+
 			this.addEventListener('mouseover', function(){
 				showMonths(this);
 			});
 			this.addEventListener('mouseout', function(){
 				hideMonths(this);
 			});
-			this.addEventListener('click', function(){
+
+			$(this).click(function(){
 				toggleHeight(this);
 			});
+
+			var count = cnt;
+			var merge = this.getElementsByClassName('mergeBtn');
+			merge[0].addEventListener('click', function(e){
+				e.stopPropagation();
+				mergeToggle(count);
+			});
+
+			cnt++;
+		});
+	}
+
+	// returns a printed member in html
+	function printMember(member, dateObj){
+		var cont = '';
+
+		cont += '<div class="mem">';
+
+		// company name
+		cont += '<div class="comp">' + member.company + '</div>';
+
+		// months div
+		cont += '<div class="months">';
+		cont += '<div class="monthAmt">';
+		cont += member.years[dateObj.year][dateObj.month];
+		cont += '</div>';
+		cont += '<div class="month">';
+		cont += (intToMonth(dateObj.month)).toLowerCase();
+		cont += '</div>';
+		cont += '</div>';
+
+		// emails div
+		cont += '<div class="emails">';
+		for(var i = 0; i < member.users.length; i++) {
+			cont+= member.users[i] + ' ';
+		}
+		cont += '</div>';
+
+		// merge button
+		cont += '<div class="mergeBtn">merge</div>';
+
+		cont += '</div>';
+
+		return cont;
+	}
+
+	// recursive function to sort the members
+	var COUNTER = 0;
+	function sortByMonth(array, testDate, opt){
+		var recent = [];
+		var old = [];
+		var newArr = [];
+		$.each(array, function(){
+			var hasMonth = false;
+			// ignore blanks when the memArr is run through
+			if(this.company != 'blank'){
+				if(this.years.hasOwnProperty(testDate.year)) {
+					if(this.years[testDate.year].hasOwnProperty(testDate.month)){
+						hasMonth = true;
+						recent.push(this);
+					} 
+				} 
+
+				if(!hasMonth) {
+					old.push(this);
+				}
+			}
 		});
 
-	});
+		newArr = quickSort(recent, 0, recent.length - 1, testDate);
+		dateArr.push(testDate);
+
+		if(old.length){
+			COUNTER++;
+			var equal = false;
+			if(opt && old.length == opt.length){
+				equal = true;
+				for(var i = 0; i < old.length; i++){
+					if(old[i].company != opt[i].company){
+						equal = false;
+					}
+				}
+			}
+
+			// make sure old is not being passed around without finding any matches
+			if(!equal){
+				// to be able to test for breaks when printing
+				newArr.push({
+					company: 'blank'
+				});
+				if(COUNTER < 5){
+					var nextArr = sortByMonth(old, getPrevMonth(testDate), recent);
+					newArr = newArr.concat(nextArr);
+				} else {
+					console.log(old);
+				}
+			}
+		}
+
+		return newArr;
+	}
+
+	// called by sortByMonth
+	// modified quicksort to sort based on given date
+	function quickSort(members, l, r, dateObj) {
+		var index;
+		if(members.length > 1) {
+
+			index = partition(members, l, r, dateObj);
+
+			if(l < index - 1) {
+				quickSort(members, l, index - 1, dateObj)
+			}
+
+			if(index < r){
+				quickSort(members, index, r, dateObj);
+			}
+		}
+
+		return members;
+	}
+
+	// called by quickSort
+	// tests values around pivot point and swaps them
+	function partition(members, l, r, dateObj) {
+		var dte = dateObj;
+
+		var pivot = members[Math.floor((l + r) / 2)];
+
+		while (l <= r){
+			while (members[l].years[dte.year][dte.month] > pivot.years[dte.year][dte.month]) {
+				l++;
+			}
+
+			while (members[r].years[dte.year][dte.month] < pivot.years[dte.year][dte.month]) {
+				r--;
+			}
+
+			if (l <= r) {
+				swap(members, l, r);
+				l++;
+				r--;
+			}
+		}
+
+		return l; 
+	}
+
+	// called by partition
+	function swap(members, l, r) {
+		var temp = members[l];
+		members[l] = members[r];
+		members[r] = temp;
+	}
+
+
+	/// public functions ///
+	populatePage.cycleMembers = cycleMembers;
+	populatePage.sortByMonth = sortByMonth;
+
+
+});
+
+// returns previous month based on given month and year
+function getPrevMonth(dateObj){
+	var newDate = {};
+	var prevYear = dateObj.year;
+	var prevMonth = dateObj.month - 1;
+	// adjust for edge case jan -> dec
+	if(prevMonth == 0){
+		prevMonth = 12;
+		prevYear -= 1;
+	}
+
+	newDate.year = prevYear;
+	newDate.month = prevMonth;
+	return newDate;
+}
+
+// returns next month based on given month and year
+function getNextMonth(dateObj){
+	var newDate = {};
+	var nextYear = dateObj.year;
+	var nextMonth = dateObj.month + 1;
+	// adjust for edge case dec -> jan
+	if(nextMonth == 13){
+		nextMonth = 1;
+		nextYear += 1;
+	}
+
+	newDate.year = nextYear;
+	newDate.month = nextMonth;
+	return newDate;
 }
 
 function showMonths(el) {
@@ -180,6 +468,48 @@ function toggleHeight(el) {
 		el.css('height', '40px');
 	} else {
 		el.css('height', '200px');
+	}
+}
+
+function mergeToggle(num) {
+	var mems = document.getElementsByClassName('mem');
+	$(mems[num]).css('border-color', 'rgba(255, 153, 51, 1');
+	mergeArr.push(num);
+
+	if(mergeArr.length == 2) {
+		// deselect if misclick
+		if (mergeArr[0] == mergeArr[1]){
+			var mem = mems[mergeArr[0]];
+			$(mem).removeAttr('style');
+			mergeArr = [];
+		} else {
+			var first = memArr[mergeArr[0]];
+			var second = memArr[mergeArr[1]];
+			// prompt to confrim merge
+			if(confirm('Merge ' + first.company + ' into ' + second.company +'?')){
+				var data = {
+					'first': first._id,
+					'second': second._id
+				};
+
+				$.ajax({
+				  type: "POST",
+				  url: '/merge',
+				  data: data,
+				  success: function(){
+				  	populatePage();
+				  },
+				  dataType: 'application/json'
+				});
+			}
+
+			for(var i = 0; i < mergeArr.length; i++){
+				var mem = mems[mergeArr[i]];
+				$(mem).removeAttr('style');
+			}
+
+			mergeArr = [];
+		}
 	}
 }
 
@@ -204,9 +534,64 @@ function adjustHeaderWidth() {
 
 function intToMonth(month){
 	switch(month){
+		case 1: return 'Jan';
+			break;
+		case 2: return 'Feb';
+			break;
+		case 3: return 'Mar';
+			break;
+		case 4: return 'Apr';
+			break;
+		case 5: return 'May';
+			break;
+		case 6: return 'Jun';
+			break;
+		case 7: return 'July';
+			break;
+		case 8: return 'Aug';
+			break;
+		case 9: return 'Sept';
+			break;
+		case 10: return 'Oct';
+			break;
 		case 11: return 'Nov';
 			break;
 		case 12: return 'Dec';
+			break;
+		default: return '???';
+			break;
+	}
+}
+
+function monthToInt(mon){
+	var month = mon.toString();
+	var mon = month.toLowerCase();
+	switch(mon){
+		case 'jan': return 1;
+			break;
+		case 'feb': return 2;
+			break;
+		case 'mar': return 3;
+			break;
+		case 'apr': return 4;
+			break;
+		case 'may': return 5;
+			break;
+		case 'jun': return 6;
+			break;
+		case 'july': return 7;
+			break;
+		case 'aug': return 8;
+			break;
+		case 'sept': return 9;
+			break;
+		case 'oct': return 10;
+			break;
+		case 'nov': return 11;
+			break;
+		case 'dec': return 12;
+			break;
+		default: return 0;
 			break;
 	}
 }

@@ -18,7 +18,7 @@
 					<select id="room">
 						<option value="1" selected>West Conference Room</option>
 						<option value="2">East Conference Room</option>
-						<option value="3">Education Lecture Hall</option>
+						<option value="3">Florida Blue Education Room</option>
 					</select>
 					<br />on the
 					<select id="dayTens">
@@ -139,6 +139,9 @@
 			var btnClicked = false;
 			var waiting = true;
 
+			var snagEmail = '';
+			var snagComp = '';
+
 			document.getElementById('month').selectedIndex = month;
 			var selDayTens = document.getElementById('dayTens');
 			var selDayOnes = document.getElementById('dayOnes');
@@ -159,6 +162,29 @@
 			}
 
 			var nlform = new NLForm( document.getElementById( 'nl-form' ) );
+
+			var form = document.getElementById('nl-form');
+			// 0 & 1 first input, 2 & 3 second input
+			var inputArr = form.getElementsByTagName('input');
+			// 0 first input, 12 second input
+			var elArr = form.getElementsByClassName('nl-field-toggle');
+
+			// have to set all three fields due to how NLForm creates and uses elements
+			if (localStorage) {
+				if (localStorage.getItem('snagComp')) {
+					var snagComp = localStorage.getItem('snagComp');
+					inputArr[0].value = snagComp;
+					inputArr[1].value = snagComp;
+					elArr[0].innerText = snagComp;
+				}
+
+				if(localStorage.getItem('snagEmail')) {
+					var snagEmail = localStorage.getItem('snagEmail');
+					inputArr[2].value = snagEmail;
+					inputArr[3].value = snagEmail;
+					elArr[12].innerText = snagEmail;
+				}
+			}			
 
 			function validateForm(e) {
 				validated = true;
@@ -225,6 +251,12 @@
 				console.log(end);
 
 				if(validated) {
+					// save local storage only when validated
+					if(localStorage){
+						localStorage.setItem('snagEmail', email);
+						localStorage.setItem('snagComp', company);
+					}
+
 					$('errorText').text('');
 
 					url = "http://domi-room.herokuapp.com/room";
@@ -239,6 +271,7 @@
 
 					btnLoad();
 
+					// send post request
 					$.ajax({
 					  type: "POST",
 					  url: url,

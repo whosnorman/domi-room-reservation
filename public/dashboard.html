@@ -1,5 +1,6 @@
 <html>
 <head>
+    <link rel="stylesheet" href="css/fontello.css">
 	<link rel='stylesheet' href='css/dash.css' />
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,300,800,700' rel='stylesheet' type='text/css'>
 	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -22,38 +23,31 @@
 
 	<div class="bar">
 		<!-- <div class="minus" id="minusMem">~</div> -->
-		<h2><span id="memTot">0</span> members</h2>
+		<h2 class="memTot"><span id="memTot">0</span> members</h2>
+		<div class="sorter">
+			<div class="icon-left-dir"></div>
+			<div id="sorterMonth"></div>
+			<div class="icon-right-dir"></div>
+			<div id="sorterYear"></div>
+			<div style="clear: both"></div>
+		</div>
+		<div class="searchBar">
+			<input id="search"></input>
+			<div class="icon-search"></div>
+		</div>
 	</div>
 
 	<div class="members" id="members">
 		<div class='mem'>
 			<div class='comp'>Company</div>
 			<div class='months'>
-				<div>month</div>
+				<div class='monthAmt'>12</div>
+				<div class='month'>jan</div>
 			</div>
-			<div class='emails'>emails</div>
+			<div class='emails'></div>
+			<div class='mergeBtn'>merge</div>
 		</div>
 	</div>
-
-
-	<!-- <table id="duration">
-		<thead>
-			<th>Company</th>
-			<th>Total Time</th>
-		</thead>
-		<tbody>
-		</tbody>
-	</table>
-
-	<div class="mem">
-			<h1>Cuttlesoft</h1>
-			<div>
-				<h2>Nov: 1</h2>
-				<h2>Dec: 3</h2>
-			</div>
-		</div>
-
-		 -->
 
 	<div class="requestsCont">
 		<table id="reqHead">

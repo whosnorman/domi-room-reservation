@@ -22,7 +22,6 @@ body {
 	-webkit-animation: gradientBG 60s ease infinite;
 	-moz-animation: gradientBG 60s ease infinite;
 	animation: gradientBG 60s ease infinite;
-
 }
 
 @-webkit-keyframes gradientBG {
@@ -192,7 +191,7 @@ span {
 
 .refreshBtn {
 	margin: 25px;
-	border: 3px dashed #fff;
+	border: 3px solid #fff;
 	border-radius: 5px;
 	padding: 10px;
 	float: right;
@@ -204,7 +203,34 @@ span {
 
 .refreshBtn:hover {
 	cursor: pointer;
-	border: 3px solid #fff;
+	border: 3px dashed #fff;
+}
+
+.mergeBtn {
+	color: rgba(255, 255, 255, 0.15);
+	float: right;
+	padding: 5px;
+}
+
+.mergeBtn:hover {
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.delBtn {
+	font-size: 15px;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	border-radius: 3px;
+	color: rgba(255, 255, 255, 0.15);
+	float: left;
+	padding: 2px 5px 2px 4px;
+	margin-right: 15px;
+
+}
+
+.delBtn:hover {
+	border: 1px solid rgba(255, 0, 0, 0.6);
+	color: rgba(255, 0, 0, 0.6);
+	cursor: pointer;
 }
 
 .minus {
@@ -235,6 +261,34 @@ span {
 	font-weight: 500;
 }
 
+.searchBar {
+	font-size: 30px;
+	float: right;
+	margin-top: -35px;
+}
+
+.searchBar:hover {
+	cursor: pointer;
+}
+
+.searchBar input {
+	outline: none;
+	background: transparent;
+	border: none;
+	margin-right: 10px;
+	color: #fff;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 300;
+	font-size: 30px;
+	text-align: center;
+	width: 5em;
+}
+
+.searchBar div {
+	float: right;
+	margin-top: 5px;
+}
+
 .footer {
 	height: 100px;
 }
@@ -257,6 +311,49 @@ span {
 	color: #f93;
 	font-weight: 500;
 }
+
+.memTot {
+	float: left;
+	position: relative;
+}
+
+.sorter {
+	margin-left: 28%;
+	margin-top: 25px;
+	font-size: 25px;
+	font-weight: 500;
+	width: 240px;
+}
+
+#sorterMonth {
+	float: left;
+}
+
+#sorterYear {
+	float: left;
+	margin-left: 20px;
+}
+
+.icon-right-dir {
+	float: left;
+	font-size: 30px;
+	margin-left: 5px;
+	margin-top: 5px;
+}
+
+.icon-left-dir {
+	float: left;
+	font-size: 30px;
+	margin-right: 5px;
+	margin-top: 5px;
+}
+
+[class^="icon-"]:hover {
+	cursor: pointer;
+	color: rgba(255, 255, 255, 0.6);
+}
+
+
 
 ::-webkit-scrollbar {
     width: 12px;
@@ -287,11 +384,11 @@ span {
 	border-radius: 5px;
 	text-align: left;
 	overflow: hidden;
+	z-index: 1000;
 }
 
 .mem:hover {
-	background-color: rgba(255, 255, 255, 0.1);
-	border: 4px solid rgba(255, 255, 255, 0);
+	border: 4px solid rgba(255, 255, 255, 1);
 	cursor: pointer;
 }
 
@@ -306,14 +403,20 @@ span {
 .mem .months {
 	position: absolute;
 	float: left;
-	margin-left: 20%;
+	margin-left: 24%;
 	transition: all 180ms ease-out;
 	opacity: 1;
+	text-align: center;
+	min-width: 40px;
 }
-
- .mem .months div {
- 	float: left;
- 	margin-left: 10px;
+.mem .months .monthAmt {
+	font-size: 30px;
+	font-weight: 600;
+	margin-top: -10px;
+}
+ .mem .months .month {
+ 	font-size: 15px;
+ 	margin-top: -5px;
  }
 
  .mem .emails {
@@ -322,4 +425,12 @@ span {
 	margin-left: 40%;
 	transition: all 180ms ease-out;
 	opacity: 0;
+ }
+
+ .line {
+ 	width: 5%;
+ 	height: 4px;
+ 	background-color: rgba(255, 255, 255, 0.1);
+ 	margin-top: 1px;
+ 	margin-bottom: 1px;
  }
