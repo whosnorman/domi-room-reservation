@@ -6,8 +6,13 @@ var dateArr = [];
 $(document).ready(function() {
 	populatePage();
 
+	// button listeners
 	$('#refresh').on('click', function(){
 		populatePage();
+	});
+
+	$('#reconfig').on('click', function(){
+		reconfigureMembers();
 	});
 
 	$('#approx').hover(
@@ -38,14 +43,12 @@ $(document).ready(function() {
 
 	$('#search').on('keyup', function(){
 		var text = $('#search').val();
-		console.log('--------------');
 		var counter = 0;
 		$('.mem').each(function() {
 			var comp = this.getElementsByClassName('comp');
 			var str = $(comp).text();
-			var test = str.toLowerCase().indexOf(text);
-			if(test > -1){
-				console.log(this.company);
+			var inStr = str.toLowerCase().indexOf(text);
+			if(inStr > -1){
 				$(this).css('display', 'block');
 				counter++;
 			} else {
@@ -66,6 +69,18 @@ $(document).ready(function() {
 	});
 });
 
+function reconfigureMembers(){
+	$.ajax({
+	  type: "POST",
+	  url: '/reconfig',
+	  data: '',
+	  success: function(){
+	  	populatePage();
+	  }
+	});
+}
+
+// change sorting month to previous or next
 function sorterBtn(dir){
 	var dateObj = {};
 	var month = $('#sorterMonth').text();
@@ -86,36 +101,14 @@ function sorterBtn(dir){
 	sorter(newDate);
 }
 
-function sorter(testDate){
-	memArr = populatePage.sortByMonth(memArr, testDate);
-	populatePage.cycleMembers();
-
-	/*var recent = [];
-		var old = [];
-		var newArr = [];
-
-		$.each(memArr, function(){
-			// ignore blanks when the memArr is run through
-			if(this.company != 'blank'){
-				var hasMonth = false;
-				if(this.years.hasOwnProperty(testDate.year)) {
-					if(this.years[testDate.year].hasOwnProperty(testDate.month)){
-						hasMonth = true;
-						recent.push(this);
-					} 
-				} 
-
-				if(!hasMonth) {
-					old.push(this);
-				}
-			}
-		});
-
-		console.log(recent);
-		console.log(old); */
+// re-sort and display a list of members based on a new date
+function sorter(sortDate){
+	dateArr = [];
+	var sortArr = populatePage.sortByMonth(memArr, sortDate);
+	populatePage.cycleMembers(sortArr);	
 }
 
-// inits data
+// inits data & page
 var populatePage = (function(){
 	// variables
 	var content = '';
@@ -194,7 +187,6 @@ var populatePage = (function(){
 
 	// get members
 	$.getJSON('/mems', function(data){	
-		console.log(tDate);
 		memArr = sortByMonth(data, tDate);
 		cycleMembers();
 	});
@@ -205,34 +197,27 @@ var populatePage = (function(){
 
 	// uses global arrarys memArr & dateArr
 	// use to refresh or resort full list of members
-	function cycleMembers(){
+	function cycleMembers(optArr){
 		// html content to fill members div
 		var content = '';
 		var dateCounter = 0;
-		$.each(memArr, function(){
-			// blanks seperate the sorted months
-			if (this.company == 'blank') {
+		// set to true if the rest of the members don't match up with the date
+		var nodata = false;
+		var arr = optArr || memArr;
+
+		$.each(arr, function(){
+			// seperates the sorted months
+			if (this.company == 'nextdate') {
 				dateCounter++;
 				content += '<div class="line"></div>';
+			} else if (this.company == 'nodata'){
+				nodata = true;
 			} else {
-				content += printMember(this, dateArr[dateCounter]);
+				content += printMember(this, dateArr[dateCounter], nodata);
 			}
 		});		
 
-		var i = 0;
-		var time = 75;
-		var counter = memArr.length - 1;
-		function countMembers(){
-			if(counter != 0){
-				i++;
-				counter--;
-				$('#memTot').text(i);
-				time += (i * 1.1);
-				setTimeout(countMembers, time);
-			}
-		}
-
-		countMembers();
+		countMembers(arr);
 		// fill members div with printed content
 		$('#members').html(content);
 
@@ -270,7 +255,7 @@ var populatePage = (function(){
 	}
 
 	// returns a printed member in html
-	function printMember(member, dateObj){
+	function printMember(member, dateObj, opt){
 		var cont = '';
 
 		cont += '<div class="mem">';
@@ -278,14 +263,20 @@ var populatePage = (function(){
 		// company name
 		cont += '<div class="comp">' + member.company + '</div>';
 
+
 		// months div
 		cont += '<div class="months">';
-		cont += '<div class="monthAmt">';
-		cont += member.years[dateObj.year][dateObj.month];
-		cont += '</div>';
-		cont += '<div class="month">';
-		cont += (intToMonth(dateObj.month)).toLowerCase();
-		cont += '</div>';
+		// true opt means the date doesn't match up
+		if(opt){
+			cont += 'no data for ' + (intToMonth(dateObj.month)).toLowerCase();
+		} else {
+			cont += '<div class="monthAmt">';
+			cont += member.years[dateObj.year][dateObj.month];
+			cont += '</div>';
+			cont += '<div class="month">';
+			cont += (intToMonth(dateObj.month)).toLowerCase();
+			cont += '</div>';
+		}
 		cont += '</div>';
 
 		// emails div
@@ -303,35 +294,48 @@ var populatePage = (function(){
 		return cont;
 	}
 
+
+
 	// recursive function to sort the members
 	var COUNTER = 0;
 	function sortByMonth(array, testDate, opt){
+		//var recent = opt || [];
 		var recent = [];
 		var old = [];
 		var newArr = [];
-		$.each(array, function(){
-			var hasMonth = false;
-			// ignore blanks when the memArr is run through
-			if(this.company != 'blank'){
-				if(this.years.hasOwnProperty(testDate.year)) {
-					if(this.years[testDate.year].hasOwnProperty(testDate.month)){
-						hasMonth = true;
-						recent.push(this);
+
+		if(opt === 'exit'){
+			$.each(array, function(){
+				newArr.push(this);
+			});
+		} else {
+			$.each(array, function(){
+				var hasMonth = false;
+				// ignore blanks when the memArr is run through
+				if(this.company != 'nodata' && this.company != 'nextdate'){
+					if(this.years.hasOwnProperty(testDate.year)) {
+						if(this.years[testDate.year].hasOwnProperty(testDate.month)){
+							hasMonth = true;
+							recent.push(this);
+						} 
 					} 
-				} 
 
-				if(!hasMonth) {
-					old.push(this);
+					if(!hasMonth) {
+						old.push(this);
+					}
 				}
-			}
-		});
+			});
 
-		newArr = quickSort(recent, 0, recent.length - 1, testDate);
-		dateArr.push(testDate);
+			newArr = quickSort(recent, 0, recent.length - 1, testDate);
+			dateArr.push(testDate);
+		}
+		
 
 		if(old.length){
-			COUNTER++;
 			var equal = false;
+
+			// to stop recursiveness when nothing else is being
+			// sorted out of the leftover array
 			if(opt && old.length == opt.length){
 				equal = true;
 				for(var i = 0; i < old.length; i++){
@@ -343,18 +347,25 @@ var populatePage = (function(){
 
 			// make sure old is not being passed around without finding any matches
 			if(!equal){
+				COUNTER++;
+				
+				var nextArr = sortByMonth(old, getPrevMonth(testDate), array);
 				// to be able to test for breaks when printing
 				newArr.push({
-					company: 'blank'
+					company: 'nextdate'
 				});
-				if(COUNTER < 5){
-					var nextArr = sortByMonth(old, getPrevMonth(testDate), recent);
-					newArr = newArr.concat(nextArr);
-				} else {
-					console.log(old);
-				}
+				newArr = newArr.concat(nextArr);
+
+			} else {
+				var nextArr = sortByMonth(old, getPrevMonth(testDate), 'exit');
+				// push flag
+				newArr.push({
+					company: 'nodata'
+				});
+				newArr = newArr.concat(nextArr);
 			}
 		}
+		
 
 		return newArr;
 	}
@@ -410,6 +421,27 @@ var populatePage = (function(){
 		var temp = members[l];
 		members[l] = members[r];
 		members[r] = temp;
+	}
+
+	// physically count the members up
+	function countMembers(arr){
+		var i = 0;
+		var time = 75;
+		var counter = arr.length - 1;
+
+		countEm();
+
+		// recursive counter
+		function countEm(){
+			if(counter != 0){
+				i++;
+				counter--;
+				$('#memTot').text(i);
+				time += (i * 1.1);
+				setTimeout(countEm, time);
+			}
+		}
+
 	}
 
 

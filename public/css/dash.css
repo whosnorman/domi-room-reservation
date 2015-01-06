@@ -189,21 +189,31 @@ span {
 	display: none;
 }
 
-.refreshBtn {
+.btn {
 	margin: 25px;
 	border: 3px solid #fff;
 	border-radius: 5px;
 	padding: 10px;
-	float: right;
-	position: relative;
 	font-weight: 400;
 	font-size: 25px;
 	color: #fff;
 }
 
-.refreshBtn:hover {
+.btn:hover {
 	cursor: pointer;
 	border: 3px dashed #fff;
+}
+
+#reconfig {
+	width: auto;
+	right: 15px;
+	font-size: 15px;
+	float: right;
+}
+
+#refresh {
+	float: right;
+	position: relative;
 }
 
 .mergeBtn {
@@ -289,10 +299,9 @@ span {
 	margin-top: 5px;
 }
 
-.footer {
-	height: 100px;
+.spacer {
+	height: 50px;
 }
-
 
 .requestsCont {
 	margin: 25px;

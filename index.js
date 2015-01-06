@@ -88,6 +88,13 @@ app.post('/delreq', function(req, res) {
   });
 });
 
+app.post('/reconfig', function(req, res) {
+  reconfigureMembers(function(){
+    res.send({success: true});
+    res.end();
+  });
+});
+
 // TODO: change keys
 
 // public calendar ID
@@ -234,7 +241,7 @@ function mergeMember(one, two, callback){
 }
 
 // insert or update relevant member document
-function insertMember(mem){
+function insertMember(mem, callback){
   // connect to database
   MongoClient.connect(MONGOHQ_URL, function(err, db){
     if(err){
@@ -242,8 +249,8 @@ function insertMember(mem){
     }
 
     var collection = db.collection('members');
+    // uses mem in getDetails
     var ev = getDetails();
-
 
     // search to see if there is an existing member doc to update
     // look through all companies
@@ -290,6 +297,8 @@ function insertMember(mem){
         updateHours(members[0]);
       }
     });
+    // above function will either insertNewMember or 
+    // updateHours, callback has been placed in those
 
 
     /// update functions ///
@@ -328,6 +337,14 @@ function insertMember(mem){
           var increment = member['years'];
           increment[ev.year][ev.month] = (ev.duration + hours);
 
+          if(ev.year == 2015){
+            console.log('----2015 month----------');
+            console.log(ev.month + ' | ' + ev.duration + ' | ' + hours);
+            console.log(increment);
+            console.log(member.years);
+            console.log('------------------------')
+          }
+
           // year and month already exist, update hours
           collection.update(
             {company: member.company}, 
@@ -335,6 +352,10 @@ function insertMember(mem){
             function(err, count, status){
               if(err)
                 console.error(err);
+
+              if(callback){
+                callback();
+              }
             }
           );
         } else {
@@ -349,6 +370,10 @@ function insertMember(mem){
             function(err, count, status){
               if(err)
                 console.error(err);
+
+              if(callback){
+                callback();
+              }
             }
           );
         }
@@ -356,8 +381,22 @@ function insertMember(mem){
         // create new year object
         var newYears = member['years'];
 
+        if(ev.year == 2015){
+          console.log('----2015----');
+          console.log(ev.month + ' | ' + ev.duration);
+          console.log(newYears);
+          console.log(member.years);
+        }
+
         newYears[ev.year] = {};
         newYears[ev.year][ev.month] = ev.duration;
+
+        if(ev.year == 2015){
+          console.log('---');
+          console.log(newYears);
+          console.log(member.years);
+          console.log('-------------');
+        }
 
         collection.update(
           {company: member.compay},
@@ -365,6 +404,10 @@ function insertMember(mem){
           function(err, count, status){
             if(err)
               console.error(err);
+
+            if(callback){
+              callback();
+            }
           }
         );
       }
@@ -388,6 +431,10 @@ function insertMember(mem){
       collection.insert(newMem, function(err, docs) {
         if (err) {
           return console.error(err);
+        }
+        // for reconfigureMembers
+        if(callback){
+          callback();
         }
         console.log('added new member ' + mem.company);
       });
@@ -415,44 +462,46 @@ function insertMember(mem){
   });
 }
 
-// run sorting logic on existing requests
-function testUpdateMember(){
-  console.log('connecting to db');
+// clear current members collection and 
+// rerun sorting logic on existing requests
+function reconfigureMembers(callback){
   MongoClient.connect(MONGOHQ_URL, function(err, db){
     if(err){
       return console.error(err);
     }
+    var coll = db.collection('members');
 
-    var collection = db.collection('requests');
+    coll.remove(function(err, numRemoved){
+      var collection = db.collection('requests');
 
-    collection.find({}).toArray(function (err, items){
-      if (err) {
-        return console.error(err);
-      }
-      
-      //console.log(items);
-      var i = 0;
-
-      function testing(){
-        insertMember(items[i]);
-        if(i < items.length - 1){
-          i++;
-          // manual delay, loop was too fast for db inserts
-          setTimeout(testing, 3500);
+      collection.find({}).toArray(function (err, items){
+        if (err) {
+          return console.error(err);
         }
-        else{
-          console.log('-- DONE WITH LOOP --');
+        
+        var i = 0;
+
+        function config(){
+          insertMember(items[i], function(){
+            if(i < items.length - 1){
+              i++;
+              config();
+            }
+            else{
+              console.log('-- DONE WITH LOOP --');
+              callback();
+            }
+          });
         }
-      }
 
-      testing();
+        // init call
+        config();
 
+      });
     });
   });
 }
 
-
-//testUpdateMember();
 
 
 
@@ -498,8 +547,6 @@ var token = new GoogleToken({
         return console.log(err);
     }
 
-    console.log('about to get token');
-
     token.getToken(function (err, tokenn) {
       if (err) {
           console.log('-- TOKEN ERR --: \n' + err);
@@ -528,8 +575,6 @@ function reAuthAttempt() {
           sendErrMail(err);
           return console.log(err);
       }
-
-      console.log('about to get token');
 
       token.getToken(function (err, tokenn) {
           if (err) {
