@@ -228,18 +228,16 @@ span {
 
 .delBtn {
 	font-size: 15px;
-	border: 1px solid rgba(255, 255, 255, 0.15);
-	border-radius: 3px;
+	font-weight: bold;
 	color: rgba(255, 255, 255, 0.15);
 	float: left;
 	padding: 2px 5px 2px 4px;
 	margin-right: 15px;
-
+	height: 100%;
 }
 
 .delBtn:hover {
-	border: 1px solid rgba(255, 0, 0, 0.6);
-	color: rgba(255, 0, 0, 0.6);
+	color: rgba(255, 0, 0, 0.7);
 	cursor: pointer;
 }
 

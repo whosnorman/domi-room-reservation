@@ -327,9 +327,19 @@ function insertMember(mem, callback){
     function updateHours(member){
       //console.log(member.years);
 
+      if(ev.year == 2015){
+          console.log('//--//');
+          console.log(ev.month);
+          console.log(member.company);
+          console.log(member.years);
+          console.log('//--//');
+        }
+
       // check if the event year is already a key
       if(member.years.hasOwnProperty(ev.year)){
-
+        if(ev.year == 2015){
+            
+        }
         // check if the event month is already a key
         if(member.years[ev.year].hasOwnProperty(ev.month)){
           var hours = member['years'][ev.year][ev.month];
@@ -337,13 +347,13 @@ function insertMember(mem, callback){
           var increment = member['years'];
           increment[ev.year][ev.month] = (ev.duration + hours);
 
-          if(ev.year == 2015){
+          /*if(ev.year == 2015){
             console.log('----2015 month----------');
             console.log(ev.month + ' | ' + ev.duration + ' | ' + hours);
             console.log(increment);
             console.log(member.years);
-            console.log('------------------------')
-          }
+            console.log('------------------------');
+          }*/
 
           // year and month already exist, update hours
           collection.update(
@@ -382,7 +392,7 @@ function insertMember(mem, callback){
         var newYears = member['years'];
 
         if(ev.year == 2015){
-          console.log('----2015----');
+          console.log('//// new 2015 ////');
           console.log(ev.month + ' | ' + ev.duration);
           console.log(newYears);
           console.log(member.years);
@@ -395,7 +405,7 @@ function insertMember(mem, callback){
           console.log('---');
           console.log(newYears);
           console.log(member.years);
-          console.log('-------------');
+          console.log('////////////');
         }
 
         collection.update(

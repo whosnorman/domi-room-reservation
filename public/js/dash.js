@@ -147,7 +147,11 @@ var populatePage = (function(){
 				data[i].duration = end - start;
 
 			content += '<tr>';
-			content += '<td>' + '<div class="delBtn">X</div>' + data[i].company + '</td>';
+			content += '<td>';
+			if(data[i].event_id){
+				content += '<div class="delBtn">X</div>';
+			}
+			content += data[i].company + '</td>';
 			content += '<td>' + data[i].email + '</td>';
 			content += '<td>' + data[i].room + '</td>';
 
