@@ -2,6 +2,7 @@ var requestData = [];
 var mergeArr = [];
 var memArr = [];
 var dateArr = [];
+var loadCal = true;
 
 $(document).ready(function() {
 	populatePage();
@@ -14,6 +15,20 @@ $(document).ready(function() {
 	$('#reconfig').on('click', function(){
 		reconfigureMembers();
 	});
+
+	$('#loadCal').on('click', function(){
+		if(loadCal){
+			$('#loadCal').text('Hide Snag Calendar');
+			$('#calendar').html('<iframe src="https://www.google.com/calendar/embed?src=domiventures.co_e1eknta8nrohjg1lhrqmntrla4%40group.calendar.google.com&amp;color=%23333333&amp;showTitle=0&amp;showNav=0&amp;showPrint=0&amp;showCalendars=0&amp;mode=WEEK&amp;height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;ctz=America%2FNew_York" style=" border-width:0 " width="1000" height="600" frameborder="0" scrolling="no"></iframe>');
+			loadCal = false;
+		} else {
+			$('#loadCal').text('Load Snag Calendar');
+			$('#calendar').html('');
+			loadCal = true;
+		}
+
+	});
+
 
 	$('#approx').hover(
 		function(){
@@ -108,11 +123,211 @@ function sorter(sortDate){
 	populatePage.cycleMembers(sortArr);	
 }
 
+function renderGraph(dataJSON){
+	/*var margin = {top: 20, right: 20, bottom: 30, left: 50},
+		width = 400 - margin.left - margin.right,
+		height = 250 - margin.top - margin.bottom;
+
+	var parseDate = d3.time.format("%d-%b-%y").parse;
+	var x = d3.time.scale().range([0, width]);
+	var y = d3.scale.linear().range([height, 0]);
+
+	var xAxis = d3.svg.axis()
+		.scale(x)
+		.orient("bottom");
+	var yAxis = d3.svg.axis()
+		.scale(y)
+		.orient("left");
+
+	var line = d3.svg.line()
+		.x(function(d) {return x(d.date); })
+		.y(function(d) {return y(d.close); });
+
+	var svg = d3.select("body").append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	d3.json(dataJSON, function(err, data){
+		data.forEach(function(d) {
+			console.log(d.hours);
+		});
+	}); */
+
+	var xy_chart = d3_xy_chart()
+	    .width(700)
+	    .height(350)
+	    .xlabel("Month")
+	    .ylabel("Hours");
+	var svg = d3.select("body").append("svg")
+	    .datum(dataJSON)
+	    .call(xy_chart);
+
+	function d3_xy_chart() {
+	    function chart(selection) {
+	        selection.each(function(datasets) {
+	        	console.log(this);
+	            //
+	            // Create the plot. 
+	            //
+	            var margin = {top: 20, right: 80, bottom: 30, left: 50}, 
+	                innerwidth = width - margin.left - margin.right,
+	                innerheight = height - margin.top - margin.bottom ;
+	            
+	            var x_scale = d3.scale.linear()
+	                .range([0, innerwidth])
+	                .domain([ d3.min(datasets, function(d) { return d3.min(d.hours); }), 
+	                          d3.max(datasets, function(d) { return d3.max(d.hours); }) ]) ;
+	            
+	            var y_scale = d3.scale.linear()
+	                .range([innerheight, 0])
+	                .domain([ d3.min(datasets, function(d) { return d3.min(d.month); }),
+	                          d3.max(datasets, function(d) { return d3.max(d.month); }) ]) ;
+
+	            var color_scale = d3.scale.category10()
+	                .domain(d3.range(datasets.length)) ;
+
+	            var x_axis = d3.svg.axis()
+	                .scale(x_scale)
+	                .orient("bottom") ;
+
+	            var y_axis = d3.svg.axis()
+	                .scale(y_scale)
+	                .orient("left") ;
+
+	            var x_grid = d3.svg.axis()
+	                .scale(x_scale)
+	                .orient("bottom")
+	                .tickSize(-innerheight)
+	                .tickFormat("") ;
+
+	            var y_grid = d3.svg.axis()
+	                .scale(y_scale)
+	                .orient("left") 
+	                .tickSize(-innerwidth)
+	                .tickFormat("") ;
+
+	            var draw_line = d3.svg.line()
+	                .interpolate("basis")
+	                .x(function(d) { return x_scale(d[0]); })
+	                .y(function(d) { return y_scale(d[1]); }) ;
+
+	            var svg = d3.select(this)
+	                .attr("width", width)
+	                .attr("height", height)
+	                .append("g")
+	                .attr("transform", "translate(" + margin.left + "," + margin.top + ")") ;
+	            
+	            svg.append("g")
+	                .attr("class", "x grid")
+	                .attr("transform", "translate(0," + innerheight + ")")
+	                .call(x_grid) ;
+
+	            svg.append("g")
+	                .attr("class", "y grid")
+	                .call(y_grid) ;
+
+	            svg.append("g")
+	                .attr("class", "x axis")
+	                .attr("transform", "translate(0," + innerheight + ")") 
+	                .call(x_axis)
+	                .append("text")
+	                .attr("dy", "-.71em")
+	                .attr("x", innerwidth)
+	                .style("text-anchor", "end")
+	                .text(xlabel) ;
+	            
+	            svg.append("g")
+	                .attr("class", "y axis")
+	                .call(y_axis)
+	                .append("text")
+	                .attr("transform", "rotate(-90)")
+	                .attr("y", 6)
+	                .attr("dy", "0.71em")
+	                .style("text-anchor", "end")
+	                .text(ylabel) ;
+
+	            var data_lines = svg.selectAll(".d3_xy_chart_line")
+	                .data(datasets.map(function(d) {return d3.zip(d.hours, d.month);}))
+	                .enter().append("g")
+	                .attr("class", ".d3_xy_chart_line") ;
+	            
+	            data_lines.append("path")
+	                .attr("class", "line")
+	                .attr("d", function(d) {return draw_line(d); })
+	                .attr("stroke", function(_, i) {return color_scale(i);})
+	                //.style("stroke", function(d) {return color(this.parentNode.__data__.name);}) ;
+	            
+	            data_lines.append("text")
+	                .datum(function(d, i) { return {name: datasets[i].month, final: d[d.length-1]}; }) 
+	                .attr("transform", function(d) { 
+	                    return ( "translate(" + x_scale(d.final[0]) + "," + 
+	                             y_scale(d.final[1]) + ")" ) ; })
+	                .attr("x", 3)
+	                .attr("dy", ".35em")
+	                .attr("fill", function(_, i) { return color_scale(i); })
+	                .text(function(d) { return d.name; }) ;
+
+	        }) ;
+	    }
+
+	    chart.width = function(value) {
+	        if (!arguments.length) return width;
+	        width = value;
+	        return chart;
+	    };
+
+	    chart.height = function(value) {
+	        if (!arguments.length) return height;
+	        height = value;
+	        return chart;
+	    };
+
+	    chart.xlabel = function(value) {
+	        if(!arguments.length) return xlabel ;
+	        xlabel = value ;
+	        return chart ;
+	    } ;
+
+	    chart.ylabel = function(value) {
+	        if(!arguments.length) return ylabel ;
+	        ylabel = value ;
+	        return chart ;
+	    } ;
+
+	    return chart;
+	}
+
+
+}
+
 // inits data & page
 var populatePage = (function(){
 	// variables
 	var content = '';
 	var arr = [];
+
+	var dataJSON = [{
+		"1": {
+			"hours": 4,
+			"month": 1,
+		},
+		"2": {
+			"hours": 6,
+			"month": 2,
+		},
+		"3": {
+			"hours": 3,
+			"month": 3,
+		}
+	}];
+
+	var dataJSON = [ { label: "Data Set 1", 
+       hours: [0, 1, 2], 
+       month: [4, 6, 3] } ] ;
+
+	renderGraph(dataJSON);
 
 	var date = new Date();
 	var year = date.getFullYear();
@@ -169,7 +384,7 @@ var populatePage = (function(){
 
 
 		var i = 0;
-		var time = 25;
+		var time = 5;
 		// approximation of saved emails
 		var counter = data.length * 2.125;
 		function countEmails(){
@@ -177,7 +392,7 @@ var populatePage = (function(){
 				i++;
 				counter--;
 				$('#emailSpared').text(i);
-				time += (i * 0.02);
+				time += (i * 0.002);
 				setTimeout(countEmails, time);
 			}
 		}
@@ -212,8 +427,11 @@ var populatePage = (function(){
 		$.each(arr, function(){
 			// seperates the sorted months
 			if (this.company == 'nextdate') {
+
 				dateCounter++;
-				content += '<div class="line"></div>';
+				content += '<div class="line">';
+				content += intToMonth(dateArr[dateCounter].month);
+				content += '</div>';
 			} else if (this.company == 'nodata'){
 				nodata = true;
 			} else {
@@ -229,11 +447,11 @@ var populatePage = (function(){
 		var cnt = 0;
 		$('.mem').each(function() {
 			var comp = this.getElementsByClassName('comp');
-			var str = $(comp).text();
-			if(str.length - 1 > 16) {
-				var newStr = str.substring(0, 16) + '...';
-				$(comp).text(newStr);
-				$(comp).attr('title', str);
+			var compStr = $(comp).text();
+			if(compStr.length - 1 > 16) {
+				$(comp).attr('title', compStr);
+				var compStr = compStr.substring(0, 16) + '...';
+				$(comp).text(compStr);
 			}
 
 			this.addEventListener('mouseover', function(){
@@ -251,7 +469,7 @@ var populatePage = (function(){
 			var merge = this.getElementsByClassName('mergeBtn');
 			merge[0].addEventListener('click', function(e){
 				e.stopPropagation();
-				mergeToggle(count);
+				mergeToggle(compStr);
 			});
 
 			cnt++;
@@ -507,10 +725,11 @@ function toggleHeight(el) {
 	}
 }
 
-function mergeToggle(num) {
+function mergeToggle(str) {
 	var mems = document.getElementsByClassName('mem');
 	$(mems[num]).css('border-color', 'rgba(255, 153, 51, 1');
-	mergeArr.push(num);
+	// find element with correct company string 
+	mergeArr.push(str);
 
 	if(mergeArr.length == 2) {
 		// deselect if misclick

@@ -74,7 +74,10 @@
 }
 
 
-
+.longErr {
+	max-width: 60%;
+	font-size: 0.5em;
+}
 
 .errorText {
 	float: right;

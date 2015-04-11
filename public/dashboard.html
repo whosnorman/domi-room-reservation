@@ -4,6 +4,7 @@
 	<link rel='stylesheet' href='css/dash.css' />
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,300,800,700' rel='stylesheet' type='text/css'>
 	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 </head>
 <body>
 
@@ -79,10 +80,15 @@
 </div>
 
 <div class="mainContent">
+	<div class="btn" id='loadCal'>
+		Load Snag Calendar
+	</div>
 	<div class="btn" id="reconfig">
 		Re-Configure Members
 	</div>
 	<div style="clear: both"></div>
+	<div id='calendar'>
+	</div>
 </div>
 
 	<script type="text/javascript" src="js/dash.js"></script>

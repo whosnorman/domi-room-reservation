@@ -59,6 +59,8 @@ app.get('/dash', function(req, res) {
   res.sendfile(__dirname + '/public/dashboard.html');
 });
 
+
+// called by dash
 app.get('/mems', function(req, res) {
   // pass async callback
   getCollection('members', function(result){
@@ -66,6 +68,7 @@ app.get('/mems', function(req, res) {
   });
 });
 
+// called by dash
 app.get('/reqs', function(req, res) {
   // pass async callback
   getCollection('requests', function(result){
@@ -73,6 +76,7 @@ app.get('/reqs', function(req, res) {
   });
 });
 
+// merge two members 
 app.post('/merge', function(req, res) {
   mergeMember(req.body['first'], req.body['second'], function(){
     res.send({success: true});
@@ -80,6 +84,8 @@ app.post('/merge', function(req, res) {
   });
 });
 
+// delete request 
+// NOT IMPLEMENTED YET
 app.post('/delreq', function(req, res) {
   // receive request obj in body json
   deleteRequest(req.body, function(){
@@ -88,12 +94,17 @@ app.post('/delreq', function(req, res) {
   });
 });
 
+
+// reconfigure members from Dash
 app.post('/reconfig', function(req, res) {
+  console.log('reconfig!');
   reconfigureMembers(function(){
+    // callback function
     res.send({success: true});
     res.end();
   });
 });
+
 
 // TODO: change keys
 
@@ -102,7 +113,7 @@ var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.co
 // google API service account, calendar has been shared with this email
 var serviceAcc = '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com';
 var oauthClient;
-var MONGOHQ_URL = process.env.MONGOHQ_URL;
+var MONGOHQ_URL = 'mongodb://heroku:thinkfast@dogen.mongohq.com:10042/reservations';//process.env.MONGOHQ_URL;
 
 
 // insert request into a mongodb collection
@@ -338,12 +349,12 @@ function insertMember(mem, callback){
       // check if the event year is already a key
       if(member.years.hasOwnProperty(ev.year)){
         if(ev.year == 2015){
-            
+
         }
         // check if the event month is already a key
         if(member.years[ev.year].hasOwnProperty(ev.month)){
           var hours = member['years'][ev.year][ev.month];
-
+                                                                                                                                                                                                                                                                                                                                                            
           var increment = member['years'];
           increment[ev.year][ev.month] = (ev.duration + hours);
 
@@ -504,7 +515,7 @@ function reconfigureMembers(callback){
           });
         }
 
-        // init call
+        // init loop call
         config();
 
       });
@@ -604,7 +615,11 @@ function reAuthAttempt() {
 }
 
 
+
+
+// 
 app.post('/room', function(req, res) {
+
 	var body = req.body;
 
   console.log(body);
@@ -617,42 +632,92 @@ app.post('/room', function(req, res) {
   var title = body.room + ' - ' + body.company;
   var attendee = body.email;
 
-  gcal.events.insert({
+  var start = new Date(body.start).toISOString();
+  var end = new Date(body.end).toISOString();
+  // console.log('start: ' + start + '   end: ' + end);
+
+  // check for existing events
+  gcal.events.list({
     auth: oauthClient,
     calendarId: calID,
-    resource: {
-      summary: title,
-      description: 'Reservation made by ' + attendee,
-      start: {
-        dateTime: now
-      },
-      end: {
-        dateTime: later
-      },
-      attendees: [{
-        email: attendee
-      }]
-    }
-  }, function(err, event){
-    if (err) {
-      console.log('-- GCAL ERR-- : ' + err);
-      reAuthAttempt();
-      sendErrMail(err, body);
-      res.send(false);
-      return console.log(err);
-    } else {  
-      console.log(event);
-      console.log('attempting to send email');
-      res.send({success: true});
-      res.end();
-      // insert into mongodb collections
-      insertMember(body);
-      body.id = event.id;
-      insertReq(body);
-      // send confirmation email
-      sendEmail(body, event);
-    }
-  }); 
+    'timeMin': start,
+    'timeMax': end
+    }, function(err, response){
+      if(err){
+        console.log('err:' + err);
+        res.send(503, false);
+        res.end();
+      } else {
+        var exists = 'nope';
+
+        if(response.items.length == 0){
+          console.log('NO EVENTS!');
+        } else {
+          console.log(body.room);
+
+          for(var i = 0; i < response.items.length - 1; i++){
+            var evnt = response.items[i];
+
+            if(evnt.summary.search(body.room) != -1){
+              var hostName = evnt.description.substring(19);
+              var lng = body.room.length;
+              var hostName = evnt.summary.substring(lng + 3);
+              console.log('HOST: ' + hostName);
+
+              exists = 'Unfortunately, the ' + body.room + ' has already been snagged by ' + hostName + ' at that time. Check the calendar above for available rooms!';
+
+              break;
+            }         
+          }
+        }
+
+        if(exists != 'nope'){
+          // event already exists
+          res.send(500, {error: exists});
+          res.end();
+        } else {
+          // insert new event
+          gcal.events.insert({
+            auth: oauthClient,
+            calendarId: calID,
+            resource: {
+              summary: title,
+              description: 'Reservation made by ' + attendee,
+              start: {
+                dateTime: now
+              },
+              end: {
+                dateTime: later
+              },
+              attendees: [{
+                email: attendee
+              }]
+            }
+          }, function(err, event){
+            if (err) {
+              console.log('-- GCAL ERR-- : ' + err);
+              reAuthAttempt();  
+              sendErrMail(err, body);
+              res.send(503, false);
+              res.end();
+              return console.log(err);
+            } else {  
+              console.log(event);
+              console.log('attempting to send email');
+              res.send({success: true});
+              res.end();
+
+              // insert into mongodb collections
+              insertMember(body);
+              body.id = event.id;
+              insertReq(body);
+              // send confirmation email
+              sendEmail(body, event);
+            }
+          }); 
+        }
+      }
+  });
 });
 
 var port = Number(process.env.PORT || 5000);
@@ -668,7 +733,7 @@ function sendEmail(user, ev){
   var titleString;
   var signOff;
 
-  var rand = Math.floor((Math.random() * 3) + 1);
+  var rand = Math.floor((Math.random() * 10) + 1);
   var rand2 = Math.floor((Math.random() * 3) + 1);
 
   switch(rand){
@@ -677,6 +742,27 @@ function sendEmail(user, ev){
       break;
     case 2:
       titleString = "Eureka!";
+      break;
+    case 3:
+      titleString = "Voila!";
+      break;
+    case 4:
+      titleString = "Yippee!";
+      break;
+    case 5:
+      titleString = "Huzzah!";
+      break;
+    case 6:
+      titleString = "Bravo!";
+      break;
+    case 7:
+      titleString = "Jeepers!";
+      break;
+    case 8:
+      titleString = "Hurrah!";
+      break;
+    case 9:
+      titleString = "Egad!";
       break;
     default:
       titleString = "Hooray!";
@@ -690,20 +776,51 @@ function sendEmail(user, ev){
     case 2:
       signOff = "The early bird catches the worm!";
       break;
+    case 3:
+      signOff = "Done is better than perfect.";
+      break;
+    case 4:
+      signOff = "Fear is the disease. Hustle is the antidote."
+      break;
+    case 5:
+      signOff = "It\'s not about ideas. It\'s about making ideas happen."
+      break;
     default:
       signOff = "Rise and shine it\'s meeting time!";
       break;
   }
-// <div style='width: 100%; background-image: url('" + domLogo + "'); background-repeat: no-repeat; background-position: fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;'>
+  // <div style='width: 100%; background-image: url('" + domLogo + "'); background-repeat: no-repeat; background-position: fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;'>
+
+
+  var ev = {};
+  var options = {hour: "numeric", minute: "numeric"};
+
+  var evDate = new Date(user.start);
+  ev.month = evDate.getMonth() + 1;
+  ev.day = evDate.getDay();
+  ev.date = evDate.getUTCDate();
+  ev.year = evDate.getUTCFullYear();
+  //var startString = evDate.toLocaleTimeString("en-US", options);
+  var startString = moment(evDate).format('h:mma');
+  //var start = evDate.getUTCHours();
+  evDate = new Date(user.end);
+  //var end = evDate.getUTCHours();
+  //var endString = evDate.toLocaleTimeString("en-US", options);
+  var endString = moment(evDate).format('h:mma');
+
+
+  var startToEnd = startString + " - " + endString;
+
+  var subjectLine = "Room Snagged: " + startString + "-" + endString + " " + ev.month + "/" + ev.date;
 
   var domLogo = "https:\/\/www.dropbox.com\/s\/wweksdd33iruxyp\/Dom_Eyes.png?raw=1";
 
-  var msg = "<body style='color: #303030 !important;'><div><img style='max-width: 30em; max-height: 200px;' src='" + domLogo + "' /></div><h1 style='color: #303030 !important'>" + titleString + " " + user.room + " has been reserved!</h1><br/><div style='color: #303030 !important'>" + link + "<br /><br />Checkout the calendar to make sure all your ducks are in a row! You can email my pal matt@domiventures.co for any problems.<br/><br/>" + signOff + "</div><br/><div style='color: #303030 !important'>-- Dom</div></body>";
+  var msg = "<body style='color: #303030 !important;'><div><img style='max-width: 30em; max-height: 200px;' src='" + domLogo + "' /></div><h1>" + titleString + "</h1><br/><h2>" + user.room + "</h2> has been reserved for<br/><h2>" + startToEnd + "</h2> on <br/><h2>" + intToDay(ev.day) + ", " + intToMonth(ev.month) + " " + ev.date + ", " + ev.year + "</h2><br/><br/><div style='color: #303030 !important'>" + link + "<br /><br />Checkout the calendar to make sure all your ducks are in a row! You can email my pal matt@domiventures.co for any problems.<br/><br/>" + signOff + "</div><br/><div style='color: #303030 !important'>-- Dom</div></body>";
 
   var message = {
       "html": msg,
       "text": null,
-      "subject": "Snag A Room",
+      "subject": subjectLine,
       "from_email": fromEmail,
       "from_name": "Domi Station",
       "to": [{
@@ -791,9 +908,7 @@ function sendEmail(user, ev){
       sendErrMail({name: e.name, message: e.message});
       // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
   });
-
-};
-
+}
 
 
 
@@ -809,7 +924,7 @@ function sendErrMail(err, user){
   var message = {
       "html": msg,
       "text": null,
-      "subject": "Snag A Room",
+      "subject": "Snag A Room ERR",
       "from_email": myEmail,
       "from_name": "Domi Station",
       "to": [{
@@ -906,16 +1021,16 @@ function sendErrMail(err, user){
 
       var fromEmail = "matt@domiventures.co";
 
-  // <div style='width: 100%; background-image: url('" + domLogo + "'); background-repeat: no-repeat; background-position: fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;'>
+      // <div style='width: 100%; background-image: url('" + domLogo + "'); background-repeat: no-repeat; background-position: fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;'>
 
-    var domLogo = "https:\/\/www.dropbox.com\/s\/wweksdd33iruxyp\/Dom_Eyes.png?raw=1";
+      var domLogo = "https:\/\/www.dropbox.com\/s\/wweksdd33iruxyp\/Dom_Eyes.png?raw=1";
 
-    var msg = "<body style='color: #303030 !important;'><div><img style='max-width: 30em; max-height: 200px;' src='" + domLogo + "' /></div><h1 style='color: #303030 !important'>Oops! I knocked over a server rack!</h1><br/><div style='color: #303030 !important'> Unfortunately your room was not reserved. Wait a couple minutes and try again, but if you stil get this email forward it to my buddy matt@domiventures.co<br /><br /><br/><br/>Have a great day!</div><br/><div style='color: #303030 !important'>-- Dom</div></body>";
+      var msg = "<body style='color: #303030 !important;'><div><img style='max-width: 30em; max-height: 200px;' src='" + domLogo + "' /></div><h1 style='color: #303030 !important'>Oops! I knocked over a server rack!</h1><br/><div style='color: #303030 !important'> Unfortunately your room was not reserved. Wait a couple minutes and try again, but if you stil get this email forward it to my buddy matt@domiventures.co<br /><br /><br/><br/>Have a great day!</div><br/><div style='color: #303030 !important'>-- Dom</div></body>";
 
     var message = {
         "html": msg,
         "text": null,
-        "subject": "Snag A Room",
+        "subject": "Snag A Room Error",
         "from_email": fromEmail,
         "from_name": "Domi Station",
         "to": [{
@@ -1004,5 +1119,70 @@ function sendErrMail(err, user){
         // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
     });
   }
+}
 
-};
+// int to month helper function
+function intToMonth(month){
+  switch(month){
+    case 1: return 'Jan';
+      break;
+    case 2: return 'Feb';
+      break;
+    case 3: return 'Mar';
+      break;
+    case 4: return 'Apr';
+      break;
+    case 5: return 'May';
+      break;
+    case 6: return 'Jun';
+      break;
+    case 7: return 'July';
+      break;
+    case 8: return 'Aug';
+      break;
+    case 9: return 'Sept';
+      break;
+    case 10: return 'Oct';
+      break;
+    case 11: return 'Nov';
+      break;
+    case 12: return 'Dec';
+      break;
+    default: return 'NA';
+      break;
+  }
+}
+
+// int to day helper function
+function intToDay(day){
+  switch(day){
+    case 0: return 'Sunday';
+      break;
+    case 1: return 'Monday';
+      break;
+    case 2: return 'Tuesday';
+      break;
+    case 3: return 'Wednesday';
+      break;
+    case 4: return 'Thursday';
+      break;
+    case 5: return 'Friday';
+      break;
+    case 6: return 'Saturday';
+      break;
+    default: return 'NA';
+      break;
+  }
+}
+
+
+
+
+
+
+// Whats left:
+// email time correctness and styling
+// error check the new snag 
+// upload everything
+
+

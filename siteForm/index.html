@@ -216,9 +216,9 @@
 
 				var endTime = endHr + (endMin * 0.01);
 				var startTime = strHr + (strMin * 0.01);
-				console.log(startTime);
-				console.log(endTime);
-				console.log(endTime - startTime);
+				//console.log(startTime);
+				//console.log(endTime);
+				//console.log(endTime - startTime);
 
 				if ((endTime - startTime) > 3) {
 					validateErr('hrs');
@@ -246,9 +246,9 @@
 
 				// create correct start and end Date objects
 				var start = new Date(year, (month - 1), day, strHr, strMin);
-				console.log(start);
+				//console.log(start);
 				var end = new Date(year, (month - 1), day, endHr, endMin);
-				console.log(end);
+				//console.log(end);
 
 				if(validated) {
 					// save local storage only when validated
@@ -257,9 +257,11 @@
 						localStorage.setItem('snagComp', company);
 					}
 
+					// clear error text
 					$('errorText').text('');
 
 					url = "http://domi-room.herokuapp.com/room";
+					url = "http://localhost:5000/room";
 
 					var data = {
 					    "email": email,
@@ -269,6 +271,7 @@
 					    "end": end
 					 };
 
+					// start recursive loader
 					btnLoad();
 
 					// send post request
@@ -279,7 +282,7 @@
 					  contentType: "application/json",
 					  data: JSON.stringify(data),
 					  success: function(result){
-					  	console.log(result);
+					  	//console.log(result);
 					  	var form = $('#nl-form');
 					  	// stop loading animation
 					  	waiting = false;
@@ -299,17 +302,42 @@
 						    	afterTxt.animate({
 						    		opacity: "toggle"
 						    	}, 700, function(){
-						    		console.log('hooray end of animation');
+						    		console.log('end');
 						    	});
 						    });
 						    
 		        		});
 					  },
 					  error: function(xhr, textStatus, errThrown){
-					  	validateErr('post');
-					  	console.log(xhr.responseText);
-					  	console.log(textStatus);
-					  	console.log(errThrown);
+					  	if(xhr.status == 500){
+					  		// room already taken
+
+					  		var response = JSON.parse(xhr.responseText);				  			
+					  		var err = response.error;
+					  		var errTxt = $('.errorText');
+
+
+							errTxt.text(err);
+							errTxt.addClass('longErr');
+							errTxt.addClass('shakeText');
+						
+							errTxt.one('webkitAnimationEnd oanimationend msAnimationEnd animationend',   
+							    function(e) {
+							    	errTxt.removeClass('shakeText');
+
+							});
+
+							// reset page 
+							$('#load').attr('stop', 'yeah');
+							validated = false;
+							btnClicked = false;
+
+					  	} else if(xhr.status == 503){
+					  		// failed to send email or other error
+					  		validateErr('post');
+					  	} else {
+					  		validateErr('post');
+					  	}
 					  }
 					});
 
@@ -324,38 +352,41 @@
 			function btnLoad(){
 				var loader = $('#load');
 				var curr = loader.attr('class');
+				// checks if it should keep calling btnLoad
+				var stop = loader.attr('stop') == 'yeah' ? true : false;
 
 				//console.log(curr);
 				
 				if(waiting){
 					if(curr == 'loader fadeRight'){
 						loader.removeClass('fadeRight');
-						loader.addClass('fadeLeft');
+							loader.addClass('fadeLeft');
 
-						loader.one('webkitAnimationEnd oanimationend msAnimationEnd animationend',   
-						    function(e) {
-						    	btnLoad();
-						    	//setTimeout(btnLoad, 250);
-						});
+							loader.one('webkitAnimationEnd oanimationend msAnimationEnd animationend',   
+							    function(e) {
+							    		btnLoad();
+							    	//setTimeout(btnLoad, 250);
+							});
 					} else if (curr == 'loader fadeLeft'){
 						loader.removeClass('fadeLeft');
-						loader.addClass('fadeRight');
+						// stopping point for loader to not repeat
+						if(!stop){
+							loader.addClass('fadeRight');
 
-						loader.one('webkitAnimationEnd oanimationend msAnimationEnd animationend',   
-						    function(e) {
-						    	btnLoad();
-						});
+							loader.one('webkitAnimationEnd oanimationend msAnimationEnd animationend',   
+							    function(e) {
+							    		btnLoad();
+							});
+						}
 					} else if (curr == 'loader'){
 						loader.addClass('fadeRight');
 
 						loader.one('webkitAnimationEnd oanimationend msAnimationEnd animationend',   
 						    function(e) {
-						    	btnLoad();
+						    		btnLoad();
 						});
 					}
 				}
-
-
 
 			}
 
@@ -408,6 +439,7 @@
 
 			function validateErr(err) {
 				var errTxt = $('.errorText');
+				errTxt.removeClass('longErr');
 
 				switch(err){
 					case 'day': 
