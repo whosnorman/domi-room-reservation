@@ -114,7 +114,7 @@ var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.co
 // google API service account, calendar has been shared with this email
 var serviceAcc = '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com';
 var oauthClient;
-var MONGOHQ_URL = 'mongodb://heroku:thinkfast@dogen.mongohq.com:10042/reservations';//process.env.MONGOHQ_URL;
+var MONGOHQ_URL = process.env.MONGOHQ_URL;
 
 
 // insert request into a mongodb collection
