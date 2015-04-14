@@ -20,6 +20,7 @@ app.use(allowCrossDomain);
 
 var http = require('http');
 var server = http.Server(app);
+
 var request = require('request');
 var logfmt = require("logfmt");
 var bodyParser = require('body-parser');
@@ -801,12 +802,12 @@ function sendEmail(user, ev){
   ev.date = evDate.getUTCDate();
   ev.year = evDate.getUTCFullYear();
   //var startString = evDate.toLocaleTimeString("en-US", options);
-  var startString = moment(evDate).format('h:mma');
+  var startString = moment(evDate).zone("-04:00").format('h:mma');
   //var start = evDate.getUTCHours();
   evDate = new Date(user.end);
   //var end = evDate.getUTCHours();
   //var endString = evDate.toLocaleTimeString("en-US", options);
-  var endString = moment(evDate).format('h:mma');
+  var endString = moment(evDate).zone("-04:00").format('h:mma');
 
 
   var startToEnd = startString + " - " + endString;
@@ -1175,14 +1176,5 @@ function intToDay(day){
   }
 }
 
-
-
-
-
-
-// Whats left:
-// email time correctness and styling
-// error check the new snag 
-// upload everything
 
 
