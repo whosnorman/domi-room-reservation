@@ -5,8 +5,6 @@ var bodyParser = require('body-parser');
 var moment = require('moment');
 var googleapis = require('googleapis');
 var GoogleToken = require('gapitoken');
-var OAuth2 = googleapis.auth.OAuth2;
-var gcal = googleapis.calendar('v3');
 
 var mandrill = require('mandrill-api/mandrill');
 var mongodb = require('mongodb');
@@ -38,8 +36,14 @@ module.exports = function(app){
 	// run through controllers and require all
 	autoload('app/controllers', app);
  
-	// create mandrill client WAS mandrillClient
+	// create mandrill client THIS WAS mandrillClient
 	app.mandrill = new mandrill.Mandrill('x6BKz6My1EWINC6ppAeIMg');
+	app.mongodb = mongodb;
+
+	app.GoogleToken = GoogleToken;
+	app.googleapis = googleapis;
+
+	app.moment = moment;
 
 
 	// logger
