@@ -1,0 +1,96 @@
+<html>
+<head>
+    <link rel="stylesheet" href="css/fontello.css">
+	<link rel='stylesheet' href='css/dash.css' />
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,300,800,700' rel='stylesheet' type='text/css'>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body>
+
+<!-- <div class="bgBlur"></div>-->
+<div class="mainContent">
+	<div class="header">
+		<div class="inner">
+			<h1>Dash</h1>
+			<div class="btn" id="refresh">Refresh</div>
+			<div class="explain" id="explain">based on a <span>2.125</span> emails per request ratio</div>
+			<h3 id="approx">approximately <span id="emailSpared">0</span> emails spared</h3>
+		</div>
+		<div class="overlay"></div>
+
+	</div>
+
+
+	<div class="bar">
+		<!-- <div class="minus" id="minusMem">~</div> -->
+		<h2 class="memTot"><span id="memTot">0</span> members</h2>
+		<div class="sorter">
+			<div class="icon-left-dir"></div>
+			<div id="sorterMonth"></div>
+			<div class="icon-right-dir"></div>
+			<div id="sorterYear"></div>
+			<div style="clear: both"></div>
+		</div>
+		<div class="searchBar">
+			<input id="search"></input>
+			<div class="icon-search"></div>
+		</div>
+	</div>
+
+	<div class="members" id="members">
+		<div class='mem'>
+			<div class='comp'>Company</div>
+			<div class='months'>
+				<div class='monthAmt'>12</div>
+				<div class='month'>jan</div>
+			</div>
+			<div class='emails'></div>
+			<div class='mergeBtn'>merge</div>
+		</div>
+	</div>
+
+	<div class="requestsCont">
+		<table id="reqHead">
+			<thead>
+				<tr>
+					<th>Company</th>
+					<th>Email</th>
+					<th>Room</th>
+					<th>Date</th>
+					<th>Start</th>
+					<th>End</th>
+					<th>Duration</th>
+				</tr>
+			</thead>
+		</table>
+
+		<div class="reqs">
+			<table id="main">
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		<div id="totReqs">
+		</div>
+	</div>
+
+	<div class="spacer">
+	</div>
+</div>
+
+<div class="mainContent">
+	<div class="btn" id='loadCal'>
+		Load Snag Calendar
+	</div>
+	<div class="btn" id="reconfig">
+		Re-Configure Members
+	</div>
+	<div style="clear: both"></div>
+	<div id='calendar'>
+	</div>
+</div>
+
+	<script type="text/javascript" src="js/dash.js"></script>
+</body>
+</html>
