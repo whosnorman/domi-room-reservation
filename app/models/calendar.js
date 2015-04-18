@@ -122,14 +122,14 @@ function auth() {
   }, function (err) {
       if (err) {
           console.log('--TOKEN ERR--:\n' + err);
-          sendErrMail(err);
+          app.snagController.errorEmail(err);
           return console.log(err);
       }
 
       token.getToken(function (err, tokenn) {
           if (err) {
               console.log('-- TOKEN ERR --: \n' + err);
-              sendErrMail(err);
+              app.snagController.errorEmail(err);
               return console.log(err);
           }
           else {

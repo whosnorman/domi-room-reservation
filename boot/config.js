@@ -36,13 +36,12 @@ module.exports = function(app){
 	// run through controllers and require all
 	autoload('app/controllers', app);
  
-	// create mandrill client THIS WAS mandrillClient
+	// create mandrill client 
+	// USED TO BE mandrillClient
 	app.mandrill = new mandrill.Mandrill('x6BKz6My1EWINC6ppAeIMg');
 	app.mongodb = mongodb;
-
 	app.GoogleToken = GoogleToken;
 	app.googleapis = googleapis;
-
 	app.moment = moment;
 
 
