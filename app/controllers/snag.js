@@ -19,7 +19,7 @@ module.exports = function(app){
 		  	  insertReq(body);
 
 		  	  // send user success email
-		  	  successEmail(body, event);
+		  	  successEmail(body, event);	
 
               res.send({success: true});
               res.end();

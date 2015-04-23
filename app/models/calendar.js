@@ -1,16 +1,14 @@
 // model for gcal interactions
 
-// public calendar ID
-var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.com';
-// google API service account, calendar has been shared with this email
-var serviceAcc = '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com';
 var oauthClient;
 var token;
-
-var OAuth2 = app.googleapis.auth.OAuth2;
-var gcal = app.googleapis.calendar('v3');
+var OAuth2;
+var gcal;
 
 module.exports = function(app) {
+  OAuth2 = app.googleapis.auth.OAuth2;
+  gcal = app.googleapis.calendar('v3');
+
 	return app.models.calendar = (function() {
 		// constructor
 		function calendar() {
@@ -36,7 +34,7 @@ function checkEvents(body, callback){
 	// check for existing events
   	app.gcal.events.list({
 	    auth: oauthClient,
-	    calendarId: calID,
+	    calendarId: app.env.CALID,
 	    'timeMin': start,
 	    'timeMax': end
 	}, function(err, response){
@@ -84,7 +82,7 @@ function addEvent(body, callback){
 	// insert new event
     app.gcal.events.insert({
         auth: oauthClient,
-        calendarId: calID,
+        calendarId: app.env.CALID,
         resource: {
           summary: title,
           description: 'Reservation made by ' + attendee,
@@ -116,7 +114,7 @@ function addEvent(body, callback){
 // authenticate with gcal services
 function auth() {
   token = new app.GoogleToken({
-      iss: serviceAcc,
+      iss: app.env.SERVICEACC,
       scope: 'https://www.googleapis.com/auth/calendar',
       keyFile: '../../key.pem'
   }, function (err) {

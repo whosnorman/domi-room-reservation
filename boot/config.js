@@ -12,6 +12,7 @@ var MongoClient = mongodb.MongoClient;
 var ObjectID = mongodb.ObjectID;
 
 var autoload = require('../lib/autoload');
+var dotenv = require('dotenv');
 
 module.exports = function(app){
 	// set headers
@@ -33,17 +34,24 @@ module.exports = function(app){
 
 	app.helpers = require(__dirname + '/../app/helpers');
 
-	// run through controllers and require all
-	autoload('app/controllers', app);
+
+	// loads .env into process.env
+	dotenv.load();
+	app.env = process.env;
  
 	// create mandrill client 
 	// USED TO BE mandrillClient
-	app.mandrill = new mandrill.Mandrill('x6BKz6My1EWINC6ppAeIMg');
+	app.mandrill = new mandrill.Mandrill(app.env.MANDRILL);
 	app.mongodb = mongodb;
 	app.GoogleToken = GoogleToken;
 	app.googleapis = googleapis;
 	app.moment = moment;
 
+	// run through controllers and require all
+	autoload('app/controllers', app);
+
+	app.models = {};
+	autoload('app/models', app);
 
 	// logger
 	app.use(logfmt.requestLogger());
@@ -54,11 +62,11 @@ module.exports = function(app){
 	  extended: true
 	}));
 
-	app.use("/public", express.static(__dirname + '/public'));
-	app.use("/js", express.static(__dirname + '/public/js'));
-	app.use("/css", express.static(__dirname + '/public/css'));
-	app.use("/img", express.static(__dirname + '/public/img'));
-	app.use("/font", express.static(__dirname + '/public/font'));
+	app.use("/public", express.static(__dirname + '../public'));
+	app.use("/js", express.static(__dirname + '../public/js'));
+	app.use("/css", express.static(__dirname + '../public/css'));
+	app.use("/img", express.static(__dirname + '../public/img'));
+	app.use("/font", express.static(__dirname + '../public/font'));
 
 
 
