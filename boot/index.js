@@ -4,6 +4,8 @@ var app = express();
 var http = require('http');
 var server = http.Server(app);
 
+app.express = express;
+
 // configure app
 require('./config')(app);
 

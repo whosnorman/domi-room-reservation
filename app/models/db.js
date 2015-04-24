@@ -6,11 +6,11 @@ var ObjectID;
 module.exports = function(app) {
 
 	return app.models.db = (function() {
-		// constructor
-		function db() {
-			MongoClient = app.mongodb.MongoClient;
-			ObjectID = app.mongodb.ObjectID;
-		}
+		
+		function db() {}
+
+		MongoClient = app.mongodb.MongoClient;
+		ObjectID = app.mongodb.ObjectID;
 
 
 		// REQUESTS
@@ -20,12 +20,12 @@ module.exports = function(app) {
 
 			MongoClient.connect(app.env.MONGOHQ_URL, function(err, mdb){
 				if(err){
-				  return console.error(err);
+				  callback.error(err);
 				}
 
 				var collection = mdb.collection('requests');
 
-				console.log('about to add new doc');
+				//console.log('about to add new doc');
 
 				var doc = {
 				  'email': r.email,
@@ -38,10 +38,10 @@ module.exports = function(app) {
 
 				collection.insert([doc], function(err, docs) {
 				  if (err) {
-				    return console.error(err);
+				    callback.error(err);
 				  }
 				  
-				  console.log('added new req');
+				  //console.log('added new req');
 				});
 			});
 		};
@@ -58,91 +58,91 @@ module.exports = function(app) {
 		db.mergeMember = function(one, two, callback) {
 			MongoClient.connect(app.env.MONGOHQ_URL, function(err, mdb){
 				if(err){
-				  return console.error(err);
+				  callback.error(err);
+				} else {
+					var collection = mdb.collection('members');
+
+					findMember(one, function(first){
+					  findMember(two, function(second){
+
+					    // combine email arrays
+					    collection.update(
+					      {_id: ObjectID(second._id)}, 
+					      {$addToSet: {users: {$each: first.users}}},
+					      function(err, count, status){
+					        if(err)
+					          callback.error(err);
+					      }
+					    );
+
+					    // add company name to aliases
+					    collection.update(
+					      {_id: ObjectID(second._id)}, 
+					      {$addToSet: {aliases: first.company}},
+					      function(err, count, status){
+					        if(err)
+					          callback.error(err);
+					      }
+					    );
+
+					    // add aliases to aliases
+					    collection.update(
+					      {_id: ObjectID(second._id)}, 
+					      {$addToSet: {aliases: {$each: first.aliases}}},
+					      function(err, count, status){
+					        if(err)
+					          callback.error(err);
+					      }
+					    );
+
+					    // update hours in json format
+					    // loop through years in first
+					    for (var year in first.years){
+					      // if that year is already in second
+					      if(second.years.hasOwnProperty(year)){
+					        // loop through months in the year in first
+					        for (var month in first.years[year]){
+					          // if that month and year are already in second
+					          if(second.years[year].hasOwnProperty(month)){
+					            second.years[year][month] += first.years[year][month];
+					          } else {
+					            // month not already in second
+					            second.years[year][month] = first.years[year][month];
+					          }
+					        }
+					      } else {
+					        // year not already in second
+					        second.years[year] = {};
+					        for (var month in first.years[year]){
+					          if(first.years[year].hasOwnProperty(month)){
+					            second.years[year][month] = first.years[year][month];
+					          }
+					        }
+					      }
+					    }
+
+					    // remove first member doc
+					    collection.remove({_id: ObjectID(first._id)});
+
+					    collection.update(
+					      {_id: ObjectID(second._id)}, 
+					      {$set: {years: second.years}},
+					      function(err, count, status){
+					        if(err)
+					          callback.error(err);
+
+					        // callback to original post request
+					        callback.success();
+					      }
+					    );
+					  });
+					});
 				}
-
-				var collection = mdb.collection('members');
-
-				findMember(one, function(first){
-				  findMember(two, function(second){
-
-				    // combine email arrays
-				    collection.update(
-				      {_id: ObjectID(second._id)}, 
-				      {$addToSet: {users: {$each: first.users}}},
-				      function(err, count, status){
-				        if(err)
-				          console.error(err);
-				      }
-				    );
-
-				    // add company name to aliases
-				    collection.update(
-				      {_id: ObjectID(second._id)}, 
-				      {$addToSet: {aliases: first.company}},
-				      function(err, count, status){
-				        if(err)
-				          console.error(err);
-				      }
-				    );
-
-				    // add aliases to aliases
-				    collection.update(
-				      {_id: ObjectID(second._id)}, 
-				      {$addToSet: {aliases: {$each: first.aliases}}},
-				      function(err, count, status){
-				        if(err)
-				          console.error(err);
-				      }
-				    );
-
-				    // update hours in json format
-				    // loop through years in first
-				    for (var year in first.years){
-				      // if that year is already in second
-				      if(second.years.hasOwnProperty(year)){
-				        // loop through months in the year in first
-				        for (var month in first.years[year]){
-				          // if that month and year are already in second
-				          if(second.years[year].hasOwnProperty(month)){
-				            second.years[year][month] += first.years[year][month];
-				          } else {
-				            // month not already in second
-				            second.years[year][month] = first.years[year][month];
-				          }
-				        }
-				      } else {
-				        // year not already in second
-				        second.years[year] = {};
-				        for (var month in first.years[year]){
-				          if(first.years[year].hasOwnProperty(month)){
-				            second.years[year][month] = first.years[year][month];
-				          }
-				        }
-				      }
-				    }
-
-				    // remove first member doc
-				    collection.remove({_id: ObjectID(first._id)});
-
-				    collection.update(
-				      {_id: ObjectID(second._id)}, 
-				      {$set: {years: second.years}},
-				      function(err, count, status){
-				        if(err)
-				          console.error(err);
-
-				        // callback to original post request
-				        callback();
-				      }
-				    );
-				  });
-				});
 
 				function findMember(id, returnMem){
 				  collection.find({_id: ObjectID(id)}).toArray(function(err, members){
 				    if(err)
-				      console.error(err);
+				      callback.error(err);
 
 				    returnMem(members[0]);
 				  });
@@ -156,7 +156,7 @@ module.exports = function(app) {
 			// connect to database
 			MongoClient.connect(app.env.MONGOHQ_URL, function(err, mdb){
 				if(err){
-				  return console.error(err);
+				  return callback.error(err);
 				}
 
 				var collection = mdb.collection('members');
@@ -167,23 +167,23 @@ module.exports = function(app) {
 				// look through all companies
 				collection.find({company: mem.company}).toArray(function (err, members){
 				  if (err)
-				    console.error(err);
+				    return callback.error(err);
 
 				  // no company matches
 				  if(members[0] == null){
-				    console.log("no member found for " + mem.company);
+				    //console.log("no member found for " + mem.company);
 				    //console.log(members);
 				    // look through all aliases
 				    collection.find({aliases: mem.company}).toArray(function(err, members){
 				      if (err) 
-				        console.error(err);
+				        return callback.error(err);
 
 				      // no alias matches
 				      if (members[0] == null){
 				        // look through all users
 				        collection.find({users: mem.email}).toArray(function(err, members){
 				          if(err)
-				            console.error(err);
+				            return callback.error(err);
 
 				          // no user matches
 				          if (members[0] == null){
@@ -219,7 +219,7 @@ module.exports = function(app) {
 				    {$addToSet: {users: mem.email}},
 				    function(err, count, status){
 				      if(err)
-				        console.error(err);
+				        callback.error(err);
 				    }
 				  );
 				}
@@ -230,7 +230,7 @@ module.exports = function(app) {
 				    {$addToSet: {aliases: mem.company}},
 				    function(err, count, status){
 				      if(err)
-				        console.error(err);
+				        callback.error(err);
 				    }
 				  );
 				}
@@ -238,13 +238,13 @@ module.exports = function(app) {
 				function updateHours(member){
 				  //console.log(member.years);
 
-				  if(ev.year == 2015){
+				  /*if(ev.year == 2015){
 				      console.log('//--//');
 				      console.log(ev.month);
 				      console.log(member.company);
 				      console.log(member.years);
 				      console.log('//--//');
-				    }
+				    }*/
 
 				  // check if the event year is already a key
 				  if(member.years.hasOwnProperty(ev.year)){
@@ -272,10 +272,10 @@ module.exports = function(app) {
 				        {$set: {years: increment}},
 				        function(err, count, status){
 				          if(err)
-				            console.error(err);
+				            callback.error(err);
 
 				          if(callback){
-				            callback();
+				            callback.success();
 				          }
 				        }
 				      );
@@ -290,10 +290,10 @@ module.exports = function(app) {
 				        {$set: {years: newYears}},
 				        function(err, count, status){
 				          if(err)
-				            console.error(err);
+				            callback.error(err);
 
 				          if(callback){
-				            callback();
+				            callback.success();
 				          }
 				        }
 				      );
@@ -302,32 +302,32 @@ module.exports = function(app) {
 				    // create new year object
 				    var newYears = member['years'];
 
-				    if(ev.year == 2015){
+				    /*if(ev.year == 2015){
 				      console.log('//// new 2015 ////');
 				      console.log(ev.month + ' | ' + ev.duration);
 				      console.log(newYears);
 				      console.log(member.years);
-				    }
+				    } */
 
 				    newYears[ev.year] = {};
 				    newYears[ev.year][ev.month] = ev.duration;
 
-				    if(ev.year == 2015){
+				    /*if(ev.year == 2015){
 				      console.log('---');
 				      console.log(newYears);
 				      console.log(member.years);
 				      console.log('////////////');
-				    }
+				    } */
 
 				    collection.update(
 				      {company: member.compay},
 				      {$set: {years: newYears}},
 				      function(err, count, status){
 				        if(err)
-				          console.error(err);
+				          callback.error(err);
 
 				        if(callback){
-				          callback();
+				          callback.success();
 				        }
 				      }
 				    );
@@ -351,13 +351,13 @@ module.exports = function(app) {
 				  // insert new member 
 				  collection.insert(newMem, function(err, docs) {
 				    if (err) {
-				      return console.error(err);
+				      return callback.error(err);
 				    }
 				    // for reconfigureMembers
 				    if(callback){
-				      callback();
+				      callback.success();
 				    }
-				    console.log('added new member ' + mem.company);
+				    //console.log('added new member ' + mem.company);
 				  });
 				}
 
@@ -388,8 +388,9 @@ module.exports = function(app) {
 		db.reconfigureMembers = function(callback) {
 			MongoClient.connect(app.env.MONGOHQ_URL, function(err, mdb){
 			    if(err){
-			      return console.error(err);
+			      callback.error(err);
 			    }
+
 			    var coll = mdb.collection('members');
 
 			    coll.remove(function(err, numRemoved){
@@ -397,7 +398,7 @@ module.exports = function(app) {
 
 			      collection.find({}).toArray(function (err, items){
 			        if (err) {
-			          return console.error(err);
+			          callback.error(err);
 			        }
 			        
 			        var i = 0;
@@ -410,7 +411,7 @@ module.exports = function(app) {
 			            }
 			            else{
 			              console.log('-- DONE WITH LOOP --');
-			              callback();
+			              callback.success();
 			            }
 			          });
 			        }
@@ -426,21 +427,20 @@ module.exports = function(app) {
 
 		// COLLECTIONS
 		// look up all docs in the requests collection
-		db.getCollection = function(request, callback) {
+		db.getCollection = function(coll, callback) {
 			MongoClient.connect(app.env.MONGOHQ_URL, function(err, mdb){
 			    if(err){
-			      return console.error(err);
-			    }
+			    	callback.error(err);
+			    } else {
+					var collection = mdb.collection(coll);
 
-			    var collection = mdb.collection(coll);
-
-			    collection.find({}).toArray(function (err, items){
-			      if (err) {
-			        return console.error(err);
-			      }
-			     
-			      callback(items);
-			    });
+					collection.find({}).toArray(function (err, items){
+					  if (err)
+					    callback.error(err);
+					  else
+						callback.success(items);					 
+					});
+				}
 			});
 		};
 

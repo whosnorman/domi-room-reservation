@@ -15,6 +15,11 @@ var autoload = require('../lib/autoload');
 var dotenv = require('dotenv');
 
 module.exports = function(app){
+
+	// used for FROM field and to send errors to
+	app.adminEmail = "matt@domiventures.co";
+
+	
 	// set headers
 	var allowCrossDomain = function(req, res, next) {
 	    res.header('Access-Control-Allow-Origin', '*');
@@ -31,6 +36,23 @@ module.exports = function(app){
 	};
 
 	app.use(allowCrossDomain);
+
+	// logger
+	app.use(logfmt.requestLogger());
+
+	// for routing and rendering
+	app.use(bodyParser.json());
+	app.use(bodyParser.urlencoded({
+	  extended: true
+	}));
+
+	app.use("/public", app.express.static(__dirname + '/../public'));
+	app.use("/js", app.express.static(__dirname + '/../public/js'));
+	app.use("/css", app.express.static(__dirname + '/../public/css'));
+	app.use("/img", app.express.static(__dirname + '/../public/img'));
+	app.use("/font", app.express.static(__dirname + '/../public/font'));
+	app.use("/views", app.express.static(__dirname + '/../app/views'));
+
 
 	app.helpers = require(__dirname + '/../app/helpers');
 
@@ -53,20 +75,7 @@ module.exports = function(app){
 	app.models = {};
 	autoload('app/models', app);
 
-	// logger
-	app.use(logfmt.requestLogger());
-
-	// for routing and rendering
-	app.use(bodyParser.json());
-	app.use(bodyParser.urlencoded({
-	  extended: true
-	}));
-
-	app.use("/public", express.static(__dirname + '../public'));
-	app.use("/js", express.static(__dirname + '../public/js'));
-	app.use("/css", express.static(__dirname + '../public/css'));
-	app.use("/img", express.static(__dirname + '../public/img'));
-	app.use("/font", express.static(__dirname + '../public/font'));
+	
 
 
 

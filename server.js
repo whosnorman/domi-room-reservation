@@ -1,1 +1,1 @@
-require(./boot);
+require('./boot');

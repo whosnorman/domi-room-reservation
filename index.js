@@ -1,3 +1,15 @@
+/*
+
+
+      Here lies Snag's previous server, 
+        put out of commission on 4/24/15.
+
+      You served us well.
+
+      RIP
+
+
+ */
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -32,7 +44,7 @@ var OAuth2 = googleapis.auth.OAuth2;
 var gcal = googleapis.calendar('v3');
 
 var mandrill = require('mandrill-api/mandrill');
-var mandrillClient = new mandrill.Mandrill('x6BKz6My1EWINC6ppAeIMg');
+var mandrillClient = new mandrill.Mandrill('REMOVED');
 
 var mongodb = require('mongodb');
 var MongoClient = mongodb.MongoClient;
@@ -110,11 +122,11 @@ app.post('/reconfig', function(req, res) {
 // TODO: change keys
 
 // public calendar ID
-var calID = 'domiventures.co_e1eknta8nrohjg1lhrqmntrla4@group.calendar.google.com';
+var calID = 'REMOVED';
 // google API service account, calendar has been shared with this email
-var serviceAcc = '129929270786-v8e3h1rkota9bskfk0a3e4gidobc2pn7@developer.gserviceaccount.com';
+var serviceAcc = 'REMOVED';
 var oauthClient;
-var MONGOHQ_URL = "mongodb://heroku:thinkfast@dogen.mongohq.com:10042/reservations";//process.env.MONGOHQ_URL;
+var MONGOHQ_URL = "REMOVED";//process.env.MONGOHQ_URL;
 
 
 // insert request into a mongodb collection

@@ -2,11 +2,10 @@
 
 module.exports = function(app) {
 	return app.models.email = (function() {
-		// constructor
 		function email() {}
 
-		email.snagSuccess = function(msg, subject, user) {
-			var fromEmail = "matt@domiventures.co";
+		email.snagSuccess = function(msg, user, subject) {
+			var fromEmail = app.adminEmail;
 
 			var message = {
 				"html": msg,
@@ -98,7 +97,7 @@ module.exports = function(app) {
 				console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
 				// A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
 				
-				snagError({name: e.name, message: e.message}, user);
+				email.snagError({name: e.name, message: e.message}, user);
 			});
 		};
 
@@ -106,8 +105,8 @@ module.exports = function(app) {
 			console.log('--ERROR BELOW--');
 			console.log(err);
 
-			var fromEmail = "matt@domiventures.co";
-			var now = moment().format();
+			var fromEmail = app.adminEmail;
+			var now = app.moment().format();
 			var msg = "<body style='color: #303030 !important;'><h1>There was an error!</h1><br /><p>" + err + "</p><br /><p>" + now + "</p></body>";
 
 			var message = {

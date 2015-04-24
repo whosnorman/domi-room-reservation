@@ -4,20 +4,23 @@ var oauthClient;
 var token;
 var OAuth2;
 var gcal;
+var app;
 
-module.exports = function(app) {
+module.exports = function(ap) {
+  app = ap;
   OAuth2 = app.googleapis.auth.OAuth2;
   gcal = app.googleapis.calendar('v3');
 
 	return app.models.calendar = (function() {
-		// constructor
-		function calendar() {
-			auth();
-		}
+		function calendar() {}
+
+    auth();
 
 		calendar.add = function(body, callback) {
-			if(checkEvents(body, callback))
-				addEvent(body, callback);
+      checkEvents(body, callback, function(check){
+        if(check)
+          addEvent(body, callback);
+      });
 		};
 
 		return calendar;
@@ -26,13 +29,13 @@ module.exports = function(app) {
 
 // check google calendar for existing 
 // reservation in the same room
-function checkEvents(body, callback){
+function checkEvents(body, callback, whenDone){
 	var resp = true;
 	var start = new Date(body.start).toISOString();
-		var end = new Date(body.end).toISOString();
+	var end = new Date(body.end).toISOString();
 	
 	// check for existing events
-  	app.gcal.events.list({
+  gcal.events.list({
 	    auth: oauthClient,
 	    calendarId: app.env.CALID,
 	    'timeMin': start,
@@ -57,30 +60,31 @@ function checkEvents(body, callback){
 
               var message = 'Unfortunately, the ' + body.room + ' has already been snagged by ' + hostName + ' at that time. Check the calendar above for available rooms!';
 
-              callback.exists(message);
               resp = false;
 
+              callback.exists(message);
+              
               break;
             }         
           }
         }
       }
-    });
-	
-	return(resp);
+
+      whenDone(resp);
+  });
 }
 
 // add event to google calendar
 function addEvent(body, callback){
 	// create correct times
-    var now = app.moment(body.start);
+  var now = app.moment(body.start);
 	var later = app.moment(body.end);
 
 	var title = body.room + ' - ' + body.company;
 	var attendee = body.email;
 
 	// insert new event
-    app.gcal.events.insert({
+    gcal.events.insert({
         auth: oauthClient,
         calendarId: app.env.CALID,
         resource: {
@@ -116,7 +120,7 @@ function auth() {
   token = new app.GoogleToken({
       iss: app.env.SERVICEACC,
       scope: 'https://www.googleapis.com/auth/calendar',
-      keyFile: '../../key.pem'
+      keyFile: 'key.pem'
   }, function (err) {
       if (err) {
           console.log('--TOKEN ERR--:\n' + err);
@@ -126,7 +130,7 @@ function auth() {
 
       token.getToken(function (err, tokenn) {
           if (err) {
-              console.log('-- TOKEN ERR --: \n' + err);
+              console.log('-- TOKEN ERR --:\n' + err);
               app.snagController.errorEmail(err);
               return console.log(err);
           }
@@ -135,7 +139,7 @@ function auth() {
             oauthClient = new OAuth2('', '', '', {}, {});
             oauthClient.setCredentials({token_type: 'Bearer', access_token: tokenn});
 
-            console.log('credentials loaded');
+            console.log('Credentials Loaded');
           }
       });
   });

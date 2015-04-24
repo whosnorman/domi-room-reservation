@@ -15,14 +15,28 @@ module.exports = function(app){
 		  	  body.id = event.id;
 
 		  	  // insert into database
-		  	  insertMember(body);
-		  	  insertReq(body);
+		  	  app.models.db.insertMember(body, {
+			  	success: function(){
+			  		res.send({success: true});
+              		res.end();
+			  	},
+			  	error: function(err){
+			  		console.log('-- INSERT REQ ERR --');
+			  		console.log(err);
+			  	}			  	
+			  });
+
+		  	  // insert request into mongo
+		  	  app.models.db.insertRequest(body, {
+			  	error: function(err){
+			  		console.log('-- INSERT REQ ERR --');
+			  		console.log(err);
+			  	}
+			  });
 
 		  	  // send user success email
-		  	  successEmail(body, event);	
-
-              res.send({success: true});
-              res.end();
+		  	  snagController.successEmail(body, event);	
+              
 		  	},
 		  	exists: function(msg){
 		  	  // event already exists
@@ -32,7 +46,7 @@ module.exports = function(app){
 		  	error: function(err){
 			  console.log(err);
 		  	  // send user and admin error emails
-              errorEmail(err, body);
+              snagController.errorEmail(err, body);
 
               res.send(503, false);
               res.end();
@@ -115,12 +129,12 @@ module.exports = function(app){
 			ev.date = evDate.getUTCDate();
 			ev.year = evDate.getUTCFullYear();
 			//var startString = evDate.toLocaleTimeString("en-US", options);
-			var startString = moment(evDate).zone("-04:00").format('h:mma');
+			var startString = app.moment(evDate).zone("-04:00").format('h:mma');
 			//var start = evDate.getUTCHours();
 			evDate = new Date(user.end);
 			//var end = evDate.getUTCHours();
 			//var endString = evDate.toLocaleTimeString("en-US", options);
-			var endString = moment(evDate).zone("-04:00").format('h:mma');
+			var endString = app.moment(evDate).zone("-04:00").format('h:mma');
 
 			var startToEnd = startString + " - " + endString;
 
