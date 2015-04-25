@@ -19,7 +19,7 @@ module.exports = function(app){
 	// used for FROM field and to send errors to
 	app.adminEmail = "matt@domiventures.co";
 
-	
+
 	// set headers
 	var allowCrossDomain = function(req, res, next) {
 	    res.header('Access-Control-Allow-Origin', '*');
