@@ -9,9 +9,9 @@ Used at www.domistation.co/reservations
 1. Login to Squarespace
 2. Edit the Reservations Page Content
 3. Edit Code Block
-4. Replace everything in the '''<body></body>''' tag
+4. Replace everything in the ```<body></body>``` tag
 
 
-Natural Language Form tweaked from http://www.codrops.com
+Natural Language Form tweaked from [Codrops Demo](http://tympanus.net/codrops/2013/05/21/natural-language-form-with-custom-input-elements/)
 
 To upload new css styles to Squarespace use this technique: http://answers.squarespace.com/questions/2080/where-do-i-upload-javascript-files
