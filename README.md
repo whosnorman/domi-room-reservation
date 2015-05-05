@@ -54,12 +54,13 @@ Automated room reservation for Domi Station's members. Built and maintained duri
 	- form for squarespace site
 
 
-#### Prerequisites
+### Setup
+
+##### Prerequisites
 1. node.js installed
 2. npm installed
 3. `.env` file is needed to connect to various services (Mandrill, GCal, etc.)
 
-#### Setup
 After forking this repo run the following
 `$ npm install`
 `$ npm update`
