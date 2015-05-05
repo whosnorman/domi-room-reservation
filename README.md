@@ -54,19 +54,23 @@ Automated room reservation for Domi Station's members. Built and maintained duri
 	- form for squarespace site
 
 
-### Setup
+## Setup
 
-##### Prerequisites
+#### Prerequisites
 1. node.js installed
 2. npm installed
 3. `.env` file is needed to connect to various services (Mandrill, GCal, etc.)
 
 After forking this repo run the following
-`$ npm install`
-`$ npm update`
+```
+$ npm install
+$ npm update
+```
 Then use any of the following to start the server
-`$ node server.js`
-`$ foreman start`
+```
+$ node server.js
+$ foreman start
+```
 Heroku uses Foreman which uses the Procfile, [info here](https://devcenter.heroku.com/articles/procfile#developing-locally-with-foreman)
 
 Head over to `http://localhost:5000/dash` for the dashboard to make sure everything checks out. 
