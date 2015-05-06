@@ -16,7 +16,8 @@ module.exports = function(app){
 	app.get('/dash', function(req, res) {
 	  // both of these would work
 	  //res.sendfile(path.resolve(__dirname + '/../app/views/dashboard.html'));
-	  res.sendfile('app/views/dashboard.html');
+	  //res.sendfile('app/views/dashboard.html');
+	  res.render('dashboard');
 	});
 
 	// return list of all members

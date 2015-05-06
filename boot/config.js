@@ -35,11 +35,11 @@ module.exports = function(app){
 	    }
 	};
 
+	app.set('views', __dirname + '/../app/views');
+	app.set('view engine', 'jade');
 	app.use(allowCrossDomain);
-
 	// logger
 	app.use(logfmt.requestLogger());
-
 	// for routing and rendering
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({
@@ -51,7 +51,7 @@ module.exports = function(app){
 	app.use("/css", app.express.static(__dirname + '/../public/css'));
 	app.use("/img", app.express.static(__dirname + '/../public/img'));
 	app.use("/font", app.express.static(__dirname + '/../public/font'));
-	app.use("/views", app.express.static(__dirname + '/../app/views'));
+	
 
 
 	app.helpers = require(__dirname + '/../app/helpers');
