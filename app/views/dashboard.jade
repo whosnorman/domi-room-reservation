@@ -16,9 +16,9 @@ block content
 				h2.memTot
 					#[span(id='memTot') 0] members
 				.sorter
-					.icon-left-dir
+					#memSortLeft.icon-left-dir
 					#sorterMonth
-					.icon-right-dir
+					#memSortRighticon-right-dir
 					#sorterYear
 					div(style='clear: both')
 				.searchBar
@@ -34,24 +34,20 @@ block content
 					.emails
 					.mergeBtn merge
 
-			.requestsCont
-				table#reqHead
-					thead
-						tr
-							th Company
-							th Email
-							th Room
-							th Date
-							th Start
-							th End
-							th Duration
-
-				.reqs
-					table#main
-						tbody
-				#totReqs
+			//- requests table
+			include requests
 
 			.spacer
+
+
+		//- footer
+		.mainContent 
+			#loadCal.btn
+				| Load Snag Calendar
+			#reconfig.btn
+				| Re-Configure Members
+			div(style='clear: both')
+			#calendar
 
 					
 

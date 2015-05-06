@@ -1,4 +1,5 @@
 var requestData = [];
+var requestCurrent = 0;
 var mergeArr = [];
 var memArr = [];
 var dateArr = [];
@@ -32,9 +33,9 @@ $(document).ready(function() {
 
 	$('#approx').hover(
 		function(){
-			$('#explain').css('display', 'block');
+			$('#explain').css('opacity', '1');
 		}, function(){
-			$('#explain').css('display', 'none');
+			$('#explain').css('opacity', '0');
 	});
 
 	$('#minusMem').on('click', function(){
@@ -75,12 +76,27 @@ $(document).ready(function() {
 
 	});
 
-	$('.icon-left-dir').on('click', function(){
-		sorterBtn('left');
+	$('#memSortLeft').on('click', function(){
+		memSort('left');
 	});
 
-	$('.icon-right-dir').on('click', function(){
-		sorterBtn('right');
+	$('#memSortRight').on('click', function(){
+		memSort('right');
+	});
+
+	$('#reqPageLeft').on('click', function(){
+		if($(this).attr('disabled') != 'disabled')
+			renderRequests(--requestCurrent);
+	});
+
+	$('#reqPageRight').on('click', function(){
+		if($(this).attr('disabled') != 'disabled')
+			renderRequests(++requestCurrent);
+	});
+
+	$('#reqOptions').change(function(){
+		requestCurrent = $(this).val();
+		renderRequests(requestCurrent);
 	});
 });
 
@@ -96,7 +112,7 @@ function reconfigureMembers(){
 }
 
 // change sorting month to previous or next
-function sorterBtn(dir){
+function memSort(dir){
 	var dateObj = {};
 	var month = $('#sorterMonth').text();
 	var year = $('#sorterYear').text();
@@ -305,7 +321,6 @@ function renderGraph(dataJSON){
 // inits data & page
 var populatePage = (function(){
 	// variables
-	var content = '';
 	var arr = [];
 
 	var dataJSON = [{
@@ -341,52 +356,31 @@ var populatePage = (function(){
 
 	// get requests
 	$.getJSON('/reqs', function(obj){
-		var date, dateString, start, end, duration;
-		var data = [];
 
 		for(var item in obj){
-			data[item] = obj[item];
+			requestData[item] = obj[item];
 		}
 
-		// print requests into a table
-		for(var i = data.length - 1; i > 0; i--){
-			date = new Date(data[i].end);
-			end = date.getUTCHours();
-			date = new Date(data[i].start);
-			start = date.getUTCHours();
-			dateString = (date.getMonth() + 1) + '/' + date.getDate();
+		renderRequests(requestCurrent);	
 
-			if(start > end)
-				data[i].duration = (end + 24) - start;
-			else
-				data[i].duration = end - start;
+		reqOptions = $('#reqOptions');
+		reqOptions.empty();
 
-			content += '<tr>';
-			content += '<td>';
-			if(data[i].event_id){
-				content += '<div class="delBtn">X</div>';
-			}
-			content += data[i].company + '</td>';
-			content += '<td>' + data[i].email + '</td>';
-			content += '<td>' + data[i].room + '</td>';
-
-			content += '<td>' + dateString + '</td>';
-			content += '<td>' + start + '</td>';
-			content += '<td>' + end + '</td>';
-
-			content += '<td>' + data[i].duration + ' hrs </td>';
-			content += '</tr>';
+		var length = (requestData.length - 1) / 10;
+		console.log('length: ' + length);
+		for(var i = 0; i < length; i++){
+			var $option = $('<option></option>')
+				.attr('value', i)
+				.text(i);
+			reqOptions.append($option);
 		}
 
-		$('#main tbody').html(content);
-
-		var totString = 'Total Requests: ' + data.length;
-
+		var totString = 'Total Requests: ' + requestData.length;
 
 		var i = 0;
 		var time = 5;
 		// approximation of saved emails
-		var counter = data.length * 2.125;
+		var counter = requestData.length * 2.125;
 		function countEmails(){
 			if(counter > 0){
 				i++;
@@ -398,18 +392,17 @@ var populatePage = (function(){
 		}
 
 		countEmails();
-		$('#totReqs').html(totString);
 
-		adjustHeaderWidth();
+		$('#totReqs').html(totString);
 	});
 
-
+/*
 	// get members
 	$.getJSON('/mems', function(data){	
 		memArr = sortByMonth(data, tDate);
 		cycleMembers();
 	});
-
+*/
 	/// END OF CALLS ///
 
 	/// START OF HELPER FUNCTIONS ///
@@ -673,6 +666,71 @@ var populatePage = (function(){
 
 
 });
+
+function renderRequests(num){
+	var date, dateString, end, duration, stop;
+	var disableRight = false;
+	var content = '';
+	// grab global requestData array
+	var data = requestData;
+	var start = data.length - 1 - (num * 10);
+	var remain = (data.length - 1) % 10;
+	// incase there aren't ten requests left to show
+	if((((data.length - 1) / 10) - (remain / 10)) <= num){
+		stop = start - remain;
+		disableRight = true;
+	} else
+		stop = start - 10;
+
+	// print requests into a table
+	for(var i = start; i > stop; i--){
+		date = new Date(data[i].end);
+		end = date.getUTCHours();
+		date = new Date(data[i].start);
+		start = date.getUTCHours();
+		dateString = (date.getMonth() + 1) + '/' + date.getDate();
+
+		if(start > end)
+			data[i].duration = (end + 24) - start;
+		else
+			data[i].duration = end - start;
+
+		content += '<tr>';
+		content += '<td>';
+		if(data[i].event_id){
+			content += '<div class="delBtn">X</div>';
+		}
+		content += data[i].company + '</td>';
+		content += '<td>' + data[i].email + '</td>';
+		content += '<td>' + data[i].room + '</td>';
+
+		content += '<td>' + dateString + '</td>';
+		content += '<td>' + start + '</td>';
+		content += '<td>' + end + '</td>';
+
+		content += '<td>' + data[i].duration + ' hrs </td>';
+		content += '</tr>';
+	}
+
+	$('#main tbody').html(content);
+
+	// disable left button
+	if(num == 0)
+		$('#reqPageLeft').attr('disabled', true);
+	else
+		$('#reqPageLeft').attr('disabled', false);
+
+	// disable right button
+	if(disableRight)
+		$('#reqPageRight').attr('disabled', true);
+	else
+		$('#reqPageRight').attr('disabled', false);
+
+	$('#reqOptions').val(num);
+
+	adjustHeaderWidth();
+}
+
 
 // returns previous month based on given month and year
 function getPrevMonth(dateObj){

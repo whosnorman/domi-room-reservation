@@ -7,69 +7,13 @@ body {
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 300;
 	font-size: 20px;
-	background-image: url('../img/giftly.png');
+	background-color: #F5F5F5;
 
-	background-repeat: repeat;
-	background-position: center center;
 	-webkit-font-smoothing: antialiased !important;
 	margin: 0;
 	position: absolute;
 	width: 100%;
 
-	background: linear-gradient(54deg, #cc4233, #ff9933, #339999);
-	background-size: 200% 200%;
-
-	-webkit-animation: gradientBG 60s ease infinite;
-	-moz-animation: gradientBG 60s ease infinite;
-	animation: gradientBG 60s ease infinite;
-}
-
-@-webkit-keyframes gradientBG {
-    0%{background-position:0% 87%}
-    50%{background-position:100% 14%}
-    100%{background-position:0% 87%}
-}
-
-
-@-moz-keyframes gradientBG {
-    0%{background-position:0% 87%}
-    50%{background-position:100% 14%}
-    100%{background-position:0% 87%}
-}
-@keyframes gradientBG { 
-    0%{background-position:0% 87%}
-    50%{background-position:100% 14%}
-    100%{background-position:0% 87%}
-}
-
-
-/*	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;*/
-
-.axis path,
-.axis line {
-	fill: none;
-	stroke: rgba(255, 255, 255, 0.4);
-	shape-rendering: crispEdges;
-}
-
-.grid path,
-.gird line {
-	fill: none;
-	stroke: rgba(255, 255, 255, 0.4);
-	shape-rendering: crispEdges;
-}
-
-.x.axis path {
-	display: none;
-}
-
-.line {
-	fill: none;
-	stroke: #fff;
-	stroke-width: 2px;
 }
 
 .mainContent {
@@ -78,31 +22,10 @@ body {
 	margin-bottom: 40px;
 	width: 85%;
 	background-color: rgba(48, 48, 48,0.6);
-	box-shadow: 0 5px 35px 0 #303030;
 	border-radius: 10px;
 	z-index: 1003;
 }
 
-
-.bgBlur {
-	-webkit-filter: blur(5px);
-	-moz-filter: blur(5px);
-	-o-filter: blur(5px);
-	-ms-filter: blur(5px);
-	filter: blur(5px);
-	width: 100%;
-	height: 100%;
-	z-index: 1001;
-	position: fixed;
-	background-image: url('../img/bg1.JPG');
-	background-size: cover cover;
-
-	margin: 0;
-	padding: 0;
-	top: 0;
-	left: 0;
-	
-}
 
 h1 {
 	font-size: 20px;
@@ -209,8 +132,8 @@ span {
 	right: 0;
 	font-size: 20px;
 	color: rgba(255, 255, 255, 0.8);
-	transition: all 1s ease;
-	display: none;
+	opacity: 0;
+	transition: all 0.15s linear;
 }
 
 .btn {
@@ -220,12 +143,14 @@ span {
 	padding: 10px;
 	font-weight: 400;
 	font-size: 25px;
+	transition: all 0.1s linear;
 	color: #fff;
 }
 
 .btn:hover {
 	cursor: pointer;
-	border: 3px dashed #fff;
+	color: #303030;
+	background-color: #fff;	
 }
 
 #calendar {
@@ -375,6 +300,38 @@ span {
 	margin-left: 20px;
 }
 
+#reqPage {
+	float: left;
+}
+
+#reqOptions {
+	color: #fff;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 500;
+	font-size: 20px;
+	background-color: transparent;
+	border: 0;
+	float: left;
+	margin-top: 10px;
+	-webkit-appearance: none;
+	outline: 0;
+	text-align: center;
+}
+
+#reqOptions option {
+	color: #303030;
+}
+
+#reqOptions:hover{
+	color: rgba(255, 255, 255, 0.6);
+	cursor: pointer;
+}
+
+/* remove select arrow on IE */
+select::-ms-expand{
+	display: none;
+}
+
 .icon-right-dir {
 	float: left;
 	font-size: 30px;
@@ -393,6 +350,11 @@ span {
 	cursor: pointer;
 	color: rgba(255, 255, 255, 0.6);
 }
+
+[class^="icon-"][disabled] {
+	color: rgba(255, 255, 255, 0.4);
+}
+
 
 
 

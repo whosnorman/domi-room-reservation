@@ -197,7 +197,7 @@ module.exports = function(app) {
 			}, function(e) {
 			  // Mandrill returns the error as an object with name and message keys
 			  console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
-			  snagError({name: e.name, message: e.message}, user);
+			  email.snagError({name: e.name, message: e.message}, user);
 			  // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
 			});
 
@@ -292,7 +292,7 @@ module.exports = function(app) {
 				}, function(e) {
 				    // Mandrill returns the error as an object with name and message keys
 				    console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
-				    snagError({name: e.name, message: e.message}, user);
+				    email.snagError({name: e.name, message: e.message}, user);
 				    // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
 				});
 			}
