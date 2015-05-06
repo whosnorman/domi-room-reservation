@@ -1,0 +1,478 @@
+html {
+	background-color: #303030;
+}
+
+body {
+	color: #fff;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 300;
+	font-size: 20px;
+	background-image: url('../img/giftly.png');
+
+	background-repeat: repeat;
+	background-position: center center;
+	-webkit-font-smoothing: antialiased !important;
+	margin: 0;
+	position: absolute;
+	width: 100%;
+
+	background: linear-gradient(54deg, #cc4233, #ff9933, #339999);
+	background-size: 200% 200%;
+
+	-webkit-animation: gradientBG 60s ease infinite;
+	-moz-animation: gradientBG 60s ease infinite;
+	animation: gradientBG 60s ease infinite;
+}
+
+@-webkit-keyframes gradientBG {
+    0%{background-position:0% 87%}
+    50%{background-position:100% 14%}
+    100%{background-position:0% 87%}
+}
+
+
+@-moz-keyframes gradientBG {
+    0%{background-position:0% 87%}
+    50%{background-position:100% 14%}
+    100%{background-position:0% 87%}
+}
+@keyframes gradientBG { 
+    0%{background-position:0% 87%}
+    50%{background-position:100% 14%}
+    100%{background-position:0% 87%}
+}
+
+
+/*	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;*/
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: rgba(255, 255, 255, 0.4);
+	shape-rendering: crispEdges;
+}
+
+.grid path,
+.gird line {
+	fill: none;
+	stroke: rgba(255, 255, 255, 0.4);
+	shape-rendering: crispEdges;
+}
+
+.x.axis path {
+	display: none;
+}
+
+.line {
+	fill: none;
+	stroke: #fff;
+	stroke-width: 2px;
+}
+
+.mainContent {
+	margin-left: 7.5%;
+	margin-top: 75px;
+	margin-bottom: 40px;
+	width: 85%;
+	background-color: rgba(48, 48, 48,0.6);
+	box-shadow: 0 5px 35px 0 #303030;
+	border-radius: 10px;
+	z-index: 1003;
+}
+
+
+.bgBlur {
+	-webkit-filter: blur(5px);
+	-moz-filter: blur(5px);
+	-o-filter: blur(5px);
+	-ms-filter: blur(5px);
+	filter: blur(5px);
+	width: 100%;
+	height: 100%;
+	z-index: 1001;
+	position: fixed;
+	background-image: url('../img/bg1.JPG');
+	background-size: cover cover;
+
+	margin: 0;
+	padding: 0;
+	top: 0;
+	left: 0;
+	
+}
+
+h1 {
+	font-size: 20px;
+	font-weight: 300;
+	color: #fff;
+}
+
+
+table > thead {
+	font-size: 20px;
+	border: 1px solid #fff;
+}
+
+table {
+	text-align: left;
+	font-size: 20px;
+	font-weight: 300;
+	width: 100%;
+}
+
+th, td {
+	border: 0px solid #fff;
+	border-radius: 2px;
+	padding: 15px;
+	margin: 0;
+}
+th {
+	font-weight: 400;
+	color: #f93;
+}
+
+tr:nth-child(even) {
+	background-color: rgba(255, 255, 255, 0.08);
+}
+
+span {
+	font-weight: 700;
+}
+
+.header {
+	height: 300px;
+	background-image: url('../img/header.JPG');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: 0 -334px;
+	border-radius: 10px 10px 0 0;
+}
+
+.overlay {
+	width: 100%;
+	height: 100%;
+	background-color: rgba(48, 48, 48, 0.6);
+	border-radius: 10px 10px 0 0;
+
+}
+
+.inner {
+	position: absolute;
+	width: 85%;
+	color: #303030;
+	height: 300px;
+
+}
+
+
+.inner h1 {
+	margin: 25px;
+	font-size: 70px;
+	float: left;
+}
+
+.inner h2 {
+	margin: 25px;
+	margin-bottom: 10px;
+	bottom: 0;
+	float: left;
+	font-size: 25px;
+	font-weight: 600;
+	position: absolute;
+}
+
+.inner h3 {
+	margin: 25px;
+	margin-bottom: 10px;
+	bottom: 0;
+	right: 0;
+	font-size: 25px;
+	font-weight: 500;
+	float: right;
+	position: absolute;
+	color: #fff;
+}
+
+.inner span {
+	font-weight: 700;
+}
+
+.inner .explain {
+	position: absolute;
+	float: right;
+	margin: 25px;
+	margin-bottom: 45px;;
+	bottom: 0;
+	right: 0;
+	font-size: 20px;
+	color: rgba(255, 255, 255, 0.8);
+	transition: all 1s ease;
+	display: none;
+}
+
+.btn {
+	margin: 25px;
+	border: 3px solid #fff;
+	border-radius: 5px;
+	padding: 10px;
+	font-weight: 400;
+	font-size: 25px;
+	color: #fff;
+}
+
+.btn:hover {
+	cursor: pointer;
+	border: 3px dashed #fff;
+}
+
+#calendar {
+	padding-bottom: 100px;
+}
+
+#reconfig {
+	width: auto;
+	right: 15px;
+	font-size: 15px;
+	float: right;
+}
+
+#loadCal {
+	width: auto;
+	float: left;
+	font-size: 15px;
+}
+
+#refresh {
+	float: right;
+	position: relative;
+}
+
+.mergeBtn {
+	color: rgba(255, 255, 255, 0.15);
+	float: right;
+	padding: 5px;
+}
+
+.mergeBtn:hover {
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.delBtn {
+	font-size: 15px;
+	font-weight: bold;
+	color: rgba(255, 255, 255, 0.15);
+	float: left;
+	padding: 2px 5px 2px 4px;
+	margin-right: 15px;
+	height: 100%;
+}
+
+.delBtn:hover {
+	color: rgba(204, 66, 51, 0.7);
+	cursor: pointer;
+}
+
+.minus {
+	margin-bottom: -10px;
+	width: 20px;
+	text-align: left;
+	font-size: 45px;
+	color: #fff;
+}
+
+.minus:hover {
+	color: rgba(255, 255, 255, 0.6);
+	cursor: pointer;
+}
+
+.bar {
+	width: 90%;
+	min-height: 40px;
+	margin: 20px 5% 20px 5%;
+ 	padding: 10px;
+	border-bottom: 4px solid rgba(255, 255, 255, 0.1);
+	text-align: left;
+}
+
+.bar h2 {
+	color: #f93;
+	margin-bottom: 0px;
+	font-weight: 500;
+}
+
+.searchBar {
+	font-size: 30px;
+	float: right;
+	margin-top: -35px;
+}
+
+.searchBar:hover {
+	cursor: pointer;
+}
+
+.searchBar input {
+	outline: none;
+	background: transparent;
+	border: none;
+	margin-right: 10px;
+	color: #fff;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 300;
+	font-size: 30px;
+	text-align: center;
+	width: 5em;
+}
+
+.searchBar div {
+	float: right;
+	margin-top: 5px;
+}
+
+.spacer {
+	height: 50px;
+}
+
+.requestsCont {
+	margin: 25px;
+	margin-top: 50px;
+}
+
+.reqs {
+	height: 300px;
+	overflow-y: scroll;
+	border: 4px solid rgba(255, 255, 255, 0.1);
+	border-radius: 5px;
+}
+
+#totReqs {
+	padding: 15px;
+	color: #f93;
+	font-weight: 500;
+}
+
+.memTot {
+	float: left;
+	position: relative;
+}
+
+.sorter {
+	margin-left: 28%;
+	margin-top: 25px;
+	font-size: 25px;
+	font-weight: 500;
+	width: 240px;
+}
+
+#sorterMonth {
+	float: left;
+}
+
+#sorterYear {
+	float: left;
+	margin-left: 20px;
+}
+
+.icon-right-dir {
+	float: left;
+	font-size: 30px;
+	margin-left: 5px;
+	margin-top: 5px;
+}
+
+.icon-left-dir {
+	float: left;
+	font-size: 30px;
+	margin-right: 5px;
+	margin-top: 5px;
+}
+
+[class^="icon-"]:hover {
+	cursor: pointer;
+	color: rgba(255, 255, 255, 0.6);
+}
+
+
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+ 
+::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.1); 
+    border-radius: 2px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background-color: #fff;
+}
+
+.members {
+	width: 100%;
+	margin-top: 50px;
+}
+
+
+.mem {
+	width: 90%;
+	height: 40px;
+	margin: 20px 5% 20px 5%;
+ 	padding: 10px;
+	border: 4px solid rgba(255, 255, 255, 0.1);
+	border-radius: 5px;
+	text-align: left;
+	overflow: hidden;
+	z-index: 1000;
+}
+
+.mem:hover {
+	border: 4px solid rgba(255, 255, 255, 1);
+	cursor: pointer;
+}
+
+.mem .comp {
+	color: #fff;
+	font-weight: 500;
+	font-size: 25px;
+	float: left;
+	position: relative;
+}
+
+.mem .months {
+	position: absolute;
+	float: left;
+	margin-left: 24%;
+	transition: all 180ms ease-out;
+	opacity: 1;
+	text-align: center;
+	min-width: 40px;
+}
+.mem .months .monthAmt {
+	font-size: 30px;
+	font-weight: 600;
+	margin-top: -10px;
+}
+ .mem .months .month {
+ 	font-size: 15px;
+ 	margin-top: -5px;
+ 	color: rgba(255, 255, 255, 0.3);
+ }
+
+ .mem .emails {
+ 	position: absolute;
+	float: left;
+	margin-left: 40%;
+	transition: all 180ms ease-out;
+	opacity: 0;
+ }
+
+ .line {
+ 	width: 5%;
+ 	font-size: 1.5em;
+ 	margin-left: 34%;
+ 	margin-top: 1px;
+ 	margin-bottom: 1px;
+ }

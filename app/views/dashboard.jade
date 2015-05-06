@@ -1,0 +1,58 @@
+extends layout
+
+block localcss
+		link(rel='stylesheet', href='css/fontello.css')
+		link(rel='stylesheet', href='css/dash.css')
+
+block localscripts
+		script(src='http://d3js.org/d3.v3.min.js', charset='utf-8')
+		script(type='text/javascript', src='js/dash.js')
+
+block content
+		.mainContent
+			include header
+
+			.bar
+				h2.memTot
+					#[span(id='memTot') 0] members
+				.sorter
+					.icon-left-dir
+					#sorterMonth
+					.icon-right-dir
+					#sorterYear
+					div(style='clear: both')
+				.searchBar
+					input#search
+					.icon-search
+
+			#members.members
+				.mem
+					.comp Company
+					.months
+						.monthAmt 12
+						.month jan
+					.emails
+					.mergeBtn merge
+
+			.requestsCont
+				table#reqHead
+					thead
+						tr
+							th Company
+							th Email
+							th Room
+							th Date
+							th Start
+							th End
+							th Duration
+
+				.reqs
+					table#main
+						tbody
+				#totReqs
+
+			.spacer
+
+					
+
+
