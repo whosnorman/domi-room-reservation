@@ -1,10 +1,14 @@
 block header
 	.header
 		.inner
-			h1 Dash
-			#refresh.btn Refresh
+			h1.dontshow Dash
+			#refresh.btn.dontshow Refresh
 			#explain.explain
 				| based on a #[span 2.125] emails per request ratio
-			h3#approx 
+			#approx.dontshow
 				| approximately #[span(id='emailSpared') 0] emails spared
-		.overlay
+			.reqUsage
+				.labelLeft.dontshow usage in the #[span past week] by total #[span reservation hours]
+				.labelRight.dontshow today
+				.ct-chart#ctReqs
+			div(style='clear: both')

@@ -8,6 +8,8 @@ var loadCal = true;
 $(document).ready(function() {
 	populatePage();
 
+	$('.dontshow').addClass('show');
+
 	// button listeners
 	$('#refresh').on('click', function(){
 		populatePage();
@@ -139,185 +141,6 @@ function sorter(sortDate){
 	populatePage.cycleMembers(sortArr);	
 }
 
-function renderGraph(dataJSON){
-	/*var margin = {top: 20, right: 20, bottom: 30, left: 50},
-		width = 400 - margin.left - margin.right,
-		height = 250 - margin.top - margin.bottom;
-
-	var parseDate = d3.time.format("%d-%b-%y").parse;
-	var x = d3.time.scale().range([0, width]);
-	var y = d3.scale.linear().range([height, 0]);
-
-	var xAxis = d3.svg.axis()
-		.scale(x)
-		.orient("bottom");
-	var yAxis = d3.svg.axis()
-		.scale(y)
-		.orient("left");
-
-	var line = d3.svg.line()
-		.x(function(d) {return x(d.date); })
-		.y(function(d) {return y(d.close); });
-
-	var svg = d3.select("body").append("svg")
-		.attr("width", width + margin.left + margin.right)
-		.attr("height", height + margin.top + margin.bottom)
-		.append("g")
-		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-	d3.json(dataJSON, function(err, data){
-		data.forEach(function(d) {
-			console.log(d.hours);
-		});
-	}); */
-
-	var xy_chart = d3_xy_chart()
-	    .width(700)
-	    .height(350)
-	    .xlabel("Month")
-	    .ylabel("Hours");
-	var svg = d3.select("body").append("svg")
-	    .datum(dataJSON)
-	    .call(xy_chart);
-
-	function d3_xy_chart() {
-	    function chart(selection) {
-	        selection.each(function(datasets) {
-	        	console.log(this);
-	            //
-	            // Create the plot. 
-	            //
-	            var margin = {top: 20, right: 80, bottom: 30, left: 50}, 
-	                innerwidth = width - margin.left - margin.right,
-	                innerheight = height - margin.top - margin.bottom ;
-	            
-	            var x_scale = d3.scale.linear()
-	                .range([0, innerwidth])
-	                .domain([ d3.min(datasets, function(d) { return d3.min(d.hours); }), 
-	                          d3.max(datasets, function(d) { return d3.max(d.hours); }) ]) ;
-	            
-	            var y_scale = d3.scale.linear()
-	                .range([innerheight, 0])
-	                .domain([ d3.min(datasets, function(d) { return d3.min(d.month); }),
-	                          d3.max(datasets, function(d) { return d3.max(d.month); }) ]) ;
-
-	            var color_scale = d3.scale.category10()
-	                .domain(d3.range(datasets.length)) ;
-
-	            var x_axis = d3.svg.axis()
-	                .scale(x_scale)
-	                .orient("bottom") ;
-
-	            var y_axis = d3.svg.axis()
-	                .scale(y_scale)
-	                .orient("left") ;
-
-	            var x_grid = d3.svg.axis()
-	                .scale(x_scale)
-	                .orient("bottom")
-	                .tickSize(-innerheight)
-	                .tickFormat("") ;
-
-	            var y_grid = d3.svg.axis()
-	                .scale(y_scale)
-	                .orient("left") 
-	                .tickSize(-innerwidth)
-	                .tickFormat("") ;
-
-	            var draw_line = d3.svg.line()
-	                .interpolate("basis")
-	                .x(function(d) { return x_scale(d[0]); })
-	                .y(function(d) { return y_scale(d[1]); }) ;
-
-	            var svg = d3.select(this)
-	                .attr("width", width)
-	                .attr("height", height)
-	                .append("g")
-	                .attr("transform", "translate(" + margin.left + "," + margin.top + ")") ;
-	            
-	            svg.append("g")
-	                .attr("class", "x grid")
-	                .attr("transform", "translate(0," + innerheight + ")")
-	                .call(x_grid) ;
-
-	            svg.append("g")
-	                .attr("class", "y grid")
-	                .call(y_grid) ;
-
-	            svg.append("g")
-	                .attr("class", "x axis")
-	                .attr("transform", "translate(0," + innerheight + ")") 
-	                .call(x_axis)
-	                .append("text")
-	                .attr("dy", "-.71em")
-	                .attr("x", innerwidth)
-	                .style("text-anchor", "end")
-	                .text(xlabel) ;
-	            
-	            svg.append("g")
-	                .attr("class", "y axis")
-	                .call(y_axis)
-	                .append("text")
-	                .attr("transform", "rotate(-90)")
-	                .attr("y", 6)
-	                .attr("dy", "0.71em")
-	                .style("text-anchor", "end")
-	                .text(ylabel) ;
-
-	            var data_lines = svg.selectAll(".d3_xy_chart_line")
-	                .data(datasets.map(function(d) {return d3.zip(d.hours, d.month);}))
-	                .enter().append("g")
-	                .attr("class", ".d3_xy_chart_line") ;
-	            
-	            data_lines.append("path")
-	                .attr("class", "line")
-	                .attr("d", function(d) {return draw_line(d); })
-	                .attr("stroke", function(_, i) {return color_scale(i);})
-	                //.style("stroke", function(d) {return color(this.parentNode.__data__.name);}) ;
-	            
-	            data_lines.append("text")
-	                .datum(function(d, i) { return {name: datasets[i].month, final: d[d.length-1]}; }) 
-	                .attr("transform", function(d) { 
-	                    return ( "translate(" + x_scale(d.final[0]) + "," + 
-	                             y_scale(d.final[1]) + ")" ) ; })
-	                .attr("x", 3)
-	                .attr("dy", ".35em")
-	                .attr("fill", function(_, i) { return color_scale(i); })
-	                .text(function(d) { return d.name; }) ;
-
-	        }) ;
-	    }
-
-	    chart.width = function(value) {
-	        if (!arguments.length) return width;
-	        width = value;
-	        return chart;
-	    };
-
-	    chart.height = function(value) {
-	        if (!arguments.length) return height;
-	        height = value;
-	        return chart;
-	    };
-
-	    chart.xlabel = function(value) {
-	        if(!arguments.length) return xlabel ;
-	        xlabel = value ;
-	        return chart ;
-	    } ;
-
-	    chart.ylabel = function(value) {
-	        if(!arguments.length) return ylabel ;
-	        ylabel = value ;
-	        return chart ;
-	    } ;
-
-	    return chart;
-	}
-
-
-}
-
 // inits data & page
 var populatePage = (function(){
 	// variables
@@ -342,7 +165,7 @@ var populatePage = (function(){
        hours: [0, 1, 2], 
        month: [4, 6, 3] } ] ;
 
-	renderGraph(dataJSON);
+
 
 	var date = new Date();
 	var year = date.getFullYear();
@@ -359,8 +182,21 @@ var populatePage = (function(){
 
 		for(var item in obj){
 			requestData[item] = obj[item];
+
+			// set duration
+			var date = new Date(obj[item].end);
+			var end = date.getUTCHours();
+			date = new Date(obj[item].start);
+			var start = date.getUTCHours();
+
+			if(start > end)
+				requestData[item].duration = (end + 24) - start;
+			else
+				requestData[item].duration = end - start;
 		}
 
+		//console.log(obj);
+		renderRequestsGraph();
 		renderRequests(requestCurrent);	
 
 		reqOptions = $('#reqOptions');
@@ -375,12 +211,10 @@ var populatePage = (function(){
 			reqOptions.append($option);
 		}
 
-		var totString = 'Total Requests: ' + requestData.length;
-
 		var i = 0;
 		var time = 5;
 		// approximation of saved emails
-		var counter = requestData.length * 2.125;
+		var counter = (requestData.length - 1) * 2.125;
 		function countEmails(){
 			if(counter > 0){
 				i++;
@@ -393,16 +227,16 @@ var populatePage = (function(){
 
 		countEmails();
 
-		$('#totReqs').html(totString);
+		$('#totReqs').text(requestData.length - 1);
 	});
 
-/*
+
 	// get members
 	$.getJSON('/mems', function(data){	
 		memArr = sortByMonth(data, tDate);
 		cycleMembers();
 	});
-*/
+
 	/// END OF CALLS ///
 
 	/// START OF HELPER FUNCTIONS ///
@@ -667,33 +501,168 @@ var populatePage = (function(){
 
 });
 
+// render the requests graph in the header based on the previous week's results
+function renderRequestsGraph(){
+	var stopCounter = requestData.length * 0.5;
+	var weekAgo = new Date();
+	weekAgo.setDate(weekAgo.getDate() - 7);
+	var withinWeek = [];
+
+	// filter out requests for current week
+	// starting at most recent, or last
+	var start = requestData.length - 1;
+
+	for(var i = start; i > 0; i--){ 
+		var curr = new Date(requestData[i].start);
+
+		if(curr > weekAgo)
+			withinWeek.push(requestData[i]);
+		else
+			stopCounter--;
+
+		// don't want the loop to keep going for no reason
+		if(stopCounter == 0)
+			break;
+	}
+
+	// sort graph data 
+	withinWeek.sort(function(a, b){
+		var aa = new Date(a.start);
+		var bb = new Date(b.start);
+
+		if(aa < bb) return -1;
+		if(aa > bb) return 1;
+		return 0;
+	});
+
+	//console.log(withinWeek);
+
+	// create graph data
+	var data = {}
+	data.labels = [];
+	// really needs to be [[]]
+	data.series = [];
+
+	// fill with all 0s
+	var arr = Array.apply(null, new Array(7)).map(Number.prototype.valueOf,0);
+	data.series = [arr];
+	// fill labels with past week
+	for(var i = 0; i < 7; i++){
+		var inc = new Date();
+		inc.setDate(weekAgo.getDate() + (i + 1));
+		var dateString = (inc.getMonth() + 1) + '/' + inc.getDate();
+		data.labels.push(dateString);
+	}
+	// increment series counts
+	for(var i = 0; i < withinWeek.length - 1; i++){
+		var date = new Date(withinWeek[i].start);
+		var dateString = (date.getMonth() + 1) + '/' + date.getDate();
+
+		var ind = $.inArray(dateString, data.labels);
+		if(ind != -1){
+			data.series[0][ind] += withinWeek[i].duration;
+		}
+	}
+	
+	var options = {
+		lineSmooth: Chartist.Interpolation.simple({
+			divisor: 20
+		}),
+		axisY: {
+			labelInterpolationFnc: function(value) {
+				return value + ' h';
+			}
+		},
+		fullWidth: true,
+		height: 160,
+		showPoint: true,
+		chartPadding: {
+			right: 20
+		}
+	}
+
+	// init a line chart 
+	new Chartist.Line('#ctReqs', data, options);
+
+	var $chart = $('#ctReqs');
+	var $tooltip = $chart
+		.append('<div class="tooltip"></div>')
+		.find('.tooltip')
+		.hide();
+
+	$chart.on('mouseenter', '.ct-point', function(event) {
+			var $point = $(this),
+		    	day = $point.attr('ct:day'),
+		    	value = $point.attr('ct:value');
+
+		  	$tooltip.html(day + ' <span>' + value + '</span>').show();
+
+		  	$tooltip.css({
+				left: $(this).attr('x1') - $tooltip.width() / 2 - 3,
+				top: $(this).attr('y1') - $tooltip.height() + 10
+			});
+	});
+
+	$chart.on('mouseleave', '.ct-point', function() {
+	  $tooltip.hide();
+	});
+
+	var elements = document.getElementsByClassName('.ct-point');
+	console.log(elements);
+	for(var i = 0; i < elements.length; i++){
+		console.log(elements[i].tagName);
+		if(elements[i].tagName == 'line'){
+			console.log(i);
+		}
+	}
+
+
+	$('#ctReqs').one('webkitAnimationEnd oanimationend msAnimationEnd animationend',   
+	    function(e) {
+	    	// set day for tooltips
+			$('#ctReqs .ct-point').each(function(i, pnt){
+				console.log(i);
+				var inc = new Date();
+				inc.setDate(weekAgo.getDate() + (i + 1));
+				var day = intToDay(inc.getDay());
+				console.log(day);
+				$(pnt).attr('ct:day', day);
+			});
+	});
+	$('#ctReqs').addClass('show');
+	setTimeout(function(){
+		// set day for tooltips
+		$('#ctReqs .ct-point').each(function(i, pnt){
+			var inc = new Date();
+			inc.setDate(weekAgo.getDate() + (i + 1));
+			var day = intToDay(inc.getDay());
+			$(pnt).attr('ct:day', day);
+		});
+	}, 1000);
+}
+
 function renderRequests(num){
-	var date, dateString, end, duration, stop;
+	var stop;
 	var disableRight = false;
 	var content = '';
 	// grab global requestData array
 	var data = requestData;
-	var start = data.length - 1 - (num * 10);
+	var begin = data.length - 1 - (num * 10);
 	var remain = (data.length - 1) % 10;
 	// incase there aren't ten requests left to show
 	if((((data.length - 1) / 10) - (remain / 10)) <= num){
-		stop = start - remain;
+		stop = begin - remain;
 		disableRight = true;
 	} else
-		stop = start - 10;
+		stop = begin - 10;
 
 	// print requests into a table
-	for(var i = start; i > stop; i--){
-		date = new Date(data[i].end);
-		end = date.getUTCHours();
+	for(var i = begin; i > stop; i--){
+		var date = new Date(data[i].end);
+		var end = date.getUTCHours();
 		date = new Date(data[i].start);
-		start = date.getUTCHours();
-		dateString = (date.getMonth() + 1) + '/' + date.getDate();
-
-		if(start > end)
-			data[i].duration = (end + 24) - start;
-		else
-			data[i].duration = end - start;
+		var start = date.getUTCHours();
+		var dateString = (date.getMonth() + 1) + '/' + date.getDate();
 
 		content += '<tr>';
 		content += '<td>';
@@ -726,8 +695,12 @@ function renderRequests(num){
 	else
 		$('#reqPageRight').attr('disabled', false);
 
-	$('#reqOptions').val(num);
+	var showString = begin;
+	showString += ' <span style="font-weight: 400">to</span> ';
+	showString += stop;
 
+	$('#showReqs').html(showString);
+	$('#reqOptions').val(num);
 	adjustHeaderWidth();
 }
 
@@ -870,6 +843,27 @@ function intToMonth(month){
 		case 11: return 'Nov';
 			break;
 		case 12: return 'Dec';
+			break;
+		default: return '???';
+			break;
+	}
+}
+
+function intToDay(day){
+	switch(day){
+		case 1: return 'Monday';
+			break;
+		case 2: return 'Tuesday';
+			break;
+		case 3: return 'Wednesday';
+			break;
+		case 4: return 'Thursday';
+			break;
+		case 5: return 'Friday';
+			break;
+		case 6: return 'Saturday';
+			break;
+		case 0: return 'Sunday';
 			break;
 		default: return '???';
 			break;

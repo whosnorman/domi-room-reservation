@@ -3,51 +3,53 @@ extends layout
 block localcss
 		link(rel='stylesheet', href='css/fontello.css')
 		link(rel='stylesheet', href='css/dash.css')
+		link(rel='stylesheet', href='http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css')
 
 block localscripts
-		script(src='http://d3js.org/d3.v3.min.js', charset='utf-8')
+		//-script(src='http://d3js.org/d3.v3.min.js', charset='utf-8')
 		script(type='text/javascript', src='js/dash.js')
+		script(src='http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js')
+
 
 block content
-		.mainContent
-			include header
+	include header
+	.mainContent.dontshow
+		.bar
+			h2.memTot
+				#[span(id='memTot') 0] members
+			.sorter
+				#memSortLeft.icon-left-dir
+				#sorterMonth
+				#memSortRight.icon-right-dir
+				#sorterYear
+				div(style='clear: both')
+			.searchBar
+				input#search
+				.icon-search
 
-			.bar
-				h2.memTot
-					#[span(id='memTot') 0] members
-				.sorter
-					#memSortLeft.icon-left-dir
-					#sorterMonth
-					#memSortRighticon-right-dir
-					#sorterYear
-					div(style='clear: both')
-				.searchBar
-					input#search
-					.icon-search
+		#members.members
+			.mem
+				.comp Company
+				.months
+					.monthAmt 12
+					.month jan
+				.emails
+				.mergeBtn merge
 
-			#members.members
-				.mem
-					.comp Company
-					.months
-						.monthAmt 12
-						.month jan
-					.emails
-					.mergeBtn merge
+		//- requests table
+		include requests
 
-			//- requests table
-			include requests
-
-			.spacer
+		.spacer
 
 
-		//- footer
-		.mainContent 
-			#loadCal.btn
-				| Load Snag Calendar
-			#reconfig.btn
-				| Re-Configure Members
-			div(style='clear: both')
-			#calendar
+	//- footer
+	.mainContent 
+		#loadCal.btn
+			| Load Snag Calendar
+		#reconfig.btn
+			| Re-Configure Members
+		div(style='clear: both')
+		#calendar
 
 					
 
