@@ -1,11 +1,44 @@
 block header
 	.header
 		.inner
-			h1.dontshow Dash
+			h1.dontshow Domi Dashboard
+			.welcome.dontshow
+				| Welcome! Today is #[span(id='toDay') ] the #[span(id='toDate') ].
+				
+			.totals.dontshow
+				|#[span(id='totTimeHrs') 0] hours #[span(id='totTimeMins') 0] minutes
+				.subLine
+					| Total Time Reserved
+				|#[span(id='westConfHrs') 0] hours #[span(id='westConfMins') 0] minutes
+				.subLine
+					| West Conference Room
+				|#[span(id='eastConfHrs') 0] hours #[span(id='eastConfMins') 0] minutes
+				.subLine
+					| East Conference Room
+				|#[span(id='educationHrs') 0] hours #[span(id='educationMins') 0] minutes
+				.subLine
+					| Florida Blue Education Room
+
+			.lasts.dontshow
+				|#[span(id='lastMeetingComp') ] in the #[span(id='lastMeetingRoom') ]
+				.subLine
+					| Last Meeting
+				|#[span(id='lastRequestComp') ] for #[span(id='lastRequestDate') ]
+				.subLine
+					| Last Request
+				|#[span(id='totReqsTop') 0]
+				.subLine
+					| Total Requests
+				|#[span(id='emailSpared') 0]
+				.subLine
+					| approximate emails spared
+
+
+				
 			#refresh.btn.dontshow Refresh
-			#explain.explain
+			//-#explain.explain
 				| based on a #[span 2.125] emails per request ratio
-			#approx.dontshow
+			//-#approx.dontshow
 				| approximately #[span(id='emailSpared') 0] emails spared
 			.reqUsage
 				.labelLeft.dontshow usage in the #[span past week] by total #[span reservation hours]

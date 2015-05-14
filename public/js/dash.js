@@ -10,6 +10,12 @@ $(document).ready(function() {
 
 	$('.dontshow').addClass('show');
 
+	var today = new Date();
+	toDay = moment.utc(today).format('dddd');
+	$('#toDay').text(toDay);
+	toDate = moment.utc(today).format('Do');
+	$('#toDate').text(toDate);
+
 	// button listeners
 	$('#refresh').on('click', function(){
 		populatePage();
@@ -179,31 +185,117 @@ var populatePage = (function(){
 
 	// get requests
 	$.getJSON('/reqs', function(obj){
+		var totalTime = 0;
+		// west, east, florida blue hours
+		var roomHrs = [0, 0, 0];
+		var lastMeeting = {};
+		lastMeeting.diff = 86400; // seconds in a day
+		var today = moment.utc(new Date());
+		console.log(today);
 
 		for(var item in obj){
-			requestData[item] = obj[item];
+			var MEM = obj[item];
+			requestData[item] = MEM;
 
 			// set duration
-			var date = new Date(obj[item].end);
-			var end = date.getUTCHours();
-			date = new Date(obj[item].start);
-			var start = date.getUTCHours();
+			var endM = moment.utc(MEM.end);
+			var start = moment.utc(MEM.start);
+			var diffMin = moment.utc(endM.diff(start)).format('m');
+			var diffHr = moment.utc(endM.diff(start)).format('h');
+			if (diffHr == 12)
+				diffHr = 0;
 
-			if(start > end)
-				requestData[item].duration = (end + 24) - start;
-			else
-				requestData[item].duration = end - start;
+			var durHr = parseInt(diffHr);
+			var durMin = parseInt(diffMin);
+
+			requestData[item].duration = diffHr + ':' + diffMin;
+			requestData[item].durHr = durHr;
+			requestData[item].durMin = durMin;
+
+			// set total time in minutes
+			totalTime += (durHr * 60) + durMin;
+
+			// set room hours
+			switch(MEM.room){
+				case 'West Conference Room':
+					roomHrs[0] += (durHr * 60) + durMin;
+					break;
+				case 'East Conference Room':
+					roomHrs[1] += (durHr * 60) + durMin;
+					break;
+				case 'Florida Blue Education Room':
+					roomHrs[2] += (durHr * 60) + durMin;
+					break;
+				case 'Education Lecture Hall':     	// replaced with Florida Blue
+					roomHrs[2] += (durHr * 60) + durMin;
+					break;
+				default:
+					console.log(MEM.room);
+					break;
+			}
+
+			// check if end time is less than current date
+			// and replace last meeting info if so
+			if(){
+				var endM = moment.utc(MEM.end);
+				var diff = moment.utc(endM.diff(today));
+				
+				// get moment difference
+				if(diff < lastMeeting.diff){
+					lastMeeting.diff = diff;
+					lastMeeting.comp = MEM.company;
+					lastMeeting.room = MEM.room;
+				}
+			}
+
+
 		}
 
-		//console.log(obj);
+		//
+		// SET HEADER TOTALS
+		// 
+		// set Total Time Reserved
+		var hrs = Math.floor(totalTime / 60);
+		var min = totalTime % 60;
+		$('#totTimeHrs').text(hrs);
+		$('#totTimeMins').text(min);
+		// set each rooms total hours
+		// west conf room 
+		hrs = Math.floor(roomHrs[0] / 60);
+		min = roomHrs[0] % 60;
+		$('#westConfHrs').text(hrs);
+		$('#westConfMins').text(min);
+		// east conf room 
+		hrs = Math.floor(roomHrs[1] / 60);
+		min = roomHrs[1] % 60;
+		$('#eastConfHrs').text(hrs);
+		$('#eastConfMins').text(min);
+		// west conf room 
+		hrs = Math.floor(roomHrs[2] / 60);
+		min = roomHrs[2] % 60;
+		$('#educationHrs').text(hrs);
+		$('#educationMins').text(min);
+
+		// set last request
+		var last = requestData[requestData.length - 1];
+		$('#lastRequestComp').text(last.company);
+		var date = moment.utc(last.start).format('MMM Do');
+		$('#lastRequestDate').text(date);
+
+		// set last meeting
+		$('#lastMeetingComp').text(lastMeeting.comp);
+		$('#lastMeetingRoom').text(lastMeeting.room);
+		
+
+		// render the header graph and table at the bottom
 		renderRequestsGraph();
 		renderRequests(requestCurrent);	
 
+		// set up page number for request table
 		reqOptions = $('#reqOptions');
 		reqOptions.empty();
-
 		var length = (requestData.length - 1) / 10;
-		console.log('length: ' + length);
+		//console.log('length: ' + length);
 		for(var i = 0; i < length; i++){
 			var $option = $('<option></option>')
 				.attr('value', i)
@@ -227,7 +319,8 @@ var populatePage = (function(){
 
 		countEmails();
 
-		$('#totReqs').text(requestData.length - 1);
+		$('#totReqsTop').text(requestData.length - 1);
+		$('#totReqsBottom').text(requestData.length - 1);
 	});
 
 
@@ -535,12 +628,10 @@ function renderRequestsGraph(){
 		return 0;
 	});
 
-	//console.log(withinWeek);
-
 	// create graph data
 	var data = {}
 	data.labels = [];
-	// really needs to be [[]]
+	// eventually needs to be [[]]
 	data.series = [];
 
 	// fill with all 0s
@@ -560,10 +651,16 @@ function renderRequestsGraph(){
 
 		var ind = $.inArray(dateString, data.labels);
 		if(ind != -1){
-			data.series[0][ind] += withinWeek[i].duration;
+			var time = withinWeek[i].durHr;
+			var mins = withinWeek[i].durMin;
+			//console.log(mins /60);
+			time += (mins / 60);
+			data.series[0][ind] += time;
+			//console.log(data.series[0][ind]);
 		}
 	}
-	
+
+	// create graph
 	var options = {
 		lineSmooth: Chartist.Interpolation.simple({
 			divisor: 20
@@ -577,13 +674,14 @@ function renderRequestsGraph(){
 		height: 160,
 		showPoint: true,
 		chartPadding: {
-			right: 20
+			right: 30,
+			left: 20
 		}
 	}
-
 	// init a line chart 
 	new Chartist.Line('#ctReqs', data, options);
 
+	// add tooltips
 	var $chart = $('#ctReqs');
 	var $tooltip = $chart
 		.append('<div class="tooltip"></div>')
@@ -607,29 +705,8 @@ function renderRequestsGraph(){
 	  $tooltip.hide();
 	});
 
-	var elements = document.getElementsByClassName('.ct-point');
-	console.log(elements);
-	for(var i = 0; i < elements.length; i++){
-		console.log(elements[i].tagName);
-		if(elements[i].tagName == 'line'){
-			console.log(i);
-		}
-	}
-
-
-	$('#ctReqs').one('webkitAnimationEnd oanimationend msAnimationEnd animationend',   
-	    function(e) {
-	    	// set day for tooltips
-			$('#ctReqs .ct-point').each(function(i, pnt){
-				console.log(i);
-				var inc = new Date();
-				inc.setDate(weekAgo.getDate() + (i + 1));
-				var day = intToDay(inc.getDay());
-				console.log(day);
-				$(pnt).attr('ct:day', day);
-			});
-	});
 	$('#ctReqs').addClass('show');
+// change to callback on addClass
 	setTimeout(function(){
 		// set day for tooltips
 		$('#ctReqs .ct-point').each(function(i, pnt){
@@ -658,10 +735,14 @@ function renderRequests(num){
 
 	// print requests into a table
 	for(var i = begin; i > stop; i--){
-		var date = new Date(data[i].end);
-		var end = date.getUTCHours();
-		date = new Date(data[i].start);
-		var start = date.getUTCHours();
+		var end = moment.utc(data[i].end);
+		var endTime = moment(end).format('h:mm');
+		var endA = moment(end).format('a');
+
+		var start = moment.utc(data[i].start);
+		var startTime = moment(start).format('h:mm');
+		var startA = moment(start).format('a');
+		var date = new Date(data[i].start);
 		var dateString = (date.getMonth() + 1) + '/' + date.getDate();
 
 		content += '<tr>';
@@ -674,10 +755,16 @@ function renderRequests(num){
 		content += '<td>' + data[i].room + '</td>';
 
 		content += '<td>' + dateString + '</td>';
-		content += '<td>' + start + '</td>';
-		content += '<td>' + end + '</td>';
+		content += '<td>' + startTime;
+		if(startA == 'am')
+			content += '<span id="meridiem">' + startA + '</span>';
+		content += '</td>';
+		content += '<td>' + endTime;
+		if(endA == 'am')
+			content += '<span id="meridiem">' + endA + '</span>';
+		content += '</td>';
 
-		content += '<td>' + data[i].duration + ' hrs </td>';
+		content += '<td>' + data[i].duration + ' <span id="meridiem">h</span></td>';
 		content += '</tr>';
 	}
 
@@ -816,6 +903,13 @@ function adjustHeaderWidth() {
 		$(this).css('width', arr[i]);
 		i++;
 	});
+}
+
+function minToHrs(mins){
+	var hrs = Math.floor(mins / 60);
+	var min = mins % 60;
+	var dur = hrs + (min / 100);
+	return dur;
 }
 
 function intToMonth(month){

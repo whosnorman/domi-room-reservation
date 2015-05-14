@@ -8,6 +8,7 @@ block localcss
 block localscripts
 		//-script(src='http://d3js.org/d3.v3.min.js', charset='utf-8')
 		script(type='text/javascript', src='js/dash.js')
+		script(type='text/javascript', src='js/moment.min.js')
 		script(src='http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js')
 
 
@@ -46,8 +47,12 @@ block content
 	.mainContent 
 		#loadCal.btn
 			| Load Snag Calendar
+		#config.btn
+			| Dashboard Settings
 		#reconfig.btn
 			| Re-Configure Members
+		#restart.btn
+			| Restart Server
 		div(style='clear: both')
 		#calendar
 
