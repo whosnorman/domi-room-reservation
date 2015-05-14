@@ -9,7 +9,9 @@ block localscripts
 		//-script(src='http://d3js.org/d3.v3.min.js', charset='utf-8')
 		script(type='text/javascript', src='js/dash.js')
 		script(type='text/javascript', src='js/moment.min.js')
+		script(type='text/javascript', src='js/velocity.min.js')
 		script(src='http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js')
+
 
 
 block content
@@ -17,7 +19,7 @@ block content
 	.mainContent.dontshow
 		.bar
 			h2.memTot
-				#[span(id='memTot') 0] members
+				#[span.bold(id='memTot') 0] members
 			.sorter
 				#memSortLeft.icon-left-dir
 				#sorterMonth

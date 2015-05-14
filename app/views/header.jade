@@ -6,16 +6,16 @@ block header
 				| Welcome! Today is #[span(id='toDay') ] the #[span(id='toDate') ].
 				
 			.totals.dontshow
-				|#[span(id='totTimeHrs') 0] hours #[span(id='totTimeMins') 0] minutes
+				|#[span.bold(id='totTimeHrs') 0] hours #[span.bold(id='totTimeMins') 0] minutes
 				.subLine
 					| Total Time Reserved
-				|#[span(id='westConfHrs') 0] hours #[span(id='westConfMins') 0] minutes
+				|#[span.bold(id='westConfHrs') 0] hours #[span.bold(id='westConfMins') 0] minutes
 				.subLine
 					| West Conference Room
-				|#[span(id='eastConfHrs') 0] hours #[span(id='eastConfMins') 0] minutes
+				|#[span.bold(id='eastConfHrs') 0] hours #[span.bold(id='eastConfMins') 0] minutes
 				.subLine
 					| East Conference Room
-				|#[span(id='educationHrs') 0] hours #[span(id='educationMins') 0] minutes
+				|#[span.bold(id='educationHrs') 0] hours #[span.bold(id='educationMins') 0] minutes
 				.subLine
 					| Florida Blue Education Room
 
@@ -25,13 +25,20 @@ block header
 					| Last Meeting
 				|#[span(id='lastRequestComp') ] for #[span(id='lastRequestDate') ]
 				.subLine
-					| Last Request
-				|#[span(id='totReqsTop') 0]
+					| Last Request Received
+				|#[span.bold(id='totReqsTop') 0] requests
 				.subLine
-					| Total Requests
-				|#[span(id='emailSpared') 0]
+					| Total Requests Taken
+				|#[span.bold(id='emailSpared') 0] emails
 				.subLine
-					| approximate emails spared
+					| Approximate Emails Spared
+			.mostPop.dontshow
+				|#[span(id='mostPopDay') Anyday]
+				.subLine
+					| Most Popular Meeting Day
+				|Around #[span(id='mostPopTime') ]
+				.subLine
+					| Most Popular Meeting Time
 
 
 				

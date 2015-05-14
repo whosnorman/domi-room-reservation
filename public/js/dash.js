@@ -38,6 +38,29 @@ $(document).ready(function() {
 
 	});
 
+	$('#restart').on('click', function(){
+
+
+		if(confirm('Are you sure you want to restart the server?'){
+
+			$.ajax({
+				type: "POST",
+				url: '/restart',
+				data: '',
+				success: function(){
+					console.log('restarted');
+				}
+			});
+			$.ajax({
+				url: '',
+				type: 'DELETE',
+				success: function(){
+					'https://api.heroku.com/apps/domi-room/dynos'
+				}
+			})
+		})
+	})
+
 
 	$('#approx').hover(
 		function(){
@@ -191,7 +214,8 @@ var populatePage = (function(){
 		var lastMeeting = {};
 		lastMeeting.diff = 86400; // seconds in a day
 		var today = moment.utc(new Date());
-		console.log(today);
+		var popDayArr = [0, 0, 0, 0, 0, 0, 0];
+		var popTimeArr = Array.apply(null, new Array(24)).map(Number.prototype.valueOf,0);
 
 		for(var item in obj){
 			var MEM = obj[item];
@@ -215,6 +239,15 @@ var populatePage = (function(){
 			// set total time in minutes
 			totalTime += (durHr * 60) + durMin;
 
+			// add counter to day for most popular day
+			var currDay = moment(start).format('dddd');
+			popDayArr[dayToInt(currDay)] += 1;
+
+			// add counter to hour for most popular time
+			var startHr = moment(start).hour();
+			console.log(startHr);
+			popTimeArr[startHr] += 1;
+
 			// set room hours
 			switch(MEM.room){
 				case 'West Conference Room':
@@ -236,19 +269,14 @@ var populatePage = (function(){
 
 			// check if end time is less than current date
 			// and replace last meeting info if so
-			if(){
-				var endM = moment.utc(MEM.end);
+			if(moment(endM).isBefore(today)){
 				var diff = moment.utc(endM.diff(today));
-				
-				// get moment difference
 				if(diff < lastMeeting.diff){
 					lastMeeting.diff = diff;
 					lastMeeting.comp = MEM.company;
 					lastMeeting.room = MEM.room;
 				}
 			}
-
-
 		}
 
 		//
@@ -285,6 +313,37 @@ var populatePage = (function(){
 		// set last meeting
 		$('#lastMeetingComp').text(lastMeeting.comp);
 		$('#lastMeetingRoom').text(lastMeeting.room);
+
+		// set most popular day
+		var popDay = {
+			day: 0,
+			count: 0
+		}
+		// run through arr for highest number
+		for(var i = 0; i < popDayArr.length - 1; i++){
+			if(popDayArr[i] > popDay.count){
+				popDay.count = popDayArr[i];
+				popDay.day = i;
+			}
+		}
+		$('#mostPopDay').text(intToDay(popDay.day));
+
+
+		// set most popular time
+		var popTime = {
+			hour: 0,
+			count: 0
+		}
+		// run through arr for highest number
+		for(var i = 0; i < popTimeArr.length - 1; i++){
+			if(popTimeArr[i] > popTime.count){
+				popTime.count = popTimeArr[i];
+				popTime.hour = i;
+			}
+		}
+		var popHour = moment().hour(popTime.hour).format('h a');
+		$('#mostPopTime').text(popHour);
+
 		
 
 		// render the header graph and table at the bottom
@@ -303,23 +362,12 @@ var populatePage = (function(){
 			reqOptions.append($option);
 		}
 
-		var i = 0;
-		var time = 5;
-		// approximation of saved emails
-		var counter = (requestData.length - 1) * 2.125;
-		function countEmails(){
-			if(counter > 0){
-				i++;
-				counter--;
-				$('#emailSpared').text(i);
-				time += (i * 0.002);
-				setTimeout(countEmails, time);
-			}
-		}
+		// approximation of spared emails
+		var emailCount = (requestData.length - 1) * 2.125;
+		countUp('#emailSpared', 10000, emailCount);
 
-		countEmails();
-
-		$('#totReqsTop').text(requestData.length - 1);
+		// total requests 
+		countUp('#totReqsTop', 7000, requestData.length - 1);
 		$('#totReqsBottom').text(requestData.length - 1);
 	});
 
@@ -359,7 +407,9 @@ var populatePage = (function(){
 			}
 		});		
 
-		countMembers(arr);
+		//countMembers(arr);
+		var count = arr.length - 1;
+		countUp('#memTot', 5000, count);
 		// fill members div with printed content
 		$('#members').html(content);
 
@@ -593,6 +643,20 @@ var populatePage = (function(){
 
 
 });
+
+// visibly count up a number using easeOutExpo
+function countUp(id, duration, count){
+	var element = $(id);
+	element.velocity({
+		opacity: 1,
+	},{
+		duration: duration,
+		easing: 'easeOutExpo',
+		progress: function(elements, complete, remaining, start, tweenValue){
+			element.text(Math.floor(complete * count));
+		}
+	});
+}
 
 // render the requests graph in the header based on the previous week's results
 function renderRequestsGraph(){
@@ -958,6 +1022,27 @@ function intToDay(day){
 		case 6: return 'Saturday';
 			break;
 		case 0: return 'Sunday';
+			break;
+		default: return '???';
+			break;
+	}
+}
+
+function dayToInt(day){
+	switch(day){
+		case 'Monday': return 1;
+			break;
+		case 'Tuesday': return 2;
+			break;
+		case 'Wednesday': return 3;
+			break;
+		case 'Thursday': return 4;
+			break;
+		case 'Friday': return 5;
+			break;
+		case 'Saturday': return 6;
+			break;
+		case 'Sunday': return 0;
 			break;
 		default: return '???';
 			break;

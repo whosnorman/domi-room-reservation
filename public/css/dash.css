@@ -80,12 +80,12 @@ tr:nth-child(even) {
 	background-color: rgba(48, 48, 48, 0.01);
 } */
 
-span {
+.bold {
 	font-weight: 700;
 }
 
 .header {
-	height: 600px;
+	height: 615px;
 	background-color: #303030;
 	position: relative;
 	color: rgba(255, 255, 255, 0.5);
@@ -115,22 +115,6 @@ span {
 	margin-bottom: 15px;
 }
 
-#toDay {
-	font-weight: 100 !important;
-}
-
-#toDate {
-	font-weight: 100 !important;
-}
-
-#totReqs {
-	font-weight: 700 !important;
-}
-
-#emailSpared {
-	font-weight: 700 !important;
-}
-
 .totTime {
 	position: absolute;
 	bottom: 220px;
@@ -144,15 +128,18 @@ span {
 	transition-delay: 200ms;
 }
 
+.mostPop {
+	position: absolute;
+	left: 735px;
+	top: 274px;
+	transition-delay: 200ms;
+}
+
 .lasts {
 	position: absolute;
 	left: 400px;
 	top: 150px;
 	transition-delay: 200ms;
-}
-
-.lasts span {
-	font-weight: 100 !important;
 }
 
 .reqUsage {
@@ -221,7 +208,7 @@ span {
 }
 
 
-.inner {
+.inner span {
 }
 
 
@@ -255,7 +242,7 @@ span {
 	color: #fff;
 }
 
-.inner span {
+.inner .bold {
 	font-weight: 700;
 }
 
