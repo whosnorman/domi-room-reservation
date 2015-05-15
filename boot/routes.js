@@ -30,6 +30,16 @@ module.exports = function(app){
 		app.dashController.reqs
 	);
 
+	// return list of last checked values
+	app.get('/getLasts',
+		app.dashController.getLasts
+	);
+
+	// set last values collection
+	app.post('/setLasts',
+		app.dashController.setLasts
+	);
+
 	// merge two members 
 	app.post('/merge', 
 		app.dashController.merge
@@ -45,6 +55,13 @@ module.exports = function(app){
 	app.post('/reconfig', 
 		app.dashController.reconfig
 	);
+
+	// reconfigure members
+	app.post('/restart', 
+		app.dashController.restart
+	);
+
+
 
 
 	// OTHER 

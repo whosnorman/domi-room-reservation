@@ -84,6 +84,27 @@ tr:nth-child(even) {
 	font-weight: 700;
 }
 
+.plus {
+	font-size: 0.7em;
+	color: rgba(255, 153, 51, 0.8);
+	margin-left: 5px;
+	margin-top: -3px;
+	position: absolute;
+	opacity: 0;
+	transition: all 350ms ease-out;
+	-webkit-transform: translate(0, 10px) !important;
+	-moz-transform: translate(0, 10px) !important;
+
+}
+
+.plusshow {
+	-webkit-transform: none !important;
+	-moz-transform: none !important;
+	opacity: 1 !important;
+}
+
+
+
 .header {
 	height: 615px;
 	background-color: #303030;
@@ -131,7 +152,7 @@ tr:nth-child(even) {
 .mostPop {
 	position: absolute;
 	left: 735px;
-	top: 274px;
+	top: 150px;
 	transition-delay: 200ms;
 }
 
@@ -290,6 +311,16 @@ tr:nth-child(even) {
 	cursor: pointer;
 	color: #303030;
 	background-color: #fff;
+}
+
+.topBorder {
+	background: #f93;
+	position: absolute;
+	width: 0%;
+	max-width: 100%;
+	top: 0;
+	height: 3px;
+	transition: all 1s ease-out;
 }
 
 #calendar {

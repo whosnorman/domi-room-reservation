@@ -68,16 +68,13 @@ module.exports = function(app){
 	app.GoogleToken = GoogleToken;
 	app.googleapis = googleapis;
 	app.moment = moment;
+	app.requestModule = request;
 
 	// run through controllers and require all
 	autoload('app/controllers', app);
 
 	app.models = {};
 	autoload('app/models', app);
-
-	
-
-
 
 
 }

@@ -4,6 +4,10 @@ var mergeArr = [];
 var memArr = [];
 var dateArr = [];
 var loadCal = true;
+var progress = 0;
+// updateProgress in 
+// 		document ready, after requests, after members, get last values
+var progressInc = 100 / 4;
 
 $(document).ready(function() {
 	populatePage();
@@ -39,27 +43,24 @@ $(document).ready(function() {
 	});
 
 	$('#restart').on('click', function(){
+		$('#restart').css('border-color', '#F5A924');
 
-
-		if(confirm('Are you sure you want to restart the server?'){
-
+		if(confirm('Are you sure you want to restart the server?')){
 			$.ajax({
 				type: "POST",
 				url: '/restart',
 				data: '',
 				success: function(){
 					console.log('restarted');
+					$('#restart').css('border-color', '#24EF45');
+				},
+				error: function(){
+					console.log('restart failed');
+					$('#restart').css('border-color', '#EE3333');
 				}
 			});
-			$.ajax({
-				url: '',
-				type: 'DELETE',
-				success: function(){
-					'https://api.heroku.com/apps/domi-room/dynos'
-				}
-			})
-		})
-	})
+		}
+	});
 
 
 	$('#approx').hover(
@@ -129,6 +130,9 @@ $(document).ready(function() {
 		requestCurrent = $(this).val();
 		renderRequests(requestCurrent);
 	});
+
+	// keep at bottom
+	updateProgress();
 });
 
 function reconfigureMembers(){
@@ -140,6 +144,29 @@ function reconfigureMembers(){
 	  	populatePage();
 	  }
 	});
+}
+
+function setLasts(data){
+	$.ajax({
+	  type: "POST",
+	  url: '/setLasts',
+	  dataType: "json",
+	  contentType: "application/json",
+	  data: JSON.stringify(data),
+	  success: function(result){
+	  	console.log('Lasts collection reset');
+	  },
+	  error: function(xhr, textStatus, errThrown){
+	  	console.log(xhr);
+	  	console.log(errThrown);
+	  }
+	});
+}
+
+// update top progress bar
+function updateProgress(){
+	progress += progressInc;
+	$('.topBorder').css('width', progress + '%');
 }
 
 // change sorting month to previous or next
@@ -212,10 +239,12 @@ var populatePage = (function(){
 		// west, east, florida blue hours
 		var roomHrs = [0, 0, 0];
 		var lastMeeting = {};
-		lastMeeting.diff = 86400; // seconds in a day
+		lastMeeting.diff = 14704897000;
 		var today = moment.utc(new Date());
 		var popDayArr = [0, 0, 0, 0, 0, 0, 0];
 		var popTimeArr = Array.apply(null, new Array(24)).map(Number.prototype.valueOf,0);
+		var avgCounter = 0;
+		var avgTime = 0;
 
 		for(var item in obj){
 			var MEM = obj[item];
@@ -245,7 +274,6 @@ var populatePage = (function(){
 
 			// add counter to hour for most popular time
 			var startHr = moment(start).hour();
-			console.log(startHr);
 			popTimeArr[startHr] += 1;
 
 			// set room hours
@@ -267,10 +295,11 @@ var populatePage = (function(){
 					break;
 			}
 
-			// check if end time is less than current date
-			// and replace last meeting info if so
+			// check requests that are before today
+			// the one with the smallest difference
+			// is the last meeting
 			if(moment(endM).isBefore(today)){
-				var diff = moment.utc(endM.diff(today));
+				var diff = today.diff(endM);
 				if(diff < lastMeeting.diff){
 					lastMeeting.diff = diff;
 					lastMeeting.comp = MEM.company;
@@ -279,30 +308,61 @@ var populatePage = (function(){
 			}
 		}
 
+		// reset lasts collection
+		var values = {
+		  'total': {
+		  		'hours': 0,
+		  		'minutes': 0
+		  },
+		  'westConf': {
+		  		'hours': 0,
+		  		'minutes': 0
+		  },
+		  'eastConf': {
+		  		'hours': 0,
+		  		'minutes': 0
+		  },
+		  'floridaBlue': {
+		  		'hours': 0,
+		  		'minutes': 0
+		  },
+		  'requests': 0,
+		  'emails': 0
+		}
+
 		//
 		// SET HEADER TOTALS
 		// 
 		// set Total Time Reserved
 		var hrs = Math.floor(totalTime / 60);
 		var min = totalTime % 60;
-		$('#totTimeHrs').text(hrs);
-		$('#totTimeMins').text(min);
+		countUp('#totTimeHrs', hrs);
+		countUp('#totTimeMins', min);
+		values.total.hours = hrs;
+		values.total.minutes = min;
 		// set each rooms total hours
 		// west conf room 
 		hrs = Math.floor(roomHrs[0] / 60);
 		min = roomHrs[0] % 60;
-		$('#westConfHrs').text(hrs);
-		$('#westConfMins').text(min);
+		countUp('#westConfHrs', hrs);
+		countUp('#westConfMins', min);
+		values.westConf.hours = hrs;
+		values.westConf.minutes = min;
 		// east conf room 
 		hrs = Math.floor(roomHrs[1] / 60);
 		min = roomHrs[1] % 60;
-		$('#eastConfHrs').text(hrs);
-		$('#eastConfMins').text(min);
+		countUp('#eastConfHrs', hrs);
+		countUp('#eastConfMins', min);
+		values.eastConf.hours = hrs;
+		values.eastConf.minutes = min;
+
 		// west conf room 
 		hrs = Math.floor(roomHrs[2] / 60);
 		min = roomHrs[2] % 60;
-		$('#educationHrs').text(hrs);
-		$('#educationMins').text(min);
+		countUp('#educationHrs', hrs);
+		countUp('#educationMins', min);
+		values.floridaBlue.hours = hrs;
+		values.floridaBlue.minutes = min;
 
 		// set last request
 		var last = requestData[requestData.length - 1];
@@ -344,6 +404,12 @@ var populatePage = (function(){
 		var popHour = moment().hour(popTime.hour).format('h a');
 		$('#mostPopTime').text(popHour);
 
+		// set average time 
+		var avg = totalTime / (requestData.length - 1);
+		var hrs = Math.floor(avg / 60);
+		var min = Math.floor(avg % 60);
+		countUp('#avgHours', hrs, 1000);
+		countUp('#avgMins', min, 1500);
 		
 
 		// render the header graph and table at the bottom
@@ -364,11 +430,68 @@ var populatePage = (function(){
 
 		// approximation of spared emails
 		var emailCount = (requestData.length - 1) * 2.125;
-		countUp('#emailSpared', 10000, emailCount);
+		countUp('#emailSpared', emailCount, 10000);
 
 		// total requests 
-		countUp('#totReqsTop', 7000, requestData.length - 1);
-		$('#totReqsBottom').text(requestData.length - 1);
+		var requestCount = requestData.length - 1;
+		countUp('#totReqsTop', requestCount);
+		countUp('#totReqsBottom', requestCount);
+
+		values.emails = emailCount;
+		values.requests = requestCount;
+
+		// get collection of last values checked
+		$.getJSON('/getLasts', function(obj){
+			console.log(obj[0]);
+			console.log(values);
+			lasts = obj[0];
+			var plusHrs = 0;
+			var plusMins = 0;
+
+			// total
+			plusHrs = values.total.hours - lasts.total.hours;
+			plusMins = values.total.minutes - lasts.total.minutes;
+			if(plusHrs != 0 || plusMins != 0)
+				$('#totTimePlus').text('+'+plusHrs+':'+plusMins);
+
+			// west conf
+			plusHrs = values.westConf.hours - lasts.westConf.hours;
+			plusMins = values.westConf.minutes - lasts.westConf.minutes;
+			if(plusHrs != 0 || plusMins != 0)
+				$('#westConfPlus').text('+'+plusHrs+':'+plusMins);
+
+			// east conf
+			plusHrs = values.eastConf.hours - lasts.eastConf.hours;
+			plusMins = values.eastConf.minutes - lasts.eastConf.minutes;
+			if(plusHrs != 0 || plusMins != 0)
+				$('#eastConfPlus').text('+'+plusHrs+':'+plusMins);
+
+			// requests 
+			plusHrs = values.requests - lasts.requests;
+			if(plusHrs != 0)
+				$('#totReqsPlus').text('+'+plusHrs);
+
+			// emails
+			plusHrs = values.emails - lasts.emails;
+			if(plusHrs != 0)
+				$('#emailSparedPlus').text('+'+plusHrs);
+
+			// animation for all plus numbers
+			$('#emailSparedPlus').addClass('plusshow');
+			$('#totReqsPlus').addClass('plusshow');
+			$('#eastConfPlus').addClass('plusshow');
+			$('#westConfPlus').addClass('plusshow');
+			$('#totTimePlus').addClass('plusshow');
+
+
+			// keep at bottom
+			setLasts(values);
+
+			updateProgress();
+		});
+
+		// keep at bottom
+		updateProgress();
 	});
 
 
@@ -409,7 +532,7 @@ var populatePage = (function(){
 
 		//countMembers(arr);
 		var count = arr.length - 1;
-		countUp('#memTot', 5000, count);
+		countUp('#memTot', count);
 		// fill members div with printed content
 		$('#members').html(content);
 
@@ -444,6 +567,8 @@ var populatePage = (function(){
 
 			cnt++;
 		});
+
+		updateProgress();
 	}
 
 	// returns a printed member in html
@@ -615,27 +740,6 @@ var populatePage = (function(){
 		members[r] = temp;
 	}
 
-	// physically count the members up
-	function countMembers(arr){
-		var i = 0;
-		var time = 75;
-		var counter = arr.length - 1;
-
-		countEm();
-
-		// recursive counter
-		function countEm(){
-			if(counter != 0){
-				i++;
-				counter--;
-				$('#memTot').text(i);
-				time += (i * 1.1);
-				setTimeout(countEm, time);
-			}
-		}
-
-	}
-
 
 	/// public functions ///
 	populatePage.cycleMembers = cycleMembers;
@@ -645,15 +749,17 @@ var populatePage = (function(){
 });
 
 // visibly count up a number using easeOutExpo
-function countUp(id, duration, count){
+function countUp(id, count, opt){
+	var duration = opt || (Math.floor(Math.random()*(7000-5000+1)+5000));
 	var element = $(id);
 	element.velocity({
 		opacity: 1,
+		tween: 1
 	},{
 		duration: duration,
 		easing: 'easeOutExpo',
 		progress: function(elements, complete, remaining, start, tweenValue){
-			element.text(Math.floor(complete * count));
+			element.text(Math.floor(tweenValue * count));
 		}
 	});
 }
@@ -743,7 +849,56 @@ function renderRequestsGraph(){
 		}
 	}
 	// init a line chart 
-	new Chartist.Line('#ctReqs', data, options);
+	var chart = new Chartist.Line('#ctReqs', data, options);
+
+	// Let's put a sequence number aside so we can use it in the event callbacks
+	var seq = 0;
+
+	// Once the chart is fully created we reset the sequence
+	chart.on('created', function() {
+	  seq = 0;
+	});
+
+	// On each drawn element by Chartist we use the Chartist.Svg API to trigger SMIL animations
+	chart.on('draw', function(data) {
+	  if(data.type === 'point') {
+	    // If the drawn element is a line we do a simple opacity fade in. This could also be achieved using CSS3 animations.
+	    data.element.animate({
+	      opacity: {
+	        // The delay when we like to start the animation
+	        begin: seq++ * 80,
+	        // Duration of the animation
+	        dur: 1000,
+	        // The value where the animation should start
+	        from: 0,
+	        // The value where it should end
+	        to: 1
+	      }
+	    });
+	  } else if(data.type === 'line'){
+	  	data.element.animate({
+	      opacity: {
+	        // The delay when we like to start the animation
+	        begin: seq * 100,
+	        // Duration of the animation
+	        dur: 10,
+	        // The value where the animation should start
+	        from: 0,
+	        // The value where it should end
+	        to: 0
+	      }
+	    });
+	  }
+	});
+
+	// For the sake of the example we update the chart every time it's created with a delay of 8 seconds
+	/*chart.on('created', function() {
+	  if(window.__exampleAnimateTimeout) {
+	    clearTimeout(window.__exampleAnimateTimeout);
+	    window.__exampleAnimateTimeout = null;
+	  }
+	  window.__exampleAnimateTimeout = setTimeout(chart.update.bind(chart), 8000);
+	}); */
 
 	// add tooltips
 	var $chart = $('#ctReqs');
@@ -779,7 +934,26 @@ function renderRequestsGraph(){
 			var day = intToDay(inc.getDay());
 			$(pnt).attr('ct:day', day);
 		});
+
+		var path = $('path').get(0);
+		$(path).attr('opacity', 1);
+		var pathLen = path.getTotalLength();
+
+		$('path').velocity({
+			tween: 1
+		},{
+			duration: 4500,
+			easing: 'eastOut',
+			progress: function(elements, complete, remaining, start, tweenValue){
+				var adjustedLen = tweenValue * pathLen;
+				$('path').attr('opacity', 1);
+				path.setAttribute('stroke-dasharray', adjustedLen+' '+pathLen);
+			}
+		});
 	}, 1000);
+
+
+
 }
 
 function renderRequests(num){

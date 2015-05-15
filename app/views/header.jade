@@ -1,37 +1,38 @@
 block header
 	.header
+		.topBorder
 		.inner
 			h1.dontshow Domi Dashboard
 			.welcome.dontshow
 				| Welcome! Today is #[span(id='toDay') ] the #[span(id='toDate') ].
 				
 			.totals.dontshow
-				|#[span.bold(id='totTimeHrs') 0] hours #[span.bold(id='totTimeMins') 0] minutes
+				|#[span.bold(id='totTimeHrs') 0] hours #[span.bold(id='totTimeMins') 0] minutes #[span.plus(id='totTimePlus') ]
 				.subLine
 					| Total Time Reserved
-				|#[span.bold(id='westConfHrs') 0] hours #[span.bold(id='westConfMins') 0] minutes
+				|#[span.bold(id='westConfHrs') 0] hours #[span.bold(id='westConfMins') 0] minutes #[span.plus.dontshow(id='westConfPlus') ]
 				.subLine
 					| West Conference Room
-				|#[span.bold(id='eastConfHrs') 0] hours #[span.bold(id='eastConfMins') 0] minutes
+				|#[span.bold(id='eastConfHrs') 0] hours #[span.bold(id='eastConfMins') 0] minutes #[span.plus.dontshow(id='eastConfPlus') ]
 				.subLine
 					| East Conference Room
-				|#[span.bold(id='educationHrs') 0] hours #[span.bold(id='educationMins') 0] minutes
+				|#[span.bold(id='educationHrs') 0] hours #[span.bold(id='educationMins') 0] minutes #[span.plus.dontshow(id='educationPlus') ]
 				.subLine
 					| Florida Blue Education Room
 
 			.lasts.dontshow
-				|#[span(id='lastMeetingComp') ] in the #[span(id='lastMeetingRoom') ]
+				|#[span.bold(id='totReqsTop') 0] requests #[span.plus.dontshow(id='totReqsPlus') ]
 				.subLine
-					| Last Meeting
+					| Total Requests Taken
+				|#[span.bold(id='emailSpared') 0] emails #[span.plus.dontshow(id='emailSparedPlus') ]
+				.subLine
+					| Approximate Emails Spared
 				|#[span(id='lastRequestComp') ] for #[span(id='lastRequestDate') ]
 				.subLine
 					| Last Request Received
-				|#[span.bold(id='totReqsTop') 0] requests
+				|#[span(id='lastMeetingComp') ] in the #[span(id='lastMeetingRoom') ]
 				.subLine
-					| Total Requests Taken
-				|#[span.bold(id='emailSpared') 0] emails
-				.subLine
-					| Approximate Emails Spared
+					| Last Meeting Held
 			.mostPop.dontshow
 				|#[span(id='mostPopDay') Anyday]
 				.subLine
@@ -39,6 +40,9 @@ block header
 				|Around #[span(id='mostPopTime') ]
 				.subLine
 					| Most Popular Meeting Time
+				|#[span.bold(id='avgHours') 0] hour and #[span.bold(id='avgMins') 0] minutes
+				.subLine
+					| Average Meeting Time
 
 
 				

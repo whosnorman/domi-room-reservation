@@ -3,7 +3,20 @@
 var MongoClient;
 var ObjectID;
 
+
 module.exports = function(app) {
+	var options =  {
+        replset: { 
+            socketOptions: { 
+                connectTimeoutMS: 30000 
+            } 
+        },
+        server: {
+                socketOptions: {
+                    connectTimeoutMS: 500
+                }
+            }
+    };
 
 	return app.models.db = (function() {
 		
@@ -18,7 +31,7 @@ module.exports = function(app) {
 		db.insertRequest = function(request, callback) {
 			var r = request;
 
-			MongoClient.connect(app.env.MONGOHQ_URL, function(err, mdb){
+			MongoClient.connect(app.env.MONGOHQ_URL, options, function(err, mdb){
 				if(err){
 				  callback.error(err);
 				}
@@ -56,7 +69,7 @@ module.exports = function(app) {
 		// MEMBERS
 		// merge two member documents
 		db.mergeMember = function(one, two, callback) {
-			MongoClient.connect(app.env.MONGOHQ_URL, function(err, mdb){
+			MongoClient.connect(app.env.MONGOHQ_URL, options, function(err, mdb){
 				if(err){
 				  callback.error(err);
 				} else {
@@ -154,7 +167,7 @@ module.exports = function(app) {
 		// insert or update relevant member document
 		db.insertMember = function(mem, callback) {
 			// connect to database
-			MongoClient.connect(app.env.MONGOHQ_URL, function(err, mdb){
+			MongoClient.connect(app.env.MONGOHQ_URL, options, function(err, mdb){
 				if(err){
 				  return callback.error(err);
 				}
@@ -386,7 +399,7 @@ module.exports = function(app) {
 		// clear current members collection and 
 		// rerun sorting logic on existing requests
 		db.reconfigureMembers = function(callback) {
-			MongoClient.connect(app.env.MONGOHQ_URL, function(err, mdb){
+			MongoClient.connect(app.env.MONGOHQ_URL, options, function(err, mdb){
 			    if(err){
 			      callback.error(err);
 			    }
@@ -404,7 +417,7 @@ module.exports = function(app) {
 			        var i = 0;
 
 			        function config(){
-			          insertMember(items[i], function(){
+			          app.models.db.insertMember(items[i], function(){
 			            if(i < items.length - 1){
 			              i++;
 			              config();
@@ -428,7 +441,7 @@ module.exports = function(app) {
 		// COLLECTIONS
 		// look up all docs in the requests collection
 		db.getCollection = function(coll, callback) {
-			MongoClient.connect(app.env.MONGOHQ_URL, function(err, mdb){
+			MongoClient.connect(app.env.MONGOHQ_URL, options, function(err, mdb){
 			    if(err){
 			    	callback.error(err);
 			    } else {
@@ -441,6 +454,57 @@ module.exports = function(app) {
 						callback.success(items);					 
 					});
 				}
+			});
+		};
+
+
+		// change last values collection
+		db.setLasts = function(values, callback) {
+			var r = values;
+
+			MongoClient.connect(app.env.MONGOHQ_URL, options, function(err, mdb){
+				if(err){
+				  callback.error(err);
+				}
+
+				var coll = mdb.collection('lasts');
+
+				coll.remove(function(err, numRemoved){
+					MongoClient.connect(app.env.MONGOHQ_URL, options, function(err, newDb){
+						if(err){
+						  callback.error(err);
+						}
+						var collection = newDb.collection('lasts');
+
+						var doc = {
+						  'total': {
+						  		'hours': r.total.hours,
+						  		'minutes': r.total.minutes
+						  },
+						  'westConf': {
+						  		'hours': r.westConf.hours,
+						  		'minutes': r.westConf.minutes
+						  },
+						  'eastConf': {
+						  		'hours': r.eastConf.hours,
+						  		'minutes': r.eastConf.minutes
+						  },
+						  'floridaBlue': {
+						  		'hours': r.floridaBlue.hours,
+						  		'minutes': r.floridaBlue.minutes
+						  },
+						  'requests': r.requests,
+						  'emails': r.emails
+						}
+
+						collection.insert([doc], function(err, docs) {
+						  if (err) {
+						    callback.error(err);
+						  }
+						});
+					});
+				});
+				
 			});
 		};
 
