@@ -15,9 +15,11 @@ $(document).ready(function() {
 	$('.dontshow').addClass('show');
 
 	var today = new Date();
-	toDay = moment.utc(today).format('dddd');
+	toDay = moment.utc(today).zone(+0400);
+	toDay = moment(toDay).format('dddd');
+
 	$('#toDay').text(toDay);
-	toDate = moment.utc(today).format('Do');
+	toDate = moment(today).format('Do');
 	$('#toDate').text(toDate);
 
 	// button listeners
@@ -240,7 +242,9 @@ var populatePage = (function(){
 		var roomHrs = [0, 0, 0];
 		var lastMeeting = {};
 		lastMeeting.diff = 14704897000;
-		var today = moment.utc(new Date());
+		var today = new Date();
+		today = moment.utc(today).zone(+0400);
+		console.log(today);
 		var popDayArr = [0, 0, 0, 0, 0, 0, 0];
 		var popTimeArr = Array.apply(null, new Array(24)).map(Number.prototype.valueOf,0);
 		var avgCounter = 0;
@@ -251,10 +255,10 @@ var populatePage = (function(){
 			requestData[item] = MEM;
 
 			// set duration
-			var endM = moment.utc(MEM.end);
-			var start = moment.utc(MEM.start);
-			var diffMin = moment.utc(endM.diff(start)).format('m');
-			var diffHr = moment.utc(endM.diff(start)).format('h');
+			var endM = moment.utc(MEM.end).zone(+0400);
+			var start = moment.utc(MEM.start).zone(+0400);
+			var diffMin = moment(endM.diff(start)).zone(+0400).format('m');
+			var diffHr = moment(endM.diff(start)).zone(+0400).format('h');
 			if (diffHr == 12)
 				diffHr = 0;
 
@@ -269,11 +273,11 @@ var populatePage = (function(){
 			totalTime += (durHr * 60) + durMin;
 
 			// add counter to day for most popular day
-			var currDay = moment(start).format('dddd');
+			var currDay = moment(start).zone(+0400).format('dddd');
 			popDayArr[dayToInt(currDay)] += 1;
 
 			// add counter to hour for most popular time
-			var startHr = moment(start).hour();
+			var startHr = moment(start).zone(+0400).hour();
 			popTimeArr[startHr] += 1;
 
 			// set room hours
@@ -367,7 +371,7 @@ var populatePage = (function(){
 		// set last request
 		var last = requestData[requestData.length - 1];
 		$('#lastRequestComp').text(last.company);
-		var date = moment.utc(last.start).format('MMM Do');
+		var date = moment.utc(last.start).zone(+0400).format('MMM Do');
 		$('#lastRequestDate').text(date);
 
 		// set last meeting
@@ -442,8 +446,6 @@ var populatePage = (function(){
 
 		// get collection of last values checked
 		$.getJSON('/getLasts', function(obj){
-			console.log(obj[0]);
-			console.log(values);
 			lasts = obj[0];
 			var plusHrs = 0;
 			var plusMins = 0;
@@ -973,11 +975,11 @@ function renderRequests(num){
 
 	// print requests into a table
 	for(var i = begin; i > stop; i--){
-		var end = moment.utc(data[i].end);
+		var end = moment.utc(data[i].end).zone(+0400);
 		var endTime = moment(end).format('h:mm');
 		var endA = moment(end).format('a');
 
-		var start = moment.utc(data[i].start);
+		var start = moment.utc(data[i].start).zone(+0400);
 		var startTime = moment(start).format('h:mm');
 		var startA = moment(start).format('a');
 		var date = new Date(data[i].start);

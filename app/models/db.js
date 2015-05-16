@@ -12,10 +12,10 @@ module.exports = function(app) {
             } 
         },
         server: {
-                socketOptions: {
-                    connectTimeoutMS: 500
-                }
+            socketOptions: {
+                connectTimeoutMS: 10000
             }
+        }
     };
 
 	return app.models.db = (function() {
