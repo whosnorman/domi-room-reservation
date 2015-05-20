@@ -501,6 +501,8 @@ module.exports = function(app) {
 						  if (err) {
 						    callback.error(err);
 						  }
+
+						  callback.success();
 						});
 					});
 				});

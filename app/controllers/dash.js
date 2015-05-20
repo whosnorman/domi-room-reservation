@@ -107,6 +107,7 @@ module.exports = function(app){
 		// restart server 
 		dashController.restart = function(req, res) {
 			process.exit(0);
+			resSuccess(res);
 		};
 
 		function resSuccess(res){

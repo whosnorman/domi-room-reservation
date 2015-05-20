@@ -8,18 +8,18 @@ block localcss
 block localscripts
 		script(src='http://d3js.org/d3.v3.min.js', charset='utf-8')
 		script(type='text/javascript', src='js/dash.js')
-		script(type='text/javascript', src='js/moment.min.js')
-		script(type='text/javascript', src='js/velocity.min.js')
+		script(type='text/javascript', src='js/helpers.js')
+		script(type='text/javascript', src='js/renders.js')
+		script(type='text/javascript', src='js/lib/moment.min.js')
+		script(type='text/javascript', src='js/lib/velocity.min.js')
 		script(src='http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js')
-
-
 
 block content
 	include header
 	.mainContent.dontshow
 		.bar
 			h2.memTot
-				#[span.bold(id='memTot') 0] members
+				| #[span.bold(id='memTot') 0] members
 			.sorter
 				#memSortLeft.icon-left-dir
 				#sorterMonth
@@ -33,10 +33,12 @@ block content
 		#members.members
 			.mem
 				.comp Company
+				//-.aliases One, Two, Three
 				.months
 					.monthAmt 12
 					.month jan
-				.emails
+				.emailCont
+					.emails
 				.mergeBtn merge
 
 		//- requests table
@@ -44,12 +46,11 @@ block content
 
 		.spacer
 
-
-	//- footer
-	.mainContent 
+	img.dom(src='img/dom-eyes.png')
+	.footer 
 		#loadCal.btn
 			| Load Snag Calendar
-		#config.btn
+		//-#config.btn
 			| Dashboard Settings
 		#reconfig.btn
 			| Re-Configure Members
@@ -57,6 +58,7 @@ block content
 			| Restart Server
 		div(style='clear: both')
 		#calendar
+
 
 					
 
