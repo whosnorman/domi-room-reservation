@@ -1,24 +1,22 @@
-### Public File Structure
+# Public File Structure
 Renders with `.jade` files in ../app/views
 
 
-`js`
+`js/`
 
-	- `dash.js` - main js file, waits for $(document).ready to make calls and render everything
+: `dash.js` - main js file, waits for `$(document).ready` to make calls and render everything
 
-	- `models.js` - mostly ajax calls 
+: `models.js` - mostly ajax calls 
 
-	- `helpers.js` - consists of: 
-		- app config and global variables 
-		- `app.helpers` for utility and helper functions
-		- `app.handlers` for event handlers when users interact with the page
+: `helpers.js` - consists of:
+--- app config and global variables 
+--- `app.helpers` for utility and helper functions
+--- `app.handlers` for event handlers when users interact with the page
 
-	- `lib` - third party libraries such as moment.js and velocity.js 
+: `lib` - third party libraries such as [moment.js](http://momentjs.com/) and [velocity.js](http://julian.com/research/velocity/)
 
-`dashboard.html` - irrelevant, dashboard.jade is used in `app/views`
+`font/` - fontello files for some icons
 
-`font` - fontello files for some icons
+`css/` - main style sheet, fontello sheets
 
-`css` - main style sheet, fontello sheets
-
-`img` - favicon, various images
+`img/` - favicon, various images
