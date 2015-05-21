@@ -1,4 +1,5 @@
-// config and global variables
+//
+//// config and global variables
 app.requestData = [];
 app.requestCurrent = 0;
 app.mergeArr = [];
@@ -12,7 +13,10 @@ app.accentColor;
 app.progressInc = 91.6 / 4;
 
 
-// utility and helper functions
+
+
+//
+//// utility and helper functions
 app.helpers = {
 	// return int pertaining to month 
 	monthToInt: function(mon){
@@ -143,11 +147,47 @@ app.helpers = {
 				element.text(Math.floor(tweenValue * count));
 			}
 		});
-	}
+	},
+
+	// returns previous month based on given month and year
+	getPrevMonth: function(dateObj){
+		var newDate = {};
+		var prevYear = dateObj.year;
+		var prevMonth = dateObj.month - 1;
+		// adjust for edge case jan -> dec
+		if(prevMonth == 0){
+			prevMonth = 12;
+			prevYear -= 1;
+		}
+
+		newDate.year = prevYear;
+		newDate.month = prevMonth;
+		return newDate;
+	},
+
+	// returns next month based on given month and year
+	getNextMonth: function(dateObj){
+		var newDate = {};
+		var nextYear = dateObj.year;
+		var nextMonth = dateObj.month + 1;
+		// adjust for edge case dec -> jan
+		if(nextMonth == 13){
+			nextMonth = 1;
+			nextYear += 1;
+		}
+
+		newDate.year = nextYear;
+		newDate.month = nextMonth;
+		return newDate;
+	},
 
 };
 
 
+
+
+//
+////
 // events that fire when a user interacts with the page
 // automatically runs when called, used for base events
 app.handlers = (function(){
@@ -231,12 +271,12 @@ app.handlers = (function(){
 
 	// member sort minus a month
 	$('#memSortLeft').on('click', function(){
-		memSort('left');
+		app.members.sortByDir('left');
 	});
 
 	// member sort plus a month
 	$('#memSortRight').on('click', function(){
-		memSort('right');
+		app.members.sortByDir('right');
 	});
 
 	// request table page left

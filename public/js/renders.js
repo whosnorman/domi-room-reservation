@@ -1,42 +1,58 @@
 // functions to render elements on the page
 app.render = {
 
+	// things to include in member elements:
+	// 		company name
+	// 		aliases
+	// 		total hours for previous and current month
+	// 		emails using name@ trend with hovering showing their full name
+	// 		chart showing usage per last couple months
+	// 		
+	//   update search bar to search full name not shortened one
+	// returns a printed member in html
+	printMember: function(member, dateObj, opt){
+		var cont = '';
+
+		cont += '<div class="mem" dashID="' + member._id + '">';
+
+		// company name
+		cont += '<div class="comp">' + member.company + '</div>';
+
+
+		// months div
+		cont += '<div class="months">';
+		// true opt means the date doesn't match up
+		if(opt){
+			cont += 'no data for ' + (app.helpers.intToMonth(dateObj.month)).toLowerCase();
+		} else {
+			cont += '<div class="monthAmt">';
+			cont += member.years[dateObj.year][dateObj.month];
+			cont += '</div>';
+			cont += '<div class="month">';
+			cont += (app.helpers.intToMonth(dateObj.month)).toLowerCase();
+			cont += '</div>';
+		}
+		cont += '</div>';
+
+		// emails div
+		cont += '<div class="emailCont"><div class="emails">';
+		for(var i = 0; i < member.users.length; i++) {
+			cont+= member.users[i] + ' ';
+		}
+		cont += '</div>';
+
+		// merge button
+		cont += '<div class="mergeBtn">merge</div>';
+
+		cont += '</div></div>';
+
+		return cont;
+	},
+
 	// update top progress bar
 	updateProgress: function(){
 		app.progress += app.progressInc;
 		$('.progress').css('width', app.progress + '%');
-	},
-
-	// returns previous month based on given month and year
-	getPrevMonth: function(dateObj){
-		var newDate = {};
-		var prevYear = dateObj.year;
-		var prevMonth = dateObj.month - 1;
-		// adjust for edge case jan -> dec
-		if(prevMonth == 0){
-			prevMonth = 12;
-			prevYear -= 1;
-		}
-
-		newDate.year = prevYear;
-		newDate.month = prevMonth;
-		return newDate;
-	},
-
-	// returns next month based on given month and year
-	getNextMonth: function(dateObj){
-		var newDate = {};
-		var nextYear = dateObj.year;
-		var nextMonth = dateObj.month + 1;
-		// adjust for edge case dec -> jan
-		if(nextMonth == 13){
-			nextMonth = 1;
-			nextYear += 1;
-		}
-
-		newDate.year = nextYear;
-		newDate.month = nextMonth;
-		return newDate;
 	},
 
 	// render requests table 
@@ -110,10 +126,29 @@ app.render = {
 
 		$('#showReqs').html(showString);
 		$('#reqOptions').val(num);
-		adjustHeaderWidth();
+		app.render.adjustTableHeaders();
 	},
 
-	// render the requests graph in the header based on the previous week's results
+	// cycle through request table columns and 
+	// set header cells to correct width
+	adjustTableHeaders: function() {
+		var reqs = $('#main').find('td');
+		var headers = $('#reqHead').find('th');
+		var arr = [];
+
+		for(var i = 0; i < 7; i++) {
+			arr.push($(reqs.eq(i)).width());
+		}
+
+		var i = 0;
+		headers.each(function(){
+			$(this).css('width', arr[i]);
+			i++;
+		});
+	},
+
+	// render the requests graph in the header 
+	// based on the previous week's results
 	requestsGraph: function(){
 		var stopCounter = app.requestData.length * 0.5;
 		var weekAgo = new Date();
@@ -362,6 +397,81 @@ app.render = {
 		}
 
 		$('#welcomeMsg').text(titleString);
+	},
+
+	// calculate and show difference of values
+	// since last visit
+	showValueDifference: function(values, lasts){
+		var plusHrs = 0;
+		var plusMins = 0;
+
+		// total
+		plusHrs = values.total.hours - lasts.total.hours;
+		plusMins = values.total.minutes - lasts.total.minutes;
+
+		if(plusHrs > 0 && plusMins < 0)
+			plusMins *= -1;
+		if(plusHrs != 0 || plusMins != 0)
+			$('#totTimePlus').text('+'+plusHrs+':'+plusMins);
+
+		// west conf
+		plusHrs = values.westConf.hours - lasts.westConf.hours;
+		plusMins = values.westConf.minutes - lasts.westConf.minutes;
+		if(plusHrs > 0 && plusMins < 0)
+			plusMins *= -1;
+		if(plusHrs != 0 || plusMins != 0)
+			$('#westConfPlus').text('+'+plusHrs+':'+plusMins);
+
+		// east conf
+		plusHrs = values.eastConf.hours - lasts.eastConf.hours;
+		plusMins = values.eastConf.minutes - lasts.eastConf.minutes;
+		if(plusHrs > 0 && plusMins < 0)
+			plusMins *= -1;
+		if(plusHrs != 0 || plusMins != 0)
+			$('#eastConfPlus').text('+'+plusHrs+':'+plusMins);
+
+		// requests 
+		plusHrs = values.requests - lasts.requests;
+		if(plusHrs != 0)
+			$('#totReqsPlus').text('+'+plusHrs);
+
+		// emails
+		plusHrs = values.emails - lasts.emails;
+		if(plusHrs != 0)
+			$('#emailSparedPlus').text('+'+plusHrs);
+
+
+		/* // For show purposes
+		$('#totReqsPlus').text('+1');
+		$('#emailSparedPlus').text('+2');
+		$('#totTimePlus').text('+2:30'); 
+		*/
+
+		// animation for all plus numbers in header
+		$('#emailSparedPlus').addClass('plusshow');
+		$('#totReqsPlus').addClass('plusshow');
+		$('#eastConfPlus').addClass('plusshow');
+		$('#westConfPlus').addClass('plusshow');
+		$('#totTimePlus').addClass('plusshow');
+	},
+
+	showEmails: function(el) {
+		var months = el.getElementsByClassName('emails');
+		$(months[0]).css('opacity', '1');
+	},
+
+	hideEmails: function(el) {
+		var months = el.getElementsByClassName('emails');
+		$(months[0]).css('opacity', '0');
+	},
+
+	toggleHeight: function(el) { 
+		var el = $(el);
+		if (el.height() > 50) {
+			el.css('height', '40px');
+		} else {
+			el.css('height', '200px');
+		}
 	}
 
 
