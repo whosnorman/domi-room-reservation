@@ -1,4 +1,6 @@
 app.members = {
+	// lookup a member by their id
+	// and return full object
 	lookup: function(id){
 		var result = $.grep(app.memArr, function(e){ 
 			return e._id === id;
@@ -10,6 +12,8 @@ app.members = {
 		return result[0];
 	},
 
+	// toggle merge button, on second click
+	// confirm merging of members
 	mergeToggle: function(str) {
 		var mems = document.getElementsByClassName('mem');
 		$(mems[num]).css('border-color', 'rgba(255, 153, 51, 1');
@@ -39,7 +43,7 @@ app.members = {
 		}
 	},
 
-	// change sorting month to previous or next
+	// change month by one and re-sort
 	sortByDir: function(dir){
 		var dateObj = {};
 		var month = $('#sorterMonth').text();

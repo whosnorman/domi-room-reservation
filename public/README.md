@@ -4,16 +4,21 @@ Renders with `.jade` files in ../app/views
 
 `js/`
 
-: `dash.js` - main js file, waits for `$(document).ready` to make calls and render everything
+: `dash.js` - main js file, consists of:
+--- populatePage to kick off retrieving data and rendering
+--- get requests and calculate header stats
+--- `app.models` to abstract away various ajax calls
 
-: `models.js` - mostly ajax calls 
-
-: `helpers.js` - consists of:
+: `utility.js` - consists of:
 --- app config and global variables 
 --- `app.helpers` for utility and helper functions
 --- `app.handlers` for event handlers when users interact with the page
 
-: `lib` - third party libraries such as [moment.js](http://momentjs.com/) and [velocity.js](http://julian.com/research/velocity/)
+: `renders.js` - functions to render aspects of the page
+
+: `members.js` - functions pertaining to manipulating and dealing with the list of members
+
+`lib/` - third party libraries such as [moment.js](http://momentjs.com/) and [velocity.js](http://julian.com/research/velocity/)
 
 `font/` - fontello files for some icons
 
