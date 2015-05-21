@@ -254,8 +254,9 @@ app.handlers = (function(){
 		var text = $('#search').val();
 		var counter = 0;
 		$('.mem').each(function() {
-			var comp = this.getElementsByClassName('comp');
-			var str = $(comp).text();
+			var id = $(this).attr('dashID');
+			var member = app.members.lookup(id);
+			var str = member.company;
 			var inStr = str.toLowerCase().indexOf(text);
 			if(inStr > -1){
 				$(this).css('display', 'block');
@@ -266,7 +267,6 @@ app.handlers = (function(){
 		});
 
 		$('#memTot').text(counter);
-
 	});
 
 	// member sort minus a month

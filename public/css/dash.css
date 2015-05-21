@@ -669,6 +669,7 @@ select::-ms-expand{
 	overflow: hidden;
 	z-index: 1000;
 	transition: all 200ms ease-Out;
+	position: relative;
 }
 
 .mem:hover {
@@ -682,6 +683,14 @@ select::-ms-expand{
 	font-size: 25px;
 	float: left;
 	position: relative;
+}
+
+.mem .aliases {
+	font-size: 0.8em;
+	font-weight: 400;
+	top: 60px;
+	left: 10px;
+	position: absolute;
 }
 
 .mem .months {

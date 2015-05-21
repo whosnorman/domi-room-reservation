@@ -17,6 +17,12 @@ app.render = {
 
 		// company name
 		cont += '<div class="comp">' + member.company + '</div>';
+		cont += '<div class="aliases">';
+		for(var i=0; i < member.aliases.length; i++){
+			cont += member.aliases[i] + '<br/>';
+			console.log(member.company);
+		}
+		cont += '</div>';
 
 
 		// months div
@@ -404,6 +410,8 @@ app.render = {
 	showValueDifference: function(values, lasts){
 		var plusHrs = 0;
 		var plusMins = 0;
+		console.log(values);
+		console.log(lasts);
 
 		// total
 		plusHrs = values.total.hours - lasts.total.hours;
