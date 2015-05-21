@@ -9,10 +9,8 @@ app.loadCal = true;
 app.progress = 0;
 app.accentColor;
 // updateProgress in 
-// 		document ready, after requests, after members, get last values
+// 	document ready, after requests, after members, get last values
 app.progressInc = 91.6 / 4;
-
-
 
 
 //
@@ -77,6 +75,38 @@ app.helpers = {
 			case 11: return 'Nov';
 				break;
 			case 12: return 'Dec';
+				break;
+			default: return '???';
+				break;
+		}
+	},
+
+
+	intToFullMonth: function(month){
+		switch(month){
+			case 1: return 'January';
+				break;
+			case 2: return 'February';
+				break;
+			case 3: return 'March';
+				break;
+			case 4: return 'April';
+				break;
+			case 5: return 'May';
+				break;
+			case 6: return 'June';
+				break;
+			case 7: return 'July';
+				break;
+			case 8: return 'August';
+				break;
+			case 9: return 'September';
+				break;
+			case 10: return 'October';
+				break;
+			case 11: return 'November';
+				break;
+			case 12: return 'December';
 				break;
 			default: return '???';
 				break;
@@ -297,7 +327,15 @@ app.handlers = (function(){
 		app.render.requestsTable(app.requestCurrent);
 	});
 
+	$('#dashboardInfo').on('click', function(){
+		$('.tidbitsCont').toggleClass('height');
+		$('#tidbits').toggleClass('unhide');
+	});
+
 	$('.dom').on('click', function(){
+		var current = app.accentColor;
 		app.render.setAccentColor();
+		if(current != app.accentColor)
+			console.log('changed');
 	});
 });

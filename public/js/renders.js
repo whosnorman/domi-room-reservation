@@ -20,7 +20,6 @@ app.render = {
 		cont += '<div class="aliases">';
 		for(var i=0; i < member.aliases.length; i++){
 			cont += member.aliases[i] + '<br/>';
-			console.log(member.company);
 		}
 		cont += '</div>';
 
@@ -45,12 +44,12 @@ app.render = {
 		for(var i = 0; i < member.users.length; i++) {
 			cont+= member.users[i] + ' ';
 		}
-		cont += '</div>';
+		cont += '</div></div>';
 
 		// merge button
 		cont += '<div class="mergeBtn">merge</div>';
 
-		cont += '</div></div>';
+		cont += '</div>';
 
 		return cont;
 	},
@@ -213,10 +212,8 @@ app.render = {
 			if(ind != -1){
 				var time = withinWeek[i].durHr;
 				var mins = withinWeek[i].durMin;
-				//console.log(mins /60);
 				time += (mins / 60);
 				data.series[0][ind] += time;
-				//console.log(data.series[0][ind]);
 			}
 		}
 
@@ -353,6 +350,7 @@ app.render = {
 
 		app.accentColor = color;
 		$('.header .progress').css('background', color);
+		$('#tidbits .divider').css('background', color);
 		$('.plusRel').css('color', color);
 		$('.plusAbs').css('color', color);
 
@@ -410,8 +408,6 @@ app.render = {
 	showValueDifference: function(values, lasts){
 		var plusHrs = 0;
 		var plusMins = 0;
-		console.log(values);
-		console.log(lasts);
 
 		// total
 		plusHrs = values.total.hours - lasts.total.hours;

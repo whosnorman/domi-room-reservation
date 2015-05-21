@@ -2,14 +2,16 @@
 var app = {};
 
 $(document).ready(function() {
-
+	// randomized and daily elements
 	app.render.showWelcomeMessage();
 	app.render.showTodaysDate();
 	app.render.setAccentColor();
 
+	// everything else
 	app.populatePage();
 	app.handlers();
 
+	// slide in animation
 	$('.dontshow').addClass('show');
 
 	// keep at bottom
@@ -19,9 +21,8 @@ $(document).ready(function() {
 
 // inits data & page
 app.populatePage = (function(){
-	// variables
-	var arr = [];
-	
+	// calculate and render header stats,
+	// also resets last values collection in mongo
 	loadRequests();
 
 	// create date object
@@ -348,4 +349,21 @@ app.models = {
 		//   	dec: 0
 		//   users: [lucas@domi.com, matt@domi.com, amanda@domi.com]
 		//   
+		//   
+		//   
+		//   
+		//   
+		//   
+		//   
+		// Tips
+		// - click search eye glass to clear seach bar
+		// - list out domi/used colors with a circle and hex codes
+		// - hover over anything with a '...' at the end for the full text
+		// - what the progress bar is broken down into
+		// 
+		// could put how stuff works
+		// - how the member sorting by month works
+		// - what reconfigure does
+		// - what restart does and it's use
+		// - 
 		

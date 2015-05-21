@@ -14,28 +14,27 @@ app.members = {
 
 	// toggle merge button, on second click
 	// confirm merging of members
-	mergeToggle: function(str) {
-		var mems = document.getElementsByClassName('mem');
-		$(mems[num]).css('border-color', 'rgba(255, 153, 51, 1');
-		// find element with correct company string 
-		app.mergeArr.push(str);
+	mergeToggle: function(id) {
+		var currElement = $('[dashID="' + id + '"]');
+		currElement.css('border-color', 'rgba(255, 153, 51, 1');
+
+		app.mergeArr.push(id);
 
 		if(app.mergeArr.length == 2) {
-			// deselect if misclick
+			// deselect if clicked twice
 			if (app.mergeArr[0] == app.mergeArr[1]){
-				var mem = mems[app.mergeArr[0]];
-				$(mem).removeAttr('style');
+				currElement.removeAttr('style');
 				app.mergeArr = [];
 			} else {
-				var first = app.memArr[app.mergeArr[0]];
-				var second = app.memArr[app.mergeArr[1]];
+				var first = app.members.lookup(app.mergeArr[0]);
+				var second = app.members.lookup(app.mergeArr[1]);
 				// prompt to confrim merge
 				if(confirm('Merge ' + first.company + ' into ' + second.company +'?'))
 					app.models.mergeMembers(first._id, second._id);
 
 				for(var i = 0; i < app.mergeArr.length; i++){
-					var mem = mems[app.mergeArr[i]];
-					$(mem).removeAttr('style');
+					var el = $('[dashID="' + app.mergeArr[i] + '"]');
+					el.removeAttr('style');
 				}
 
 				app.mergeArr = [];
@@ -82,7 +81,7 @@ app.members = {
 			if (this.company == 'nextdate') {
 				dateCounter++;
 				content += '<div class="line">';
-				content += app.helpers.intToMonth(app.dateArr[dateCounter].month);
+				content += app.helpers.intToFullMonth(app.dateArr[dateCounter].month);
 				content += '</div>';
 			} else if (this.company == 'nodata'){
 				nodata = true;
@@ -101,6 +100,7 @@ app.members = {
 		$('.mem').each(function() {
 			var comp = this.getElementsByClassName('comp');
 			var compStr = $(comp).text();
+			var id = $(this).attr('dashID');
 			if(compStr.length - 1 > 16) {
 				$(comp).attr('title', compStr);
 				var compStr = compStr.substring(0, 16) + '...';
@@ -116,16 +116,13 @@ app.members = {
 
 			$(this).click(function(){
 				app.render.toggleHeight(this);
-				var id = $(this).attr('dashID');
-				var result = app.members.lookup(id);
-				console.log(result.company);
 			});
 
 			var count = cnt;
 			var merge = this.getElementsByClassName('mergeBtn');
 			merge[0].addEventListener('click', function(e){
 				e.stopPropagation();
-				app.members.mergeToggle(compStr);
+				app.members.mergeToggle(id);
 			});
 
 			cnt++;
