@@ -114,28 +114,36 @@ app.members = {
 				//app.render.hideEmails(this);
 			});
 
+			// only toggle height if not clicking on emails to copy
 			this.addEventListener('click', function(ev) {
 				var target = ev.target;
-				if($(target).attr('class') == 'emailcopy') {
-					console.log('clicked email');
-				} else 
+				target = $(target).attr('class');
+				if(target !== 'emailcopy zeroclipboard-is-hover' && target !== 'aliases')
 					app.render.toggleHeight(this);
 			});
 
+			var emailTitle = this.getElementsByClassName('emailTitle');
 			// copy the emails to clipboard on click
 			var zeroClip = this.getElementsByClassName('emailcopy');
+
 			for(var i = 0; i < zeroClip.length; i++){
-				var client = new ZeroClipboard(zeroClip[i]);
-				console.log(client);
-				client.on( "ready", function( readyEvent ) {
-					console.log('read');
-				  client.on( "aftercopy", function( event ) {
-				    // `this` === `client`
-				    // `event.target` === the element that was clicked
-				    event.target.style.display = "none";
-				    console.log("Copied text to clipboard: " + event.data["text/plain"] );
-				  } );
-				} );
+				zeroClipFunc(zeroClip[i]);
+			}
+
+			function zeroClipFunc(zc){
+				var client = new ZeroClipboard(zc, {moviePath: 'js/lib/ZeroClipboard.swf'});
+					client.on( "ready", function( readyEvent ) {
+					  client.on( "aftercopy", function( event ) {
+					    // `this` === `client`
+					    // `event.target` === the element that was clicked
+					    //event.target.style.display = "none";
+					    emailTitle[0].style.color = app.accentColor;
+					    setTimeout(function(){
+					    	emailTitle[0].style.color = '#303030';
+					    }, 1000);
+					    console.log("Copied text to clipboard: " + event.data["text/plain"] );
+					  } );
+					} );
 			}
 
 			var count = cnt;

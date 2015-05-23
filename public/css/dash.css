@@ -852,6 +852,11 @@ select::-ms-expand{
 	position: relative;
 }
 
+.mem .emailTitle {
+	-webkit-transition: all 350ms ease-out;
+	-moz-webkit-transition: all 350ms ease-out;
+}
+
 .mem .months {
 	position: absolute;
 	float: left;

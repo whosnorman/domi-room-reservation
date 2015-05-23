@@ -4,11 +4,9 @@ app.render = {
 	// things to include in member elements:
 	// 		x company name
 	// 		x aliases
-	// 		  total hours for previous and current month
-	// 		  emails using name@ trend with hovering showing their full name
+	// 		x emails using name@ trend with hovering showing their full name
 	// 		  chart showing usage per last couple months
-	// 		
-	//   update search bar to search full name not shortened one
+	//   	x update search bar to search full name not shortened one
 	// returns a printed member in html
 	printMember: function(member, dateObj, opt){
 		var cont = '';
@@ -23,7 +21,7 @@ app.render = {
 		//  emails
 		var length = member.users.length;
 		if(length > 0){
-			cont += '<div id="emails" class="emails"><span>Emails</span><br/>';
+			cont += '<div id="emails" class="emails"><span class="emailTitle">Emails</span><br/>';
 			for(var i=0; i < length; i++){
 				var full = member.users[i];
 				var string = full.split('@');
