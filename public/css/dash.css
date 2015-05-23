@@ -27,9 +27,110 @@ body {
 .footer {
 	margin-left: 7.5%;
 	margin-top: 10px;
-	margin-bottom: 50px;
+	margin-bottom: 30px;
 	width: 85%;
 }
+
+.tidbitsCont {
+	height: 100%;
+	width: 100%;
+	padding: 20px 60px 30px 60px;
+}
+
+#tidbits {
+	font-size: 25px;
+	position: fixed;
+	height: 500px;
+	width: 100%;
+	background-color: #303030;
+	color: rgba(255, 255, 255, 1);
+	-webkit-transition: all 350ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
+	-moz-webkit-transition: all 350ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
+	z-index: 1002;
+}
+
+#tidbits .unhide {
+	margin-top: 43%;
+}
+
+.tidbitsCont .divider {
+	background: rgba(255, 255, 255, 0.3);
+	height: 2px;
+	width: 88%;
+	margin-top: -10px;
+	margin-left: -5px;
+	margin-bottom: 25px;
+}
+
+.tidbitsCont .title {
+	font-size: 40px;
+	margin-bottom: 20px;
+	max-width: 40%;
+	pointer-events: none;
+}
+
+.tidbitsCont .heading {
+	color: rgba(255, 255, 255, 0.8);
+	margin-bottom: 10px;
+}
+
+.tidbitsCont .tips {
+	margin-left: 19%;
+	position: absolute;
+	top: 112px;
+	pointer-events: none;
+}
+
+.tidbitsCont .tip {
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 0.7em;
+	margin-bottom: 5px;
+}
+
+.tidbitsCont .colors {
+	margin-left: -8px;
+	pointer-events: none;
+}
+
+.tidbitsCont .colors span {
+	font-size: 0.6em;
+	color: rgba(255, 255, 255, 0.6);
+	margin-left: 30px;
+	float: left;
+}
+
+.color{
+	width: 20px;
+	height: 20px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	margin-bottom: 10px;
+} 
+
+#orange{
+	background: #FF9933;
+}
+
+#blue{
+	background: #339999;
+} 
+
+#red{
+	background: #CC4233;
+} 
+
+#black{
+	background: #303030;
+	border: 1px solid #E7E7E7;
+	margin-left: -1px;
+} 
+
+#grey{
+	background: #E7E7E7;
+} 
+
+
 
 
 
@@ -406,7 +507,7 @@ tr:nth-child(even) {
 	background-color: rgba(204, 66, 51, 0.8);
 }
 
-#config {
+#dashboardInfo {
 	float: left;
 	font-size: 15px;
 	width: auto;
@@ -439,13 +540,35 @@ tr:nth-child(even) {
 }
 
 .mergeBtn {
-	color: rgba(48, 48, 48, 0.15);
+	color: rgba(48, 48, 48, 0.25);
 	float: right;
 	padding: 5px;
+	font-weight: 400;
 }
 
 .mergeBtn:hover {
-	color: rgba(48, 48, 48, 0.7);
+	color: rgba(48, 48, 48, 0.8);
+}
+
+.seeReqs {
+	color: rgba(48, 48, 48, 0.25);
+	float: right;
+	margin-right: 20px;
+	padding: 5px;
+	font-weight: 400;
+}
+
+.seeReqs:hover {
+	color: rgba(48, 48, 48, 0.8);
+}
+
+.divide {
+	color: rgba(48, 48, 48, 0.25);
+	float: right;
+	margin-right: 2px;
+	margin-left: 2px;
+	padding: 5px;
+	font-weight: 400;
 }
 
 .delBtn {
@@ -552,6 +675,22 @@ tr:nth-child(even) {
 	padding: 15px;
 	font-weight: 500;
 	float: left;
+}
+
+.soloReqs {
+	padding: 15px;
+	font-weight: 500;
+	float: left;
+	margin-left: 7%;
+}
+
+#soloReqs {
+	color: rgba(48, 48, 48, 0.5);
+}
+
+#soloReqs:hover {
+	color: rgba(48, 48, 48, 1);
+	cursor: pointer;
 }
 
 .memTot {
@@ -667,8 +806,8 @@ select::-ms-expand{
 	border-radius: 5px;
 	text-align: left;
 	overflow: hidden;
-	z-index: 1000;
-	transition: all 200ms ease-Out;
+	-webkit-transition: all 270ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
+	-moz-webkit-transition: all 270ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
 	position: relative;
 }
 
@@ -685,18 +824,28 @@ select::-ms-expand{
 	position: relative;
 }
 
-.mem .aliases {
+.mem .leftColumn {
+	top: 50px;
+	position: absolute;
+	left: 10px;
 	font-size: 0.8em;
 	font-weight: 400;
-	top: 60px;
-	left: 10px;
-	position: absolute;
+}
+
+.mem .aliases {
+	margin-top: 20px;
+	position: relative;
+}
+
+.mem .emails {
+	margin-top: 20px;
+	position: relative;
 }
 
 .mem .months {
 	position: absolute;
 	float: left;
-	margin-left: 24%;
+	margin-left: 31%;
 	transition: all 180ms ease-out;
 	opacity: 1;
 	text-align: center;
@@ -707,18 +856,12 @@ select::-ms-expand{
 	font-weight: 600;
 	margin-top: -10px;
 }
+
  .mem .months .month {
  	font-size: 15px;
+ 	font-weight: 400;
  	margin-top: -5px;
  	color: rgba(48, 48, 48, 0.9);
- }
-
- .mem .emails {
-	overflow: auto;
-	padding-right: 10px;
-	width: 100%;
-	height: 100%;
-	position: absolute;
  }
 
  .mem .emailCont {

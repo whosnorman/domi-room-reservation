@@ -11,6 +11,12 @@ app.accentColor;
 // updateProgress in 
 // 	document ready, after requests, after members, get last values
 app.progressInc = 91.6 / 4;
+app.tidbits = {};
+app.tidbits.open = false;
+app.tidbits.animating = false;
+app.soloRequest = {};
+app.soloRequest.show = false;
+app.soloRequest.id = '';
 
 
 //
@@ -311,25 +317,52 @@ app.handlers = (function(){
 
 	// request table page left
 	$('#reqPageLeft').on('click', function(){
-		if($(this).attr('disabled') != 'disabled')
-			app.render.requestsTable(--app.requestCurrent);
+		if($(this).attr('disabled') != 'disabled'){
+			if(app.soloRequest.show)
+				app.render.requestsTable(--app.requestCurrent, app.soloRequest.id);
+			else
+				app.render.requestsTable(--app.requestCurrent);
+		}
 	});
 
 	// request table page right
 	$('#reqPageRight').on('click', function(){
-		if($(this).attr('disabled') != 'disabled')
-			app.render.requestsTable(++app.requestCurrent);
+		if($(this).attr('disabled') != 'disabled'){
+			if(app.soloRequest.show)
+				app.render.requestsTable(++app.requestCurrent, app.soloRequest.id);
+			else
+				app.render.requestsTable(++app.requestCurrent);
+		}
 	});
 
 	// dropdown to change request table page
 	$('#reqOptions').change(function(){
 		app.requestCurrent = $(this).val();
-		app.render.requestsTable(app.requestCurrent);
+		if(app.soloRequest.show)
+				app.render.requestsTable(app.requestCurrent, app.soloRequest.id);
+			else
+				app.render.requestsTable(app.requestCurrent);
 	});
 
 	$('#dashboardInfo').on('click', function(){
-		$('.tidbitsCont').toggleClass('height');
-		$('#tidbits').toggleClass('unhide');
+		//$('.tidbitsCont').toggleClass('height');
+		app.render.toggleTidbits();
+		//app.render.setTidbitsTranslate();
+	});
+
+	document.body.addEventListener( 'click', function(ev) {
+		var target = ev.target;
+		tidbits = document.querySelector('.tidbitsCont');
+		if(app.tidbits.open && target !== tidbits) {
+			app.render.toggleTidbits();
+		}
+	});
+
+	window.addEventListener('scroll', function(ev){
+		if(app.tidbits.open)
+			app.render.toggleTidbits();
+		else
+			return;
 	});
 
 	$('.dom').on('click', function(){
@@ -338,4 +371,7 @@ app.handlers = (function(){
 		if(current != app.accentColor)
 			console.log('changed');
 	});
+
+	//-webkit-transform: translate(0, -262px);
+	//-moz-transform: translate(0, -262px);
 });

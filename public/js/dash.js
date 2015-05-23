@@ -360,6 +360,7 @@ app.models = {
 		// - list out domi/used colors with a circle and hex codes
 		// - hover over anything with a '...' at the end for the full text
 		// - what the progress bar is broken down into
+		// - database requests time out after 30 seconds
 		// 
 		// could put how stuff works
 		// - how the member sorting by month works

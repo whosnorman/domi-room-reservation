@@ -6,7 +6,6 @@ block localcss
 		link(rel='stylesheet', href='http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css')
 
 block localscripts
-		script(src='http://d3js.org/d3.v3.min.js', charset='utf-8')
 		script(type='text/javascript', src='js/dash.js')
 		script(type='text/javascript', src='js/utility.js')
 		script(type='text/javascript', src='js/renders.js')
@@ -34,12 +33,15 @@ block content
 		#members.members
 			.mem
 				.comp Company
-				.aliases One, Two, Three
+				.leftColumn
+					.aliases One, Two, Three
+					.emails One, Two, Three
 				.months
 					.monthAmt 12
 					.month jan
-				.emailCont
-					.emails
+				
+				.seeReqs see requests
+				.divide |
 				.mergeBtn merge
 
 		//- requests table
@@ -47,20 +49,44 @@ block content
 
 		.spacer
 
-	img.dom(src='img/dom-eyes.png')
 	.footer 
 		#loadCal.btn
 			| Load Snag Calendar
-		//-#config.btn
-			| Dashboard Settings
+		#dashboardInfo.btn
+			| Dashboard Info
 		#reconfig.btn
 			| Re-Configure Members
 		#restart.btn
 			| Restart Server
 		div(style='clear: both')
 		#calendar
+	
+	//-#tidbits 
+		.tidbitsCont
+			.title
+				| Just some tidbits.
+			.divider
+			.colors
+				.heading Colors Used
+				#blue.color
+					| #[span #339999]
+				#red.color
+					| #[span #CC4233]
+				#orange.color
+					| #[span #FF9933]
+				#black.color
+					| #[span #303030]
+				#grey.color
+					| #[span #E7E7E7]
+			.tips
+				.heading Tips
+				.tip - Click the search eye glass to automatically clear the search criteria
+				.tip - Hover over any field with '...' to see the full text
+				.tip - Database requests time out after 30 seconds, if it's been a minute refresh the page
+				.tip - All times are in Eastern Time (-4:00 GMT)
+				.tip - Re-Configure clears existing Member data and reconstructs it with the requests
+				.tip - Times in the request table are PM if not otherwise stated
 
-
-					
+	img.dom(src='img/dom-eyes.png')		
 
 

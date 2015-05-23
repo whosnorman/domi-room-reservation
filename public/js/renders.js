@@ -2,11 +2,11 @@
 app.render = {
 
 	// things to include in member elements:
-	// 		company name
-	// 		aliases
-	// 		total hours for previous and current month
-	// 		emails using name@ trend with hovering showing their full name
-	// 		chart showing usage per last couple months
+	// 		x company name
+	// 		x aliases
+	// 		  total hours for previous and current month
+	// 		  emails using name@ trend with hovering showing their full name
+	// 		  chart showing usage per last couple months
 	// 		
 	//   update search bar to search full name not shortened one
 	// returns a printed member in html
@@ -17,10 +17,31 @@ app.render = {
 
 		// company name
 		cont += '<div class="comp">' + member.company + '</div>';
-		cont += '<div class="aliases">';
-		for(var i=0; i < member.aliases.length; i++){
-			cont += member.aliases[i] + '<br/>';
+
+		cont += '<div class="leftColumn">';
+
+		// company emails
+		var length = member.users.length;
+		if(length > 0){
+			cont += '<div class="emails">';
+			for(var i=0; i < length; i++){
+				var full = member.users[i];
+				var string = full.split('@');
+				cont += string[0] + '@<br/>';
+			}
+			cont += '</div>';
 		}
+
+		// company aliases
+		var length = member.aliases.length;
+		if(length > 0){
+			cont += '<div class="aliases">';
+			for(var i=0; i < length; i++){
+				cont += member.aliases[i] + '<br/>';
+			}
+			cont += '</div>';
+		}
+		
 		cont += '</div>';
 
 
@@ -38,13 +59,10 @@ app.render = {
 			cont += '</div>';
 		}
 		cont += '</div>';
+		//cont += '</div>';
 
-		// emails div
-		cont += '<div class="emailCont"><div class="emails">';
-		for(var i = 0; i < member.users.length; i++) {
-			cont+= member.users[i] + ' ';
-		}
-		cont += '</div></div>';
+		// see requests button
+		cont += '<div class="seeReqs">see requests</div><div class="divide">|</div>';
 
 		// merge button
 		cont += '<div class="mergeBtn">merge</div>';
@@ -61,23 +79,39 @@ app.render = {
 	},
 
 	// render requests table 
-	requestsTable: function(num){
-		var stop;
+	requestsTable: function(num, id){
+		// id only used for solo request showing
+		app.soloRequest.id = id;
+		var stop, 
+			begin,
+			remain;
 		var disableRight = false;
 		var content = '';
 		// grab global app.requestData array
 		var data = app.requestData;
-		var begin = data.length - 1 - (num * 10);
-		var remain = (data.length - 1) % 10;
+
+		// if only showing one member's request
+		if(app.soloRequest.show){
+			var solo = data.filter(function(el){ 
+				var comp = app.members.lookup(app.soloRequest.id);
+				comp = comp.company;
+				return el.company == comp;
+			});
+
+			data = solo;
+		}
+
+		begin = data.length - 1 - (num * 10);
+		remain = (data.length - 1) % 10;
 		// incase there aren't ten requests left to show
 		if((((data.length - 1) / 10) - (remain / 10)) <= num){
 			stop = begin - remain;
 			disableRight = true;
 		} else
-			stop = begin - 10;
+			stop = begin - 9;
 
 		// print requests into a table
-		for(var i = begin; i > stop; i--){
+		for(var i = begin; i > stop - 1; i--){
 			var end = moment.utc(data[i].end).utcOffset(-4);
 			var endTime = moment(end).format('h:mm');
 			var endA = moment(end).format('a');
@@ -128,6 +162,21 @@ app.render = {
 		var showString = begin;
 		showString += ' <span style="font-weight: 400">to</span> ';
 		showString += stop;
+
+		if(app.soloRequest.show){
+			var comp = app.members.lookup(id);
+			cont = comp.company + ' only ';
+			cont += '<span id="soloReqs">  [clear]</span>';
+			$('.soloReqs').html(cont);
+
+			$('#soloReqs').on('click', function(){
+				$('.soloReqs').html('');
+				app.soloRequest.show = false;
+				app.requestCurrent = 0;
+				app.render.requestsTable(app.requestCurrent);
+			});
+		}
+
 
 		$('#showReqs').html(showString);
 		$('#reqOptions').val(num);
@@ -459,6 +508,10 @@ app.render = {
 		$('#totTimePlus').addClass('plusshow');
 	},
 
+	showRequestsFrom: function(id){
+
+	},
+
 	showEmails: function(el) {
 		var months = el.getElementsByClassName('emails');
 		$(months[0]).css('opacity', '1');
@@ -476,6 +529,34 @@ app.render = {
 		} else {
 			el.css('height', '200px');
 		}
+	},
+
+	toggleTidbits: function(){
+		if(app.tidbits.animating) return false;
+		app.tidbits.animating = true;
+
+		$('#tidbits').toggleClass('unhide');
+		if(app.tidbits.open)
+			app.tidbits.open = false;
+		else
+			app.tidbits.open = true;
+
+		setTimeout( function() {
+			app.tidbits.animating = false; 
+		}, 300 );
+	},
+
+	setTidbitsTranslate: function(){
+		var height = $('body').height();
+		var trans = (height * -1) - 260;
+		var unhide = (height * -1) - 600;
+
+		$('#tidbits').css('-webkit-transform', 'translate(0,'+trans+'px)');
+		$('#tidbits').css('-moz-transform', 'translate(0, '+trans+'px)');
+
+		$('.undhide').css('-webkit-transform', 'translate(0,'+unhide+'px !important)');
+		$('.unhide').css('-moz-transform', 'translate(0, '+unhide+'px !important)');
+
 	}
 
 

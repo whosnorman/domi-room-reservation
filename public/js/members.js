@@ -108,10 +108,10 @@ app.members = {
 			}
 
 			this.addEventListener('mouseover', function(){
-				app.render.showEmails(this);
+				//app.render.showEmails(this);
 			});
 			this.addEventListener('mouseout', function(){
-				app.render.hideEmails(this);
+				//app.render.hideEmails(this);
 			});
 
 			$(this).click(function(){
@@ -125,9 +125,22 @@ app.members = {
 				app.members.mergeToggle(id);
 			});
 
+			var seeReqs = this.getElementsByClassName('seeReqs');
+			seeReqs[0].addEventListener('click', function(e){
+				e.stopPropagation();
+				app.soloRequest.show = true;
+				app.requestCurrent = 0;
+				app.render.requestsTable(app.requestCurrent, id);
+
+				$('html, body').animate({
+			    	scrollTop: $(".requestsCont").offset().top
+			    }, 2000);
+			});
+
 			cnt++;
 		});
 
+		//app.render.setTidbitsTranslate();
 		// keep at bottom
 		app.render.updateProgress();
 	},
