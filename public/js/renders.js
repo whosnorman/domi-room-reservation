@@ -20,14 +20,14 @@ app.render = {
 
 		cont += '<div class="leftColumn">';
 
-		// company emails
+		//  emails
 		var length = member.users.length;
 		if(length > 0){
-			cont += '<div class="emails">';
+			cont += '<div class="emails"><span>Emails</span><br/>';
 			for(var i=0; i < length; i++){
 				var full = member.users[i];
 				var string = full.split('@');
-				cont += string[0] + '@<br/>';
+				cont += '<a title="' + full + '">'+string[0]+'@</a><br/>';
 			}
 			cont += '</div>';
 		}
@@ -35,7 +35,7 @@ app.render = {
 		// company aliases
 		var length = member.aliases.length;
 		if(length > 0){
-			cont += '<div class="aliases">';
+			cont += '<div class="aliases"><span>Aliases</span><br/>';
 			for(var i=0; i < length; i++){
 				cont += member.aliases[i] + '<br/>';
 			}

@@ -16,7 +16,7 @@ app.members = {
 	// confirm merging of members
 	mergeToggle: function(id) {
 		var currElement = $('[dashID="' + id + '"]');
-		currElement.css('border-color', 'rgba(255, 153, 51, 1');
+		currElement.css('border-color', app.accentColor);
 
 		app.mergeArr.push(id);
 

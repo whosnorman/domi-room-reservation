@@ -21,8 +21,10 @@ $(document).ready(function() {
 
 // inits data & page
 app.populatePage = (function(){
+	$('.progress').css('width', '0%');
 	// calculate and render header stats,
 	// also resets last values collection in mongo
+	// defined below
 	loadRequests();
 
 	// create date object

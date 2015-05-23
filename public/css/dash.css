@@ -816,6 +816,11 @@ select::-ms-expand{
 	cursor: pointer;
 }
 
+.mem span {
+	font-size: 1.3em;
+	color: rgba(48, 48, 48, 0.6);
+}
+
 .mem .comp {
 	color: #303030;
 	font-weight: 500;
@@ -826,10 +831,15 @@ select::-ms-expand{
 
 .mem .leftColumn {
 	top: 50px;
+	width: 360px;
+	word-wrap: break-word;
 	position: absolute;
 	left: 10px;
 	font-size: 0.8em;
 	font-weight: 400;
+	height: 160px;
+	overflow-y: auto;
+	overflow-x: auto;
 }
 
 .mem .aliases {
@@ -838,7 +848,7 @@ select::-ms-expand{
 }
 
 .mem .emails {
-	margin-top: 20px;
+	margin-top: 4px;
 	position: relative;
 }
 
