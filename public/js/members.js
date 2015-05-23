@@ -114,9 +114,29 @@ app.members = {
 				//app.render.hideEmails(this);
 			});
 
-			$(this).click(function(){
-				app.render.toggleHeight(this);
+			this.addEventListener('click', function(ev) {
+				var target = ev.target;
+				if($(target).attr('class') == 'emailcopy') {
+					console.log('clicked email');
+				} else 
+					app.render.toggleHeight(this);
 			});
+
+			// copy the emails to clipboard on click
+			var zeroClip = this.getElementsByClassName('emailcopy');
+			for(var i = 0; i < zeroClip.length; i++){
+				var client = new ZeroClipboard(zeroClip[i]);
+				console.log(client);
+				client.on( "ready", function( readyEvent ) {
+					console.log('read');
+				  client.on( "aftercopy", function( event ) {
+				    // `this` === `client`
+				    // `event.target` === the element that was clicked
+				    event.target.style.display = "none";
+				    console.log("Copied text to clipboard: " + event.data["text/plain"] );
+				  } );
+				} );
+			}
 
 			var count = cnt;
 			var merge = this.getElementsByClassName('mergeBtn');

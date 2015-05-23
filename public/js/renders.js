@@ -23,11 +23,11 @@ app.render = {
 		//  emails
 		var length = member.users.length;
 		if(length > 0){
-			cont += '<div class="emails"><span>Emails</span><br/>';
+			cont += '<div id="emails" class="emails"><span>Emails</span><br/>';
 			for(var i=0; i < length; i++){
 				var full = member.users[i];
 				var string = full.split('@');
-				cont += '<a title="' + full + '">'+string[0]+'@</a><br/>';
+				cont += '<a class="emailcopy" data-clipboard-text="'+full+'" title="' + full + '">'+string[0]+'@</a><br/>';
 			}
 			cont += '</div>';
 		}
