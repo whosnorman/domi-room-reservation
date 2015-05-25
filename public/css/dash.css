@@ -481,7 +481,11 @@ tr:nth-child(even) {
 
 #calendar {
 	padding-bottom: 20px;
-	padding-left: 5%;
+	margin: 0 auto;
+	position: relative;
+  	left: 10%;
+  	transform: translate(-10%, 0);
+  	max-width: 1000px;
 }
 
 #reconfig {
@@ -553,7 +557,7 @@ tr:nth-child(even) {
 .seeReqs {
 	color: rgba(48, 48, 48, 0.25);
 	float: right;
-	margin-right: 20px;
+	margin-right: 5px;
 	padding: 5px;
 	font-weight: 400;
 }
@@ -831,7 +835,7 @@ select::-ms-expand{
 
 .mem .leftColumn {
 	top: 50px;
-	width: 360px;
+	width: 30%;
 	word-wrap: break-word;
 	position: absolute;
 	left: 10px;
@@ -890,6 +894,48 @@ select::-ms-expand{
  .mem::-webkit-scrollbar {
  	display: none;
  }
+
+
+.monthChart {
+	font-size: 10px;
+	transition: all 320ms ease-out;
+	height: 170px;
+	position: absolute;
+	width: 64%;
+	margin-left: 34%;
+	margin-top: 50px;
+}
+
+.monthChart line {
+	stroke: rgba(48, 48, 48, 0.8);
+}
+
+.monthChart path {
+	stroke: #303030;
+	stroke-width: 2px;
+	fill: transparent;
+}
+
+.monthChart .ct-label {
+	color: rgba(48, 48, 48, 0.8);
+}
+
+.monthChart .ct-point {
+	stroke: #303030;
+	stroke-width: 10px;
+	stroke-linecap: round;
+}
+
+.monthChart .ct-grid {
+	stroke-width: 1px;
+	stroke-dasharray: 2px;
+}
+
+.monthChart .ct-vertical {
+	position: relative;
+	top: 21px;
+}
+
 
  .line {
  	width: 5%;

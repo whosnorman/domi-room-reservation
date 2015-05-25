@@ -18,14 +18,13 @@ app.render = {
 
 		cont += '<div class="leftColumn">';
 
-		//  emails
+		// emails
 		var length = member.users.length;
 		if(length > 0){
 			cont += '<div id="emails" class="emails"><span class="emailTitle">Emails</span><br/>';
 			for(var i=0; i < length; i++){
 				var full = member.users[i];
-				var string = full.split('@');
-				cont += '<a class="emailcopy" data-clipboard-text="'+full+'" title="' + full + '">'+string[0]+'@</a><br/>';
+				cont += '<a class="emailcopy" data-clipboard-text="'+full+'" title="Copy to Clipboard">'+full+'</a><br/>';
 			}
 			cont += '</div>';
 		}
@@ -39,9 +38,8 @@ app.render = {
 			}
 			cont += '</div>';
 		}
-		
+		// end of left column
 		cont += '</div>';
-
 
 		// months div
 		cont += '<div class="months">';
@@ -56,15 +54,18 @@ app.render = {
 			cont += (app.helpers.intToMonth(dateObj.month)).toLowerCase();
 			cont += '</div>';
 		}
+		// end of months div
 		cont += '</div>';
-		//cont += '</div>';
+
+		// chart div
+		cont += '<div class="monthChart"></div>';
 
 		// see requests button
 		cont += '<div class="seeReqs">see requests</div><div class="divide">|</div>';
-
 		// merge button
 		cont += '<div class="mergeBtn">merge</div>';
 
+		// end of mem div
 		cont += '</div>';
 
 		return cont;
@@ -369,11 +370,104 @@ app.render = {
 		});
 
 		$('#ctReqs').addClass('show');
-	// change to callback on addClass
-		setTimeout(function(){
-			// set day for tooltips
+
+	},
+
+	memberGraph: function(id){
+		// get current sorting date
+		var dateObj = {};
+		var month = $('#sorterMonth').text();
+		var year = $('#sorterYear').text();
+
+		dateObj.month = app.helpers.monthToInt(month);
+		dateObj.year = parseInt(year);
+
+		// create empty graph data
+		var data = {}
+		data.labels = [];
+		data.series = [[]];
+
+		// fill chart arrays with member data
+		loopDate = dateObj;
+		for(var i = 0; i < 6; i++){
+			// label array
+			var label = app.helpers.intToMonth(loopDate.month);
+			data.labels[i] = label;
+			// data array
+			var member = app.members.lookup(id);
+			//console.log(member.years);
 			
-		}, 1000);
+			// init at 0
+			data.series[0][i] = 0;
+
+			var year = member.years[loopDate.year];
+			if(year !== undefined && total !== null){
+				var total = member.years[loopDate.year][loopDate.month];
+				if(total !== undefined && total !== null)
+					data.series[0][i] = total;
+			}
+
+			loopDate = app.helpers.getPrevMonth(loopDate);
+		}
+
+		// revere arrays
+		data.labels.reverse();
+		data.series[0].reverse();
+
+		// create graph
+		var opt = {
+			lineSmooth: Chartist.Interpolation.simple({
+				divisor: 20
+			}),
+			axisY: {
+				labelInterpolationFnc: function(value) {
+					return value + ' h';
+				}
+			},
+			height: 155,
+			showPoint: true,
+			showArea: false,
+			fullWidth: true,
+			chartPadding: {
+				right: 25
+			}
+		}
+
+		var selector = '[dashID="' + id + '"] .monthChart';
+		// init a line chart 
+		var chart = new Chartist.Line(selector, data, opt);
+
+		// Let's put a sequence number aside so we can use it in the event callbacks
+		var seq = 0;
+
+		// Once the chart is fully created we reset the sequence
+		chart.on('created', function() {
+			seq = 0;
+
+			// add tooltips
+			var $chart = $(selector);
+			var $tooltip = $chart
+				.append('<div class="tooltip"></div>')
+				.find('.tooltip')
+				.hide();
+
+			$chart.on('mouseenter', '.ct-point', function(event) {
+					var $point = $(this),
+				    	day = $point.attr('ct:day'),
+				    	value = $point.attr('ct:value');
+
+				  	$tooltip.html(value + ' hours').show();
+
+				  	$tooltip.css({
+						left: $(this).attr('x1') - $tooltip.width() / 2 - 3,
+						top: $(this).attr('y1') - $tooltip.height() - 20
+					});
+			});
+
+			$chart.on('mouseleave', '.ct-point', function() {
+			  $tooltip.hide();
+			});
+		});
 
 	},
 

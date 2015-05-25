@@ -95,24 +95,27 @@ app.members = {
 		// fill members div with printed content
 		$('#members').html(content);
 
-		// add event listeners
+		// add event listeners after they've been created 
 		var cnt = 0;
 		$('.mem').each(function() {
 			var comp = this.getElementsByClassName('comp');
 			var compStr = $(comp).text();
 			var id = $(this).attr('dashID');
+
+			// shortern company name if too long 
 			if(compStr.length - 1 > 16) {
 				$(comp).attr('title', compStr);
 				var compStr = compStr.substring(0, 16) + '...';
 				$(comp).text(compStr);
 			}
 
+			/*
 			this.addEventListener('mouseover', function(){
 				//app.render.showEmails(this);
 			});
 			this.addEventListener('mouseout', function(){
 				//app.render.hideEmails(this);
-			});
+			}); */
 
 			// only toggle height if not clicking on emails to copy
 			this.addEventListener('click', function(ev) {
@@ -122,30 +125,33 @@ app.members = {
 					app.render.toggleHeight(this);
 			});
 
-			var emailTitle = this.getElementsByClassName('emailTitle');
 			// copy the emails to clipboard on click
+			var emailTitle = this.getElementsByClassName('emailTitle');
 			var zeroClip = this.getElementsByClassName('emailcopy');
 
+			// creates a new variable for each email so it doesn't 
+			// only wind up on the last element
 			for(var i = 0; i < zeroClip.length; i++){
 				zeroClipFunc(zeroClip[i]);
 			}
 
 			function zeroClipFunc(zc){
 				var client = new ZeroClipboard(zc, {moviePath: 'js/lib/ZeroClipboard.swf'});
-					client.on( "ready", function( readyEvent ) {
-					  client.on( "aftercopy", function( event ) {
-					    // `this` === `client`
-					    // `event.target` === the element that was clicked
-					    //event.target.style.display = "none";
-					    emailTitle[0].style.color = app.accentColor;
-					    setTimeout(function(){
-					    	emailTitle[0].style.color = '#303030';
-					    }, 1000);
-					    console.log("Copied text to clipboard: " + event.data["text/plain"] );
-					  } );
-					} );
+				client.on( "ready", function( readyEvent ) {
+				  client.on( "aftercopy", function( event ) {
+				    // `this` === `client`
+				    // `event.target` === the element that was clicked
+				    //event.target.style.display = "none";
+				    emailTitle[0].style.color = app.accentColor;
+				    setTimeout(function(){
+				    	emailTitle[0].style.color = 'rgba(48, 48, 48, 0.6)';
+				    }, 1000);
+				    console.log("Copied text to clipboard: " + event.data["text/plain"] );
+				  } );
+				} );
 			}
 
+			// event listener for merge buttons
 			var count = cnt;
 			var merge = this.getElementsByClassName('mergeBtn');
 			merge[0].addEventListener('click', function(e){
@@ -153,6 +159,7 @@ app.members = {
 				app.members.mergeToggle(id);
 			});
 
+			// listener for see solo requests buttons
 			var seeReqs = this.getElementsByClassName('seeReqs');
 			seeReqs[0].addEventListener('click', function(e){
 				e.stopPropagation();
@@ -164,6 +171,9 @@ app.members = {
 			    	scrollTop: $(".requestsCont").offset().top
 			    }, 2000);
 			});
+
+			// create graph
+			app.render.memberGraph(id);
 
 			cnt++;
 		});
@@ -190,8 +200,14 @@ app.members = {
 				var hasMonth = false;
 				// ignore blanks when the app.memArr is run through
 				if(this.company != 'nodata' && this.company != 'nextdate'){
+					console.log('----'+this.company+'------');
+					console.log(this.years);
+					console.log(testDate.year);
 					if(this.years.hasOwnProperty(testDate.year)) {
-						if(this.years[testDate.year].hasOwnProperty(testDate.month)){
+						var curr = this.years[testDate.year];
+						console.log(curr);
+						console.log(testDate.month);
+						if(curr.hasOwnProperty(testDate.month)){
 							hasMonth = true;
 							recent.push(this);
 						} 
