@@ -64,13 +64,13 @@ block content
 		div(style='clear: both')
 		#calendar
 	
-	//-#tidbits 
+	#tidbits 
 		.tidbitsCont
 			.title
-				| Just some tidbits.
+				| Dashboard Info
 			.divider
 			.colors
-				.heading Colors Used
+				//-.heading Colors Used
 				#blue.color
 					| #[span #339999]
 				#red.color
@@ -82,14 +82,14 @@ block content
 				#grey.color
 					| #[span #E7E7E7]
 			.tips
-				.heading Tips
-				.tip - Click the search eye glass to automatically clear the search criteria
-				.tip - Hover over any text with '...' at the end to see the full text
-				.tip - Database requests time out after 30 seconds, if it's been a minute refresh the page
-				.tip - All times are in Eastern Time (-4:00 GMT)
-				.tip - Re-Configure clears existing Member data and reconstructs it with the requests
-				.tip - Times in the request table are PM if not otherwise stated
-				.tip - Click on an email to copy it to the clipboard
+				.tip > Click the search eye glass to automatically clear the search criteria
+				.tip > Hover over any text with '...' to see the full company name
+				.tip > Click on an email to copy it to the clipboard
+				.tipdivide
+				.tip | All times are in Eastern Time (-4:00 GMT)
+				.tip | Times in the request table are PM if not otherwise stated
+				.tip | Re-Configure clears existing Member data and reconstructs it with the requests
+				.tip | Database requests time out after about 10 seconds, if it's been too long refresh the page
 
 	img.dom(src='img/dom-eyes.png')		
 

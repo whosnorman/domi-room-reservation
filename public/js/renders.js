@@ -586,11 +586,12 @@ app.render = {
 			$('#emailSparedPlus').text('+'+plusHrs);
 
 
-		/* // For show purposes
-		$('#totReqsPlus').text('+1');
+		 // For show purposes
+		/* $('#totReqsPlus').text('+1');
 		$('#emailSparedPlus').text('+2');
 		$('#totTimePlus').text('+2:30'); 
-		*/
+		$('#eastConfPlus').text('+2:30'); */
+		
 
 		// animation for all plus numbers in header
 		$('#emailSparedPlus').addClass('plusshow');

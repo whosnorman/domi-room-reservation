@@ -2,6 +2,9 @@
 var app = {};
 
 $(document).ready(function() {
+	// first page animation
+	//$('.header').addClass('fill');
+
 	// randomized and daily elements
 	app.render.showWelcomeMessage();
 	app.render.showTodaysDate();

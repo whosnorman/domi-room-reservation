@@ -119,6 +119,9 @@ app.members = {
 
 			// only toggle height if not clicking on emails to copy
 			this.addEventListener('click', function(ev) {
+				var m = app.members.lookup(id);
+				console.log(m.years);
+				
 				var target = ev.target;
 				target = $(target).attr('class');
 				if(target !== 'emailcopy zeroclipboard-is-hover' && target !== 'aliases')

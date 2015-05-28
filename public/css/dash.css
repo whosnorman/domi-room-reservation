@@ -40,17 +40,19 @@ body {
 #tidbits {
 	font-size: 25px;
 	position: fixed;
+	bottom: -600px;
 	height: 500px;
 	width: 100%;
 	background-color: #303030;
 	color: rgba(255, 255, 255, 1);
-	-webkit-transition: all 350ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
-	-moz-webkit-transition: all 350ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
+	transition: all 400ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
+	-webkit-transition: all 400ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
+	-moz-webkit-transition: all 400ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
 	z-index: 1002;
 }
 
-#tidbits .unhide {
-	margin-top: 43%;
+.unhide {
+	bottom: -115px !important;
 }
 
 .tidbitsCont .divider {
@@ -63,10 +65,11 @@ body {
 }
 
 .tidbitsCont .title {
-	font-size: 40px;
+	font-size: 30px;
 	margin-bottom: 20px;
 	max-width: 40%;
 	pointer-events: none;
+	margin-left: -7px;
 }
 
 .tidbitsCont .heading {
@@ -77,36 +80,48 @@ body {
 .tidbitsCont .tips {
 	margin-left: 19%;
 	position: absolute;
-	top: 112px;
+	top: 96px;
 	pointer-events: none;
 }
 
 .tidbitsCont .tip {
-	color: rgba(255, 255, 255, 0.5);
+	color: rgba(255, 255, 255, 0.8);
 	font-size: 0.7em;
-	margin-bottom: 5px;
+	margin-bottom: 7px;
+}
+
+.tidbitsCont .tipdivide {
+	height: 20px;
 }
 
 .tidbitsCont .colors {
-	margin-left: -8px;
-	pointer-events: none;
+	margin-left: -5px;
 }
 
 .tidbitsCont .colors span {
 	font-size: 0.6em;
 	color: rgba(255, 255, 255, 0.6);
-	margin-left: 30px;
+	margin-left: 35px;
 	float: left;
 }
 
 .color{
-	width: 20px;
-	height: 20px;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	border-radius: 10px;
-	margin-bottom: 10px;
+	width: 22px;
+	height: 22px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	transition: all 150ms ease-out;
+	margin-bottom: 20px;
 } 
+
+.color:hover {
+	border-radius: 20px;
+	-moz-border-radius: 20px;
+	-webkit-border-radius: 20px;
+	background-color: rgba(255, 255, 255, 0.7);
+}
 
 #orange{
 	background: #FF9933;
@@ -122,8 +137,8 @@ body {
 
 #black{
 	background: #303030;
-	border: 1px solid #E7E7E7;
-	margin-left: -1px;
+	border: 2px solid rgba(231, 231, 231, 0.1);
+	margin-left: -2px;
 } 
 
 #grey{
@@ -149,6 +164,8 @@ h1 {
 .dontshow {
 	opacity: 0;
 	transition: all 320ms ease-out;
+	-webkit-transition: all 320ms ease-out;
+	-moz-transition: all 320ms ease-out;
 	-webkit-transform: translate(-15px);
 	-moz-transform: translate(-15px);
 }
@@ -200,6 +217,8 @@ tr:nth-child(even) {
 	position: relative;
 	opacity: 0;
 	transition: all 350ms ease-out;
+	-webkit-transition: all 350ms ease-out;
+	-moz-transition: all 350ms ease-out;
 	-webkit-transform: translate(0, 10px) !important;
 	-moz-transform: translate(0, 10px) !important;
 }
@@ -211,6 +230,8 @@ tr:nth-child(even) {
 	position: absolute;
 	opacity: 0;
 	transition: all 350ms ease-out;
+	-webkit-transition: all 350ms ease-out;
+	-moz-transition: all 350ms ease-out;
 	-webkit-transform: translate(0, 10px) !important;
 	-moz-transform: translate(0, 10px) !important;
 }
@@ -225,9 +246,28 @@ tr:nth-child(even) {
 
 .header {
 	height: 615px;
-	background-color: #303030;
 	position: relative;
 	color: rgba(255, 255, 255, 0.5);
+	background-color: #303030;
+	/*opacity: 0;
+	background-size: 100% 200%;
+    background-image: linear-gradient(to bottom, #E7E7E7 50%, #303030 50%);
+
+	-webkit-transition: all .7s ease-out;
+	-moz-transition: all .7s ease-out;
+	-o-transition: all .7s ease-out;
+	transition: all .7s ease-out;
+
+	-webkit-transition: opacity .01s ease-out;
+	-moz-transition: opacity .01s ease-out;
+	-o-transition: opacity .01s ease-out;
+	transition: opacity .01s ease-out; */
+}
+
+
+.fill {
+	opacity: 1;
+	background-position: 0 -100% !important;
 }
 
 
@@ -245,6 +285,8 @@ tr:nth-child(even) {
 	left: 58px;
 	top: 90px;
 	transition-delay: 200ms;
+	-webkit-transition-delay: 200ms;
+	-moz-transition-delay: 200ms;
 }
 
 .subLine {
@@ -295,6 +337,8 @@ tr:nth-child(even) {
 #ctReqs {
 	opacity: 0;
 	transition: all 320ms ease-out;
+	-webkit-transition: all 320ms ease-out;
+	-moz-transition: all 320ms ease-out;
 	-webkit-transform: translate(-15px);
 	-moz-transform: translate(-15px);
 	height: 160px;
@@ -376,6 +420,8 @@ tr:nth-child(even) {
 	color: rgba(48, 48, 48, 0.8);
 	opacity: 0;
 	transition: all 0.15s linear;
+	-webkit-transition: all 0.15 linear;
+	-moz-transition: all 0.15 linear;
 	position: absolute;
 	bottom: -55px;
 	right: 15px;
@@ -387,6 +433,8 @@ tr:nth-child(even) {
 	right: 15px;
 	color: #303030;
 	transition-delay: 250ms;
+	-webkit-transition-delay: 250ms;
+	-moz-transition-delay: 250ms;
 }
 
 .inner .first {
@@ -394,6 +442,8 @@ tr:nth-child(even) {
 	left: 58px;
 	top: 150px;
 	transition-delay: 200ms;
+	-webkit-transition-delay: 200ms;
+	-moz-transition-delay: 200ms;
 }
 
 .inner .second {
@@ -401,6 +451,8 @@ tr:nth-child(even) {
 	left: 33%;
 	top: 150px;
 	transition-delay: 200ms;
+	-webkit-transition-delay: 200ms;
+	-moz-transition-delay: 200ms;
 }
 
 .inner .third {
@@ -408,6 +460,8 @@ tr:nth-child(even) {
 	left: 54%;
 	top: 150px;
 	transition-delay: 200ms;
+	-webkit-transition-delay: 200ms;
+	-moz-transition-delay: 200ms;
 }
 
 .inner .fourth {
@@ -415,6 +469,8 @@ tr:nth-child(even) {
 	left: 76%;
 	top: 150px;
 	transition-delay: 200ms;
+	-webkit-transition-delay: 200ms;
+	-moz-transition-delay: 200ms;
 }
 
 
@@ -426,6 +482,8 @@ tr:nth-child(even) {
 	font-weight: 400;
 	font-size: 25px;
 	transition: all 0.1s linear;
+	-webkit-transition: all 0.1s linear;
+	-moz-transition: all 0.1s linear;
 	color: #303030;
 }
 
@@ -456,6 +514,8 @@ tr:nth-child(even) {
 	width: 0%;
 	max-width: 91.6%;
 	transition: all 1s ease-out;
+	-webkit-transition: all 1s ease-out;
+	-moz-transition: all 1s ease-out;
 	position: absolute;
 }
 
@@ -477,6 +537,8 @@ tr:nth-child(even) {
 	top: 0;
 	height: 3px;
 	transition: all 1s ease-out;
+	-webkit-transition: all 1s ease-out;
+	-moz-transition: all 1s ease-out;
 }
 
 #calendar {
@@ -537,6 +599,7 @@ tr:nth-child(even) {
   	left: 50%;
   	transform: translate(-50%, 0);
   	max-width: 200px;
+  	margin-bottom: -5px;
 }
 
 .dom:hover {
@@ -585,7 +648,8 @@ tr:nth-child(even) {
 	margin-right: 15px;
 	height: 100%;
 	transition: all 0.1s linear;
-
+	-webkit-transition: all 0.1s linear;
+	-moz-transition: all 0.1s linear;
 }
 
 .delBtn:hover {
@@ -812,6 +876,7 @@ select::-ms-expand{
 	overflow: hidden;
 	-webkit-transition: all 270ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
 	-moz-webkit-transition: all 270ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
+	transition: all 270ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
 	position: relative;
 }
 
@@ -857,6 +922,7 @@ select::-ms-expand{
 }
 
 .mem .emailTitle {
+	transition: all 350ms ease-out;
 	-webkit-transition: all 350ms ease-out;
 	-moz-webkit-transition: all 350ms ease-out;
 }
@@ -866,6 +932,8 @@ select::-ms-expand{
 	float: left;
 	margin-left: 31%;
 	transition: all 180ms ease-out;
+	-webkit-transition: all 180ms ease-out;
+	-moz-transition: all 180ms ease-out;
 	opacity: 1;
 	text-align: center;
 	min-width: 40px;
@@ -887,6 +955,8 @@ select::-ms-expand{
  	position: relative;
 	margin-left: 40%;
 	transition: all 180ms ease-out;
+	-webkit-transition: all 180ms ease-out;
+	-moz-transition: all 180ms ease-out;
 	opacity: 0;
 	overflow: hidden;
  }
@@ -899,6 +969,8 @@ select::-ms-expand{
 .monthChart {
 	font-size: 10px;
 	transition: all 320ms ease-out;
+	-webkit-transition: all 320ms ease-out;
+	-moz-transition: all 320ms ease-out;
 	height: 170px;
 	position: absolute;
 	width: 64%;

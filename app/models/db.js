@@ -294,13 +294,13 @@ module.exports = function(app) {
 				      );
 				    } else {
 				      // create new month object
-				      var newYears = member['years'];
+				      var newMonth = member['years'];
 
-				      newYears[ev.year][ev.month] = ev.duration;
-
+				      newMonth[ev.year][ev.month] = ev.duration;
+				      //console.log(newMonth);
 				      collection.update(
 				        {company: member.company}, 
-				        {$set: {years: newYears}},
+				        {$set: {years: newMonth}},
 				        function(err, count, status){
 				          if(err)
 				            callback.error(err);
@@ -322,9 +322,12 @@ module.exports = function(app) {
 				      console.log(member.years);
 				    } */
 
+				    console.log('creating new year for '+member.company);
+				    console.log(newYears);
 				    newYears[ev.year] = {};
 				    newYears[ev.year][ev.month] = ev.duration;
-
+				    console.log('after addition of year and month');
+				    console.log(newYears);
 				    /*if(ev.year == 2015){
 				      console.log('---');
 				      console.log(newYears);
@@ -338,6 +341,8 @@ module.exports = function(app) {
 				      function(err, count, status){
 				        if(err)
 				          callback.error(err);
+
+				        console.log('created for '+member.company);
 
 				        if(callback){
 				          callback.success();
@@ -366,9 +371,12 @@ module.exports = function(app) {
 				    if (err) {
 				      return callback.error(err);
 				    }
+
 				    // for reconfigureMembers
 				    if(callback){
+				      // this callback is different than other callback.success()
 				      callback.success();
+				      mdb.close();
 				    }
 				    //console.log('added new member ' + mem.company);
 				  });
@@ -399,6 +407,7 @@ module.exports = function(app) {
 		// clear current members collection and 
 		// rerun sorting logic on existing requests
 		db.reconfigureMembers = function(callback) {
+			console.log('reconfiguring members...');
 			MongoClient.connect(app.env.MONGOHQ_URL, options, function(err, mdb){
 			    if(err){
 			      callback.error(err);
@@ -417,15 +426,16 @@ module.exports = function(app) {
 			        var i = 0;
 
 			        function config(){
-			          app.models.db.insertMember(items[i], function(){
-			            if(i < items.length - 1){
-			              i++;
-			              config();
-			            }
-			            else{
-			              console.log('-- DONE WITH LOOP --');
-			              callback.success();
-			            }
+			          app.models.db.insertMember(items[i], {
+			          	success: function(){
+				            if(i < items.length - 1){
+				              i++;
+				              config();
+				            } else {
+				              console.log('-- DONE WITH LOOP --');
+				              callback.success();
+				            }
+				        }
 			          });
 			        }
 
