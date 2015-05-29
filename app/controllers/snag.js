@@ -145,7 +145,7 @@ module.exports = function(app){
 			var monthString = app.helpers.intToMonth(ev.month);
 			var dayString = app.helpers.intToDay(ev.day);
 
-			var msg = "<body style='color: #303030 !important;'><div><img style='max-width: 30em; max-height: 200px;' src='" + domLogo + "' /></div><h1>" + titleString + "</h1><br/><h2>" + user.room + "</h2> has been reserved for<br/><h2>" + startToEnd + "</h2> on <br/><h2>" + dayString + ", " + monthString + " " + ev.date + ", " + ev.year + "</h2><br/><br/><div style='color: #303030 !important'>" + link + "<br /><br />Checkout the calendar to make sure all your ducks are in a row! You can email my pal matt@domiventures.co for any problems.<br/><br/>" + signOff + "</div><br/><div style='color: #303030 !important'>-- Dom</div></body>";
+			var msg = "<body style='color: #303030 !important;'><div><img style='max-width: 30em; max-height: 200px;' src='" + domLogo + "' /></div><h1>" + titleString + "</h1><br/><h2>" + user.room + "</h2> has been reserved for<br/><h2>" + startToEnd + "</h2> on <br/><h2>" + dayString + ", " + monthString + " " + ev.date + ", " + ev.year + "</h2><br/><br/><div style='color: #303030 !important'>" + link + "<br /><br />Checkout the calendar to make sure all your ducks are in a row! You can email my pal " + app.adminEmail + " for any problems.<br/><br/>" + signOff + "</div><br/><div style='color: #303030 !important'>-- Dom</div></body>";
 
 
 			// send email
@@ -155,7 +155,7 @@ module.exports = function(app){
 		snagController.errorEmail = function(err, user){
 			var domLogo = "https:\/\/www.dropbox.com\/s\/wweksdd33iruxyp\/Dom_Eyes.png?raw=1";
 
-			var messageToUser = "<body style='color: #303030 !important;'><div><img style='max-width: 30em; max-height: 200px;' src='" + domLogo + "' /></div><h1 style='color: #303030 !important'>Oops! I knocked over a server rack!</h1><br/><div style='color: #303030 !important'> Unfortunately your room was not reserved. Wait a couple minutes and try again, but if you stil get this email forward it to my buddy matt@domiventures.co<br /><br /><br/><br/>Have a great day!</div><br/><div style='color: #303030 !important'>-- Dom</div></body>";
+			var messageToUser = "<body style='color: #303030 !important;'><div><img style='max-width: 30em; max-height: 200px;' src='" + domLogo + "' /></div><h1 style='color: #303030 !important'>Oops! I knocked over a server rack!</h1><br/><div style='color: #303030 !important'> Unfortunately your room was not reserved. Wait a couple minutes and try again, but if you stil get this email forward it to my buddy " + app.adminEmail + "<br /><br /><br/><br/>Have a great day!</div><br/><div style='color: #303030 !important'>-- Dom</div></body>";
 
 			app.models.email.snagError(err, user, messageToUser);
 		};

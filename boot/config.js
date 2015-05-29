@@ -17,7 +17,7 @@ var dotenv = require('dotenv');
 module.exports = function(app){
 
 	// used for FROM field and to send errors to
-	app.adminEmail = "matt@domiventures.co";
+	app.adminEmail = "lucas@domiventures.co";
 
 
 	// set headers
