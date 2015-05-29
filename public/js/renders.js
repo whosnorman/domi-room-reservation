@@ -338,7 +338,7 @@ app.render = {
 
 				  	$tooltip.css({
 						left: $(this).attr('x1') - $tooltip.width() / 2 - 3,
-						top: $(this).attr('y1') - $tooltip.height() - 20
+						top: $(this).attr('y1') - $tooltip.height() - 30
 					});
 			});
 
@@ -460,7 +460,7 @@ app.render = {
 
 				  	$tooltip.css({
 						left: $(this).attr('x1') - $tooltip.width() / 2 - 3,
-						top: $(this).attr('y1') - $tooltip.height() - 20
+						top: $(this).attr('y1') - $tooltip.height() - 27
 					});
 			});
 

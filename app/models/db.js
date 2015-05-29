@@ -343,6 +343,10 @@ module.exports = function(app) {
 				          callback.error(err);
 
 				        console.log('created for '+member.company);
+				        console.log(count);
+				        console.log(status);
+				        console.log('-----------');
+
 
 				        if(callback){
 				          callback.success();
