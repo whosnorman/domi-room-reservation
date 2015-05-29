@@ -119,9 +119,7 @@ app.members = {
 
 			// only toggle height if not clicking on emails to copy
 			this.addEventListener('click', function(ev) {
-				var m = app.members.lookup(id);
-				console.log(m.years);
-				
+				//var m = app.members.lookup(id);
 				var target = ev.target;
 				target = $(target).attr('class');
 				if(target !== 'emailcopy zeroclipboard-is-hover' && target !== 'aliases')
@@ -199,17 +197,17 @@ app.members = {
 				newArr.push(this);
 			});
 		} else {
+			// go through each member, if it has current date put it in recent
+			// and then sort it and then keep sorting through the old array 
+			// until it's empty and everything has been sorted by date into 
+			// newArr which is returned
+			// 
 			$.each(array, function(){
 				var hasMonth = false;
 				// ignore blanks when the app.memArr is run through
 				if(this.company != 'nodata' && this.company != 'nextdate'){
-					console.log('----'+this.company+'------');
-					console.log(this.years);
-					console.log(testDate.year);
 					if(this.years.hasOwnProperty(testDate.year)) {
 						var curr = this.years[testDate.year];
-						console.log(curr);
-						console.log(testDate.month);
 						if(curr.hasOwnProperty(testDate.month)){
 							hasMonth = true;
 							recent.push(this);
@@ -267,10 +265,8 @@ app.members = {
 
 
 
-
 		/// sortByMonth Helper Functions ///
 
-		// called by sortByMonth
 		// modified quicksort to sort based on given date
 		function quickSort(members, l, r, dateObj) {
 			var index;

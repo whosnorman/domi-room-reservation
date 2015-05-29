@@ -288,14 +288,18 @@ var loadRequests = (function(){
 app.models = {
 	// call to server to reconfigure member docs in mongodb
 	reconfigureMembers: function(){
-		$.ajax({
-		  type: "POST",
-		  url: '/reconfig',
-		  data: '',
-		  success: function(){
-		  	app.populatePage();
-		  }
-		});
+		if(confirm('Suggested to have access to server logs before proceeding. Continue?')){
+			if(confirm('Will erase current Member collection and could take awhile, proceed to reconfigure?')){
+				$.ajax({
+				  type: "POST",
+				  url: '/reconfig',
+				  data: '',
+				  success: function(){
+				  	app.populatePage();
+				  }
+				});
+			}
+		}
 	},
 
 	// reset lasts collection doc in mongo

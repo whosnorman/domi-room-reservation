@@ -13,7 +13,7 @@ module.exports = function(app) {
         },
         server: {
             socketOptions: {
-                connectTimeoutMS: 10000
+                connectTimeoutMS: 30000
             }
         }
     };
@@ -305,6 +305,9 @@ module.exports = function(app) {
 				          if(err)
 				            callback.error(err);
 
+				          if(status.updatedExisting == false)
+				        	console.log(member.company + ' failed to update '+status.err);
+
 				          if(callback){
 				            callback.success();
 				          }
@@ -314,39 +317,18 @@ module.exports = function(app) {
 				  } else {
 				    // create new year object
 				    var newYears = member['years'];
-
-				    /*if(ev.year == 2015){
-				      console.log('//// new 2015 ////');
-				      console.log(ev.month + ' | ' + ev.duration);
-				      console.log(newYears);
-				      console.log(member.years);
-				    } */
-
-				    console.log('creating new year for '+member.company);
-				    console.log(newYears);
 				    newYears[ev.year] = {};
 				    newYears[ev.year][ev.month] = ev.duration;
-				    console.log('after addition of year and month');
-				    console.log(newYears);
-				    /*if(ev.year == 2015){
-				      console.log('---');
-				      console.log(newYears);
-				      console.log(member.years);
-				      console.log('////////////');
-				    } */
 
 				    collection.update(
-				      {company: member.compay},
+				      {company: member.company},
 				      {$set: {years: newYears}},
 				      function(err, count, status){
 				        if(err)
 				          callback.error(err);
 
-				        console.log('created for '+member.company);
-				        console.log(count);
-				        console.log(status);
-				        console.log('-----------');
-
+				        if(status.updatedExisting == false)
+				        	console.log(member.company + ' failed to update '+status.err);
 
 				        if(callback){
 				          callback.success();
@@ -434,11 +416,17 @@ module.exports = function(app) {
 			          	success: function(){
 				            if(i < items.length - 1){
 				              i++;
+				              process.stdout.write(i +' ');
 				              config();
 				            } else {
 				              console.log('-- DONE WITH LOOP --');
 				              callback.success();
 				            }
+				        },
+				        error: function(err){
+				        	console.log('ERROR DURING RECONFIGURATION');
+				        	console.log(err);
+				        	console.log('Stopped at: '+ items[i].company +' on '+ items[i].start);
 				        }
 			          });
 			        }
