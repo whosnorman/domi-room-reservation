@@ -12,7 +12,7 @@ require('./config')(app);
 // set up routes
 require('./routes')(app);
 
-var port = Number(process.env.PORT || 5000);
+var port = Number(process.env.PORT || 8080);
 server.listen(port, function() {
    console.log("Listenin\' on " + port);
 }); 
