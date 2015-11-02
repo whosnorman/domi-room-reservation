@@ -40,7 +40,7 @@ module.exports = function(app){
 		  	},
 		  	exists: function(msg){
 		  	  // event already exists
-	          res.send(500, {error: msg});
+	          res.status(500).send({error: msg});
 	          res.end();
 		  	},
 		  	error: function(err){
@@ -48,7 +48,7 @@ module.exports = function(app){
 		  	  // send user and admin error emails
               snagController.errorEmail(err, body);
 
-              res.send(503, false);
+              res.status(503).send(false);
               res.end();
 		  	}
 		  });

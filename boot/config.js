@@ -22,13 +22,15 @@ module.exports = function(app){
 
 	// set headers
 	var allowCrossDomain = function(req, res, next) {
+		console.log('--- HEADER ORIGIN ---');
+		console.log(req.header.origin);
 	    res.header('Access-Control-Allow-Origin', '*');
-	    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+	    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
 	    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
 
 	    // intercept OPTIONS method
 	    if ('OPTIONS' == req.method) {
-	      res.send(200);
+	      res.sendStatus(200);
 	    }
 	    else {
 	      next();

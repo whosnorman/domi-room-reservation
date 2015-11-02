@@ -107,7 +107,7 @@ module.exports = function(app) {
 
 			var fromEmail = app.adminEmail;
 			var now = app.moment().format();
-			var msg = "<body style='color: #303030 !important;'><h1>There was an error!</h1><br /><p>" + err + "</p><br /><p>" + now + "</p></body>";
+			var msg = "<body style='color: #303030 !important;'><h1>There was an error!</h1><br /><p>" + (JSON.parse(err) || err) + "</p><br /><p>" + now + "</p></body>";
 
 			var message = {
 			  "html": msg,

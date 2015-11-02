@@ -102,7 +102,8 @@ function addEvent(body, callback){
         }
     }, function(err, event){
     	if (err) {
-          console.log('-- GCAL ERR-- : ' + err);
+          console.log('-- GCAL ERR --');
+          console.log(err);
           
           // try to re-authenticate
           auth();  
@@ -123,7 +124,9 @@ function auth() {
       keyFile: 'key.pem'
   }, function (err) {
       if (err) {
-          console.log('--TOKEN ERR--:\n' + err);
+          console.log('--TOKEN ERR--');
+          console.log(err);
+          
           app.snagController.errorEmail(err);
           return console.log(err);
       }
