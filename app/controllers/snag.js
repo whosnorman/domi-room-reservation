@@ -121,20 +121,21 @@ module.exports = function(app){
 			  break;
 			}
 
+			// create event object to get date info for email
 			var ev = {};
 			//var options = {hour: "numeric", minute: "numeric"};
-			var evDate = new Date(user.start);
-			ev.month = evDate.getMonth() + 1;
-			ev.day = evDate.getDay();
-			ev.date = evDate.getUTCDate();
-			ev.year = evDate.getUTCFullYear();
-			//var startString = evDate.toLocaleTimeString("en-US", options);
-			var startString = app.moment(evDate).zone("-04:00").format('h:mma');
-			//var start = evDate.getUTCHours();
-			evDate = new Date(user.end);
-			//var end = evDate.getUTCHours();
-			//var endString = evDate.toLocaleTimeString("en-US", options);
-			var endString = app.moment(evDate).zone("-04:00").format('h:mma');
+			var startDate = new Date(user.start);
+			ev.month = startDate.getMonth() + 1;
+			ev.day = startDate.getDay();
+			ev.date = startDate.getDate();
+			ev.year = startDate.getUTCFullYear();
+
+			// get start time string for email
+			var startString = app.moment({hour: startDate.getHours(), minute: startDate.getMinutes()}).format('h:mma');
+
+			// get end time string for email
+			var endDate = new Date(user.end);
+			var endString = app.moment({hour: endDate.getHours(), minute: endDate.getMinutes()}).format('h:mma');
 
 			var startToEnd = startString + " - " + endString;
 
