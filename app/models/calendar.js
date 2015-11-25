@@ -1,6 +1,5 @@
 // model for gcal interactions
 
-var oauthClient;
 var token;
 var OAuth2;
 var gcal;
@@ -14,6 +13,7 @@ module.exports = function(ap) {
 	return app.models.calendar = (function() {
 		function calendar() {}
 
+    // initial authentication
     auth();
 
 		calendar.add = function(body, callback) {
@@ -34,44 +34,48 @@ function checkEvents(body, callback, whenDone){
 	var start = new Date(body.start).toISOString();
 	var end = new Date(body.end).toISOString();
 	
-	// check for existing events
-  gcal.events.list({
-	    auth: oauthClient,
-	    calendarId: app.env.CALID,
-	    'timeMin': start,
-	    'timeMax': end
-	}, function(err, response){
-      if(err){
-        callback.error(err);
-        resp = false;
-      } else {
-      	// no event exists if length == 0
-      	if(response.items.length != 0){
-      	  // go through events to check rooms
-          for(var i = 0; i < response.items.length; i++){
-            var evnt = response.items[i];
+  // authenticate before trying to make api call
+  auth(function(){
+    // check for existing events
+    gcal.events.list({
+        auth: app.googleOauthClient,
+        calendarId: app.env.CALID,
+        'timeMin': start,
+        'timeMax': end
+    }, function(err, response){
+        if(err){
+          callback.error(err);
+          resp = false;
+        } else {
+          // no event exists if length == 0
+          if(response.items.length != 0){
+            // go through events to check rooms
+            for(var i = 0; i < response.items.length; i++){
+              var evnt = response.items[i];
 
-            // check if event is the same room as request
-            if(evnt.summary.search(body.room) != -1){
-              var hostName = evnt.description.substring(19);
-              var lng = body.room.length;
-              var hostName = evnt.summary.substring(lng + 3);
-              //console.log('HOST: ' + hostName);
+              // check if event is the same room as request
+              if(evnt.summary.search(body.room) != -1){
+                var hostName = evnt.description.substring(19);
+                var lng = body.room.length;
+                var hostName = evnt.summary.substring(lng + 3);
+                //console.log('HOST: ' + hostName);
 
-              var message = 'Unfortunately, the ' + body.room + ' has already been snagged by ' + hostName + ' at that time. Check the calendar above for available rooms!';
+                var message = 'Unfortunately, the ' + body.room + ' has already been snagged by ' + hostName + ' at that time. Check the calendar above for available rooms!';
 
-              resp = false;
+                resp = false;
 
-              callback.exists(message);
-              
-              break;
-            }         
+                callback.exists(message);
+                
+                break;
+              }         
+            }
           }
         }
-      }
 
-      whenDone(resp);
+        whenDone(resp);
+    });
   });
+	
 }
 
 // add event to google calendar
@@ -83,9 +87,11 @@ function addEvent(body, callback){
 	var title = body.room + ' - ' + body.company;
 	var attendee = body.email;
 
-	// insert new event
+  // make sure we're authenticated before we try to add an event
+  auth(function(){
+    // insert new event
     gcal.events.insert({
-        auth: oauthClient,
+        auth: app.googleOauthClient,
         calendarId: app.env.CALID,
         resource: {
           summary: title,
@@ -101,7 +107,7 @@ function addEvent(body, callback){
           }]
         }
     }, function(err, event){
-    	if (err) {
+      if (err) {
           console.log('-- GCAL ERR --');
           console.log(err);
           
@@ -113,11 +119,15 @@ function addEvent(body, callback){
           callback.success(event);
         }
     }); 
+  });
+
+	
 }
   
 
 // authenticate with gcal services
-function auth() {
+// optional callback
+function auth(done) {
   token = new app.GoogleToken({
       iss: app.env.SERVICEACC,
       scope: 'https://www.googleapis.com/auth/calendar',
@@ -139,9 +149,12 @@ function auth() {
           }
           else {
             // create and set authorization client and necessary credentials
-            oauthClient = new OAuth2('', '', '', {}, {});
-            oauthClient.setCredentials({token_type: 'Bearer', access_token: tokenn});
+            app.googleOauthClient = new OAuth2('', '', '', {}, {});
+            app.googleOauthClient.setCredentials({token_type: 'Bearer', access_token: tokenn});
 
+            if(done){
+              done();
+            }
             console.log('Credentials Loaded');
           }
       });

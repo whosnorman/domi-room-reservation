@@ -22,9 +22,7 @@ module.exports = function(app){
 
 	// set headers
 	var allowCrossDomain = function(req, res, next) {
-		console.log('--- HEADER ORIGIN ---');
-		console.log(req.get('origin'));
-		console.log(req.headers);
+		console.log('--- HEADER ORIGIN:  ' + req.get('origin'));
 	    res.header('Access-Control-Allow-Origin', '*');
 	    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
 	    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
