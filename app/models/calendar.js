@@ -17,9 +17,10 @@ module.exports = function(ap) {
     auth();
 
 		calendar.add = function(body, callback) {
-      checkEvents(body, callback, function(check){
-        if(check)
+      checkEvents(body, callback, function(isFree){
+        if(isFree){
           addEvent(body, callback);
+        }
       });
 		};
 
@@ -29,6 +30,7 @@ module.exports = function(ap) {
 
 // check google calendar for existing 
 // reservation in the same room
+// used as a middleware of sorts when an event is attempted to be added
 function checkEvents(body, callback, whenDone){
 	var resp = true;
 	var start = new Date(body.start).toISOString();
@@ -44,6 +46,8 @@ function checkEvents(body, callback, whenDone){
         'timeMax': end
     }, function(err, response){
         if(err){
+          console.log('- EVENTS LIST ERR - ');
+          console.log(err);
           callback.error(err);
           resp = false;
         } else {
@@ -87,8 +91,7 @@ function addEvent(body, callback){
 	var title = body.room + ' - ' + body.company;
 	var attendee = body.email;
 
-  // make sure we're authenticated before we try to add an event
-  auth(function(){
+  try{
     // insert new event
     gcal.events.insert({
         auth: app.googleOauthClient,
@@ -108,18 +111,17 @@ function addEvent(body, callback){
         }
     }, function(err, event){
       if (err) {
-          console.log('-- GCAL ERR --');
-          console.log(err);
-          
-          // try to re-authenticate
-          auth();  
-
-          callback.error(err)
-        } else {  
-          callback.success(event);
-        }
+        console.log('-- GCAL ERR --');
+        throw err;
+      } else {  
+        callback.success(event);
+      }
     }); 
-  });
+  } catch(err) {
+    console.log('--- ADD EVENT ERROR THROWN -');
+    console.log(err);
+    callback.error(err);
+  }
 
 	
 }
@@ -141,16 +143,15 @@ function auth(done) {
           return console.log(err);
       }
 
-      token.getToken(function (err, tokenn) {
+      token.getToken(function (err, toke) {
           if (err) {
-              console.log('-- TOKEN ERR --:\n' + err);
+              console.log('-- GET TOKEN ERR --:');
+              console.log(err);
               app.snagController.errorEmail(err);
-              return console.log(err);
-          }
-          else {
+          } else {
             // create and set authorization client and necessary credentials
             app.googleOauthClient = new OAuth2('', '', '', {}, {});
-            app.googleOauthClient.setCredentials({token_type: 'Bearer', access_token: tokenn});
+            app.googleOauthClient.setCredentials({token_type: 'Bearer', access_token: toke});
 
             if(done){
               done();

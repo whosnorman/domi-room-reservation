@@ -17,11 +17,10 @@ module.exports = function(app){
 		  	  // insert into database
 		  	  app.models.db.insertMember(body, {
 			  	success: function(){
-			  		res.send({success: true});
-              		res.end();
+			  		console.log('Member Request Inserted into Mongo.');
 			  	},
 			  	error: function(err){
-			  		console.log('-- INSERT REQ ERR --');
+			  		console.log('-- INSERT MEMBER ERR --');
 			  		console.log(err);
 			  	}			  	
 			  });
@@ -35,7 +34,9 @@ module.exports = function(app){
 			  });
 
 		  	  // send user success email
-		  	  snagController.successEmail(body, event);	
+		  	  snagController.successEmail(body, event);
+		  	  res.send({success: true});
+		  	  res.end();	
               
 		  	},
 		  	exists: function(msg){
@@ -44,6 +45,7 @@ module.exports = function(app){
 	          res.end();
 		  	},
 		  	error: function(err){
+		  	  console.log('- OUTPUT OF SNAG ERR - ');
 			  console.log(err);
 		  	  // send user and admin error emails
               snagController.errorEmail(err, body);
